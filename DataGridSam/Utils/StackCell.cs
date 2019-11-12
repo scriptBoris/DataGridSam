@@ -51,6 +51,8 @@ namespace DataGridSam.Utils
             };
 
             int index = 0;
+            bool[] columnWithCustomTemplate = new bool [DataGrid.Columns.Count];
+
             foreach (var column in DataGrid.Columns)
             {
                 ColumnDefinitions.Add(new ColumnDefinition() { Width = column.Width });
@@ -58,10 +60,8 @@ namespace DataGridSam.Utils
                 if (column.CellTemplate != null)
                 {
                     cell = new ContentView() { Content = column.CellTemplate.CreateContent() as View };
-                    //if (column.PropertyName != null)
-                    //{
-                    //    cell.SetBinding(BindingContextProperty, new Binding(column.PropertyName));
-                    //}
+
+                    columnWithCustomTemplate[index] = true;
                 }
                 else
                 {
@@ -103,6 +103,16 @@ namespace DataGridSam.Utils
             var tapControll = new TapGestureRecognizer { Command = DataGrid.CommandSelectedItem };
             tapControll.Tapped += TapControll_Tapped;
             GestureRecognizers.Add(tapControll);
+
+            // Add imitation thickness
+            if (DataGrid.RowsThickness > 0)
+            {
+                foreach (var item in Children)
+                {
+                    if (item is Layout layout)
+                        layout.Padding = new Thickness(0, DataGrid.RowsThickness/2.0, 0, DataGrid.RowsThickness/2.0);
+                }
+            }
         }
 
         private void TapControll_Tapped(object sender, EventArgs e)
@@ -127,7 +137,7 @@ namespace DataGridSam.Utils
             }
         }
 
-        private View CreateHorizontalLine()
+        private BoxView CreateHorizontalLine()
         {
             var line = new BoxView
             {
