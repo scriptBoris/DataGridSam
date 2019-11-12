@@ -36,6 +36,7 @@ namespace Sample
                 Name = "Жареные гренки",
                 Price = 87.4f,
                 Weight = 0.15f,
+                IsCompleted = true,
             });
             Items.Add(new Ware
             {

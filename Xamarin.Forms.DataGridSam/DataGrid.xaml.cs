@@ -34,8 +34,7 @@ namespace DataGridSam
                 defaultValueCreator: b =>
                 {
                     return new ColumnCollection();
-                }
-            );
+                });
         public ColumnCollection Columns
         {
             get { return (ColumnCollection)GetValue(ColumnsProperty); }
@@ -92,7 +91,15 @@ namespace DataGridSam
             set { SetValue(LinesWidthProperty, value); }
         }
 
-        // Header width
+        // Lines color
+        public static readonly BindableProperty LinesColorProperty =
+            BindableProperty.Create(nameof(LinesColor), typeof(Color), typeof(DataGrid), defaultValue: Color.Gray);
+        public Color LinesColor { 
+            get { return (Color)GetValue(LinesColorProperty); } 
+            set { SetValue(LinesColorProperty, value); } 
+        }
+
+        // Header height
         public static readonly BindableProperty HeaderHeightProperty =
             BindableProperty.Create(nameof(HeaderHeight), typeof(int), typeof(DataGrid), 0,
                 propertyChanged: (b, o, n) => 
@@ -112,6 +119,32 @@ namespace DataGridSam
             set { SetValue(HeaderHeightProperty, value); } 
         }
 
+        // Header background color
+        public static readonly BindableProperty HeaderBackgroundColorProperty =
+            BindableProperty.Create(nameof(HeaderBackgroundColor), typeof(Color), typeof(DataGrid), defaultValue: Color.Gray);
+        public Color HeaderBackgroundColor { 
+            get { return (Color)GetValue(HeaderBackgroundColorProperty); }
+            set { SetValue(HeaderBackgroundColorProperty, value); }
+        }
+
+        // Header text color
+        public static readonly BindableProperty HeaderTextColorProperty =
+            BindableProperty.Create(nameof(HeaderTextColor), typeof(Color), typeof(DataGrid), defaultValue: Color.Black);
+        public Color HeaderTextColor
+        {
+            get { return (Color)GetValue(HeaderTextColorProperty); }
+            set { SetValue(HeaderTextColorProperty, value); }
+        }
+
+        // Header text size
+        public static readonly BindableProperty HeaderFontSizeProperty =
+            BindableProperty.Create(nameof(HeaderFontSize), typeof(double), typeof(DataGrid), defaultValue: 14.0);
+        public double HeaderFontSize
+        {
+            get { return (double)GetValue(HeaderFontSizeProperty); }
+            set { SetValue(HeaderFontSizeProperty, value); }
+        }
+
         // Header label style
         public static readonly BindableProperty HeaderLabelStyleProperty =
             BindableProperty.Create(nameof(HeaderLabelStyle), typeof(Style), typeof(DataGrid));
@@ -119,6 +152,21 @@ namespace DataGridSam
         {
             get { return (Style)GetValue(HeaderLabelStyleProperty); }
             set { SetValue(HeaderLabelStyleProperty, value); }
+        }
+
+        // Cell padding
+        public static readonly BindableProperty CellPaddingProperty =
+            BindableProperty.Create(nameof(CellPadding), typeof(Thickness), typeof(DataGrid), defaultValue: new Thickness(0,0,0,0),
+                propertyChanged: (b, o, n)=> 
+                {
+                    var self = (DataGrid)b;
+                    if (n is Thickness value)
+                        self.UpdatePadding(value);
+                });
+        public Thickness CellPadding 
+        { 
+            get { return (Thickness)GetValue(CellPaddingProperty); }
+            set { SetValue(CellPaddingProperty, value); }
         }
     }
 }

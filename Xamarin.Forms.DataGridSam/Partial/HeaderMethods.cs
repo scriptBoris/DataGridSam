@@ -12,13 +12,19 @@ namespace DataGridSam
         private void InitHeaderView()
         {
             SetColumnsBindingContext();
+            
+            // Set vertical thickness
+            verticalLines.ColumnSpacing = LinesWidth;
+            _headerView.ColumnSpacing = LinesWidth;
+
             _headerView.Children.Clear();
             _headerView.ColumnDefinitions.Clear();
 
             verticalLines.Children.Clear();
             verticalLines.ColumnDefinitions.Clear();
 
-            //_headerView.ColumnSpacing = 0;
+            // Imitation header lines and color
+            _headerView.BackgroundColor = LinesColor;
 
             if (Columns != null)
             {
@@ -27,7 +33,7 @@ namespace DataGridSam
                 {
                     // Header table
                     _headerView.ColumnDefinitions.Add(new ColumnDefinition { Width = col.Width });
-                    var cell = GetHeaderViewForColumn(col);
+                    var cell = CreateColumnHeader(col);
                     _headerView.Children.Add(cell);
                     Grid.SetColumn(cell, i);
 
@@ -36,7 +42,7 @@ namespace DataGridSam
 
                     if (i < Columns.Count - 1)
                     {
-                        var line = CreateLine();
+                        var line = CreateColumnLine();
                         verticalLines.Children.Add(line);
                         Grid.SetColumn(line, i);
                     }
@@ -46,25 +52,39 @@ namespace DataGridSam
             }
         }
 
-        private View GetHeaderViewForColumn(DataGridColumn column)
+        /// <summary>
+        /// Create header label over column
+        /// </summary>
+        /// <param name="column">Source label column</param>
+        private View CreateColumnHeader(DataGridColumn column)
         {
+            // Set header text color & font size
+            column.HeaderLabel.TextColor = HeaderTextColor;
+            column.HeaderLabel.FontSize = HeaderFontSize;
+
+            // Detect styles (if has - override latest parameters)
 			column.HeaderLabel.Style = column.HeaderLabelStyle ?? this.HeaderLabelStyle ?? (Style)_headerView.Resources["HeaderDefaultStyle"];
 
+            // Drop in wrap container
             var container = new StackLayout();
+            container.BackgroundColor = HeaderBackgroundColor;
             container.Children.Add(column.HeaderLabel);
 
             return container;
         }
 
-        private View CreateLine()
+        /// <summary>
+        /// Create vertical linse aka Column
+        /// </summary>
+        private View CreateColumnLine()
         {
             var line = new BoxView
             {
                 WidthRequest = LinesWidth,
                 VerticalOptions = LayoutOptions.FillAndExpand,
                 HorizontalOptions = LayoutOptions.EndAndExpand,
-                BackgroundColor = Color.Blue,
-                TranslationX = 5,
+                BackgroundColor = LinesColor,
+                TranslationX = LinesWidth,
             };
             return line;
         }

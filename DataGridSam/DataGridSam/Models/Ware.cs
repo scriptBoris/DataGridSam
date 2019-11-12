@@ -6,6 +6,7 @@ namespace Sample.Models
 {
     public class Ware
     {
+        public bool IsCompleted { get; set; }
         public int Pos { get; set; }
         public string Name { get; set; }
         public float Price { get; set; }

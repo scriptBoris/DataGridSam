@@ -10,20 +10,25 @@ namespace DataGridSam.Utils
     {
         private Color backgroundColor = Color.White;
         private Color textColor = Color.Black;
-        private Color lineColor = Color.Blue;
 
+        // Data grid sam
         public static readonly BindableProperty DataGridProperty =
-            BindableProperty.Create(nameof(DataGrid), typeof(DataGrid), typeof(DataGridViewCell), null
-                ,propertyChanged: (b, o, n) => (b as DataGridViewCell).CreateView());
+            BindableProperty.Create(nameof(DataGrid), typeof(DataGrid), typeof(DataGridViewCell), null,
+                propertyChanged: (b, o, n) =>
+                {
+                    (b as DataGridViewCell).CreateView();
+                });
         public DataGrid DataGrid
         {
             get { return (DataGrid)GetValue(DataGridProperty); }
             set { SetValue(DataGridProperty, value); }
         }
 
+        // Row context
         public static readonly BindableProperty RowContextProperty =
             BindableProperty.Create(nameof(RowContext), typeof(object), typeof(DataGridViewCell),
-                propertyChanged: (b, o, n) => {
+                propertyChanged: (b, o, n) =>
+                {
                     var self = (DataGridViewCell)b;
                     var click = (TapGestureRecognizer)self.GestureRecognizers.FirstOrDefault();
                     click.CommandParameter = n;
@@ -34,11 +39,11 @@ namespace DataGridSam.Utils
             set { SetValue(RowContextProperty, value); }
         }
 
-
-        #region Methods
         private void CreateView()
         {
             RowSpacing = 0;
+            ColumnSpacing = DataGrid.LinesWidth;
+
             RowDefinitions = new RowDefinitionCollection
             {
                 new RowDefinition { Height = GridLength.Auto },
@@ -75,7 +80,7 @@ namespace DataGridSam.Utils
 
                     cell = new ContentView
                     {
-                        Padding = 0,
+                        Padding = DataGrid.CellPadding,
                         Content = label,
                     };
                 }
@@ -85,40 +90,28 @@ namespace DataGridSam.Utils
                 index++;
             }
 
-            var line = CreateLine();
+            // Create horizontal line table
+            var line = CreateHorizontalLine();
             SetRow(line, 1);
             SetColumn(line, 0);
             SetColumnSpan(line, DataGrid.Columns.Count);
             Children.Add(line);
 
-            var tapControll = new TapGestureRecognizer
-            {
-                Command = DataGrid.CommandSelectedItem,
-            };
+            // Add tap event
+            // Set only tap command, setting CommandParameter - after changed "RowContext" :)
+            var tapControll = new TapGestureRecognizer { Command = DataGrid.CommandSelectedItem };
             GestureRecognizers.Add(tapControll);
         }
 
-        private View CreateLine()
+        private View CreateHorizontalLine()
         {
             var line = new BoxView
             {
-                BackgroundColor = lineColor,
+                BackgroundColor = DataGrid.LinesColor,
                 VerticalOptions = LayoutOptions.FillAndExpand,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
             };
             return line;
         }
-
-        //private void ChangeColor(Color color)
-        //{
-        //    foreach (var v in mainLayout.Children)
-        //    {
-        //        v.BackgroundColor = color;
-        //        var contentView = v as ContentView;
-        //        //if (contentView?.Content is Label)
-        //            //((Label)contentView.Content).TextColor = _textColor;
-        //    }
-        //}
-        #endregion
     }
 }

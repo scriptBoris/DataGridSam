@@ -10,6 +10,8 @@ namespace Sample
         {
             InitializeComponent();
 
+            HotReloader.Current.Run(this);
+
             MainPage = new MainPage();
         }
 
