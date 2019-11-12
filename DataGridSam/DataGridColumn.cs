@@ -5,6 +5,7 @@ using Xamarin.Forms;
 
 namespace DataGridSam
 {
+    [Xamarin.Forms.Internals.Preserve(AllMembers = true)]
     public class DataGridColumn : BindableObject, IDefinition
     {
         public event EventHandler SizeChanged;

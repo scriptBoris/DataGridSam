@@ -11,6 +11,7 @@ namespace DataGridSam.Utils
     /// RepeatableStack
     /// StackLayout corresponding to ItemsSource and ItemTemplate
     /// </summary>
+    [Xamarin.Forms.Internals.Preserve(AllMembers = true)]
     internal class StackList : StackLayout
     {
         // ItemsSource

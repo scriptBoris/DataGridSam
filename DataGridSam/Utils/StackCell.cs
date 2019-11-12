@@ -6,6 +6,7 @@ using Xamarin.Forms;
 
 namespace DataGridSam.Utils
 {
+    [Xamarin.Forms.Internals.Preserve(AllMembers = true)]
     internal sealed class StackCell : Grid
     {
         private Color textColor = Color.Black;

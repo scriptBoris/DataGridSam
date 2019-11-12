@@ -5,6 +5,7 @@ using Xamarin.Forms;
 
 namespace DataGridSam.Utils
 {
+    [Xamarin.Forms.Internals.Preserve(AllMembers = true)]
     internal class StackListTemplateSelector : DataTemplateSelector
     {
         private static DataTemplate Template;

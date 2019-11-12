@@ -12,6 +12,7 @@ using Xamarin.Forms.Xaml;
 
 namespace DataGridSam
 {
+    [Xamarin.Forms.Internals.Preserve(AllMembers = true)]
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class DataGrid : Grid
     {
