@@ -184,5 +184,14 @@ namespace DataGridSam
             get { return (Color)GetValue(RowsColorProperty); }
             set { SetValue(RowsColorProperty, value); }
         }
+
+        // Rows text size
+        public static readonly BindableProperty RowsFontSizeProperty =
+            BindableProperty.Create(nameof(RowsFontSize), typeof(double), typeof(DataGrid), defaultValue: 14.0);
+        public double RowsFontSize
+        {
+            get { return (double)GetValue(RowsFontSizeProperty); }
+            set { SetValue(RowsFontSizeProperty, value); }
+        }
     }
 }

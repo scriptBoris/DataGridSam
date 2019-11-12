@@ -12,10 +12,10 @@
         <!--Таблица-->
         <dg:DataGrid ItemsSource="{Binding Items}"
                      HeaderTextColor="White"
-                     HeaderFontSize="12"
+                     HeaderFontSize="16"
                      HeaderBackgroundColor="#2196F3"
-                     SelectedRowColor="Accent"
                      RowsColor="White"
+                     RowsFontSize="16"
                      LinesColor="#2196F3"
                      CellPadding="5,0,5,0"
                      CommandSelectedItem="{Binding CommandSelectItem}">
@@ -51,7 +51,7 @@
             </dg:DataGrid.Columns>
         </dg:DataGrid>
         
-        <Button Text="Add"
+        <Button Text="Add s"
                 BackgroundColor="Accent"
                 Clicked="Button_Clicked"/>
         <Button Text="Remove last"

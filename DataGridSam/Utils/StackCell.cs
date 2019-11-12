@@ -67,6 +67,7 @@ namespace DataGridSam.Utils
                     var label = new Label
                     {
                         TextColor = textColor,
+                        FontSize = DataGrid.RowsFontSize,
                         HorizontalOptions = column.HorizontalContentAlignment,
                         VerticalOptions = column.VerticalContentAlignment,
                         HorizontalTextAlignment = column.HorizontalTextAlignment,
