@@ -15,8 +15,6 @@ namespace DataGridSam
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class DataGrid : Grid
     {
-        //public event EventHandler Refreshing;
-
         public DataGrid()
         {
             InitializeComponent();
@@ -167,6 +165,24 @@ namespace DataGridSam
         { 
             get { return (Thickness)GetValue(CellPaddingProperty); }
             set { SetValue(CellPaddingProperty, value); }
+        }
+
+        // Selected row color
+        public static readonly BindableProperty SelectedRowColorProperty =
+            BindableProperty.Create(nameof(SelectedRowColor), typeof(Color), typeof(DataGrid), defaultValue: Color.Beige);
+        public Color SelectedRowColor
+        {
+            get { return (Color)GetValue(SelectedRowColorProperty); }
+            set { SetValue(SelectedRowColorProperty, value); }
+        }
+
+        // Rows color
+        public static readonly BindableProperty RowsColorProperty =
+            BindableProperty.Create(nameof(RowsColor), typeof(Color), typeof(DataGrid), defaultValue: Color.White);
+        public Color RowsColor
+        {
+            get { return (Color)GetValue(RowsColorProperty); }
+            set { SetValue(RowsColorProperty, value); }
         }
     }
 }

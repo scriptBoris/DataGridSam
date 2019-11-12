@@ -11,7 +11,7 @@ namespace DataGridSam.Utils
 
         public StackListTemplateSelector()
         {
-            Template = new DataTemplate(typeof(DataGridViewCell));
+            Template = new DataTemplate(typeof(StackCell));
         }
 
         protected override DataTemplate OnSelectTemplate(object item, BindableObject container)
@@ -19,9 +19,9 @@ namespace DataGridSam.Utils
             var self = (StackList)container;
 
             //Binding context
-            Template.SetValue(DataGridViewCell.DataGridProperty, self.DataGrid);
-            Template.SetValue(DataGridViewCell.RowContextProperty, item);
-            Template.SetValue(DataGridViewCell.BindingContextProperty, item);
+            Template.SetValue(StackCell.DataGridProperty, self.DataGrid);
+            Template.SetValue(StackCell.RowContextProperty, item);
+            Template.SetValue(StackCell.BindingContextProperty, item);
             return Template;
         }
     }

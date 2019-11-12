@@ -6,17 +6,16 @@ using Xamarin.Forms;
 
 namespace DataGridSam.Utils
 {
-    internal sealed class DataGridViewCell : Grid
+    internal sealed class StackCell : Grid
     {
-        private Color backgroundColor = Color.White;
         private Color textColor = Color.Black;
 
         // Data grid sam
         public static readonly BindableProperty DataGridProperty =
-            BindableProperty.Create(nameof(DataGrid), typeof(DataGrid), typeof(DataGridViewCell), null,
+            BindableProperty.Create(nameof(DataGrid), typeof(DataGrid), typeof(StackCell), null,
                 propertyChanged: (b, o, n) =>
                 {
-                    (b as DataGridViewCell).CreateView();
+                    (b as StackCell).CreateView();
                 });
         public DataGrid DataGrid
         {
@@ -26,10 +25,10 @@ namespace DataGridSam.Utils
 
         // Row context
         public static readonly BindableProperty RowContextProperty =
-            BindableProperty.Create(nameof(RowContext), typeof(object), typeof(DataGridViewCell),
+            BindableProperty.Create(nameof(RowContext), typeof(object), typeof(StackCell),
                 propertyChanged: (b, o, n) =>
                 {
-                    var self = (DataGridViewCell)b;
+                    var self = (StackCell)b;
                     var click = (TapGestureRecognizer)self.GestureRecognizers.FirstOrDefault();
                     click.CommandParameter = n;
                 });
@@ -100,7 +99,30 @@ namespace DataGridSam.Utils
             // Add tap event
             // Set only tap command, setting CommandParameter - after changed "RowContext" :)
             var tapControll = new TapGestureRecognizer { Command = DataGrid.CommandSelectedItem };
+            tapControll.Tapped += TapControll_Tapped;
             GestureRecognizers.Add(tapControll);
+        }
+
+        private void TapControll_Tapped(object sender, EventArgs e)
+        {
+            var self = (StackCell)sender;
+
+            var last = self.DataGrid.SelectedItem;
+            if (last != null)
+            {
+                foreach (var item in last.Children)
+                {
+                    if (item is BoxView == false)
+                        item.BackgroundColor = self.DataGrid.RowsColor;
+                }
+            }
+
+            self.DataGrid.SelectedItem = this;
+            foreach (var item in self.Children)
+            {
+                if (item is BoxView == false)
+                    item.BackgroundColor = self.DataGrid.SelectedRowColor;
+            }
         }
 
         private View CreateHorizontalLine()
