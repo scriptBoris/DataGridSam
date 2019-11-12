@@ -1,11 +1,14 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <Grid xmlns="http://xamarin.com/schemas/2014/forms" 
-                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-                xmlns:d="http://xamarin.com/schemas/2014/forms/design"
-                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                xmlns:stack="clr-namespace:DataGridSam.Utils;assembly=DataGridSam"
-                mc:Ignorable="d"
-                x:Class="DataGridSam.DataGrid">
+      xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+      xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:stack="clr-namespace:DataGridSam.Utils;assembly=DataGridSam"
+      mc:Ignorable="d"
+      x:Name="self"
+      x:Class="DataGridSam.DataGrid"
+      RowSpacing="0"
+      Padding="0">
 
     <Grid.RowDefinitions>
         <RowDefinition Height="Auto"/>
@@ -44,16 +47,11 @@
             </ResourceDictionary>
         </Grid.Resources>
         
-        <!--StackList-->
-        <ScrollView Grid.Row="1">
-            <stack:RepeatableStack x:Name="stackList">
-                <stack:RepeatableStack.ItemTemplate>
-                    <DataTemplate>
-                        <Label Text="{Binding Name}"/>
-                    </DataTemplate>
-                </stack:RepeatableStack.ItemTemplate>
-            </stack:RepeatableStack>
-        </ScrollView>
     </Grid>
 
+    <!--StackList-->
+    <ScrollView Grid.Row="1">
+        <stack:StackList x:Name="stackList"
+                         DataGrid="{Reference self}"/>
+    </ScrollView>
 </Grid>

@@ -13,7 +13,14 @@
         <dg:DataGrid ItemsSource="{Binding Items}">
             <dg:DataGrid.Columns>
                 <!--Колонки-->
-                <dg:DataGridColumn />
+                <dg:DataGridColumn Title="№" 
+                                   PropertyName="Pos"/>
+                <dg:DataGridColumn Title="Наименование" 
+                                   PropertyName="Name"/>
+                <dg:DataGridColumn Title="Цена" 
+                                   PropertyName="Price"/>
+                <dg:DataGridColumn Title="Вес" 
+                                   PropertyName="Weight"/>
             </dg:DataGrid.Columns>
         </dg:DataGrid>
         <Button Text="Add"

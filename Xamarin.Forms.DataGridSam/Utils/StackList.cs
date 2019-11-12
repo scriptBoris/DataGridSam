@@ -11,13 +11,14 @@ namespace DataGridSam.Utils
     /// RepeatableStack
     /// StackLayout corresponding to ItemsSource and ItemTemplate
     /// </summary>
-    internal class RepeatableStack : StackLayout
+    internal class StackList : StackLayout
     {
+        // ItemsSource
         public static BindableProperty ItemsSourceProperty =
             BindableProperty.Create(
                 nameof(ItemsSource),
                 typeof(IEnumerable),
-                typeof(RepeatableStack),
+                typeof(StackList),
                 null,
                 defaultBindingMode: BindingMode.OneWay,
                 propertyChanged: ItemsChanged
@@ -29,15 +30,16 @@ namespace DataGridSam.Utils
             set { SetValue(ItemsSourceProperty, value); }
         }
 
+        // ItemTemplate
         public static BindableProperty ItemTemplateProperty =
             BindableProperty.Create(
                 nameof(ItemTemplate),
                 typeof(DataTemplate),
-                typeof(RepeatableStack),
+                typeof(StackList),
                 default(DataTemplate),
                 propertyChanged: (bindable, oldValue, newValue) =>
                 {
-                    var control = (RepeatableStack)bindable;
+                    var control = (StackList)bindable;
                     //when to occur propertychanged earlier ItemsSource than ItemTemplate, raise ItemsChanged manually
                     if (newValue != null && control.ItemsSource != null && !control.doneItemSourceChanged)
                     {
@@ -45,18 +47,26 @@ namespace DataGridSam.Utils
                     }
                 }
             );
-
         public DataTemplate ItemTemplate
         {
             get { return (DataTemplate)GetValue(ItemTemplateProperty); }
             set { SetValue(ItemTemplateProperty, value); }
         }
 
+        // DataGrid
+        public static readonly BindableProperty DataGridProperty =
+            BindableProperty.Create(nameof(DataGrid), typeof(DataGrid), typeof(StackList), null);
+        public DataGrid DataGrid
+        {
+            get { return (DataGrid)GetValue(DataGridProperty); }
+            set { SetValue(DataGridProperty, value); }
+        }
+
         private bool doneItemSourceChanged = false;
 
         private static void ItemsChanged(BindableObject bindable, object oldValue, object newValue)
         {
-            var control = (RepeatableStack)bindable;
+            var control = (StackList)bindable;
             // when to occur propertychanged earlier ItemsSource than ItemTemplate, do nothing.
             if (control.ItemTemplate == null)
             {
@@ -156,17 +166,20 @@ namespace DataGridSam.Utils
 
         private static View CreateChildViewFor(DataTemplate template, object item, BindableObject container)
         {
-            var selector = template as DataTemplateSelector;
-
-            if (selector != null)
+            if (template is DataTemplateSelector selector)
             {
                 template = selector.SelectTemplate(item, container);
             }
 
-            //Binding context
-            template.SetValue(BindableObject.BindingContextProperty, item);
+            var self = (StackList)container;
 
-            return (View)template.CreateContent();
+            //Binding context
+            template.SetValue(DataGridViewCell.DataGridProperty, self.DataGrid);
+            //template.SetValue(BindableObject.BindingContextProperty, item);
+            //template.SetValue(BindableObject.BindingContextProperty, item);
+
+            var res = template.CreateContent();
+            return (View)res;
         }
     }
 }

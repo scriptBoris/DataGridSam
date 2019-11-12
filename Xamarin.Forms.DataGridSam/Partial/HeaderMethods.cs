@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Text;
+using Xamarin.Forms;
 
 namespace DataGridSam
 {
@@ -13,10 +14,8 @@ namespace DataGridSam
             SetColumnsBindingContext();
             _headerView.Children.Clear();
             _headerView.ColumnDefinitions.Clear();
-            _sortingOrders.Clear();
 
-            _headerView.Padding = new Thickness(BorderThickness.Left, BorderThickness.Top, BorderThickness.Right, 0);
-            _headerView.ColumnSpacing = BorderThickness.HorizontalThickness / 2;
+            //_headerView.ColumnSpacing = 0;
 
             if (Columns != null)
             {
@@ -28,10 +27,19 @@ namespace DataGridSam
 
                     _headerView.Children.Add(cell);
                     Grid.SetColumn(cell, Columns.IndexOf(col));
-
-                    _sortingOrders.Add(Columns.IndexOf(col), SortingOrder.None);
                 }
             }
+        }
+
+        private View GetHeaderViewForColumn(DataGridColumn column)
+        {
+            column.HeaderLabel.Style = (Style)_headerView.Resources["HeaderDefaultStyle"];
+
+            var container = new StackLayout();
+
+            container.Children.Add(column.HeaderLabel);
+
+            return container;
         }
 
         private void SetColumnsBindingContext()
