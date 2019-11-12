@@ -15,25 +15,25 @@ namespace DataGridSam
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class DataGrid : Grid
     {
-		//public event EventHandler Refreshing;
+        //public event EventHandler Refreshing;
 
         public DataGrid()
         {
             InitializeComponent();
-
+            stackList.Spacing = 0;
             stackList.ItemTemplate = new StackListTemplateSelector();
         }
 
         // Columns
         public static readonly BindableProperty ColumnsProperty =
             BindableProperty.Create(nameof(Columns), typeof(ColumnCollection), typeof(DataGrid),
-                propertyChanged: (bindableObj, o, n) => 
+                propertyChanged: (bindableObj, o, n) =>
                 {
                     (bindableObj as DataGrid).InitHeaderView();
                 },
-                defaultValueCreator: b => 
+                defaultValueCreator: b =>
                 {
-                    return new ColumnCollection(); 
+                    return new ColumnCollection();
                 }
             );
         public ColumnCollection Columns
@@ -59,9 +59,23 @@ namespace DataGridSam
         }
 
         // Command selected item 
-        public static readonly BindableProperty CommandSelectedItemProperty = 
-            BindableProperty.Create(nameof(CommandSelectedItem), typeof(ICommand), typeof(DataGrid), null, BindingMode.TwoWay);
+        public static readonly BindableProperty CommandSelectedItemProperty =
+            BindableProperty.Create(nameof(CommandSelectedItem), typeof(ICommand), typeof(DataGrid), null,
+                propertyChanged: (b, o, n) =>
+                {
+                    var self = (DataGrid)b;
+                    if (self.stackList.Children == null)
+                        return;
 
+                    foreach (var child in self.stackList.Children)
+                    {
+                        var view = child;
+
+                        // Add event click
+                        var click = (TapGestureRecognizer)view.GestureRecognizers.FirstOrDefault();
+                        click.Command = n as ICommand;
+                    }
+                });
         public ICommand CommandSelectedItem
         {
             get { return (ICommand)GetValue(CommandSelectedItemProperty); }
@@ -76,6 +90,35 @@ namespace DataGridSam
         {
             get { return (double)GetValue(LinesWidthProperty); }
             set { SetValue(LinesWidthProperty, value); }
+        }
+
+        // Header width
+        public static readonly BindableProperty HeaderHeightProperty =
+            BindableProperty.Create(nameof(HeaderHeight), typeof(int), typeof(DataGrid), 0,
+                propertyChanged: (b, o, n) => 
+                {
+                    var self = b as DataGrid;
+                    var r = self.RowDefinitions.First();
+                    int value = (int)n;
+
+                    if (value == 0)
+                        r.Height = GridLength.Auto;
+                    else if (value > 0)
+                        r.Height = new GridLength(value);
+                });
+        public int HeaderHeight
+        {
+            get { return (int)GetValue(HeaderHeightProperty); }
+            set { SetValue(HeaderHeightProperty, value); } 
+        }
+
+        // Header label style
+        public static readonly BindableProperty HeaderLabelStyleProperty =
+            BindableProperty.Create(nameof(HeaderLabelStyle), typeof(Style), typeof(DataGrid));
+        public Style HeaderLabelStyle
+        {
+            get { return (Style)GetValue(HeaderLabelStyleProperty); }
+            set { SetValue(HeaderLabelStyleProperty, value); }
         }
     }
 }

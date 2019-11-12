@@ -6,11 +6,11 @@
              xmlns:dg="clr-namespace:DataGridSam;assembly=DataGridSam"
              mc:Ignorable="d"
              x:Class="Sample.MainPage">
-
     <StackLayout>
         
         <!--Таблица-->
-        <dg:DataGrid ItemsSource="{Binding Items}">
+        <dg:DataGrid ItemsSource="{Binding Items}"
+                     CommandSelectedItem="{Binding CommandSelectItem}">
             <dg:DataGrid.Columns>
                 <!--Колонки-->
                 <dg:DataGridColumn Title="№" 

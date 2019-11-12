@@ -94,8 +94,32 @@ namespace DataGridSam
             set { SetValue(VerticalTextAlignmentProperty, value); }
         }
 
-        internal Label HeaderLabel { get; set; }
+        // Header label style
+        public static readonly BindableProperty HeaderLabelStyleProperty =
+            BindableProperty.Create(nameof(HeaderLabelStyle), typeof(Style), typeof(DataGridColumn),
+                propertyChanged: (b, old, newValue) => {
+                    var self = (DataGridColumn)b;
+                    if (self.HeaderLabel != null && (old != newValue))
+                        self.HeaderLabel.Style = newValue as Style;
+                });
+        public Style HeaderLabelStyle
+        {
+            get { return (Style)GetValue(HeaderLabelStyleProperty); }
+            set { SetValue(HeaderLabelStyleProperty, value); }
+        }
 
+        // Cell template
+        public static readonly BindableProperty CellTemplateProperty =
+            BindableProperty.Create(nameof(CellTemplate), typeof(DataTemplate), typeof(DataGridColumn), null);
+        public DataTemplate CellTemplate
+        {
+            get { return (DataTemplate)GetValue(CellTemplateProperty); }
+            set { SetValue(CellTemplateProperty, value); }
+        }
+
+
+
+        internal Label HeaderLabel { get; set; }
 
         void OnSizeChanged()
         {

@@ -13,11 +13,6 @@ namespace DataGridSam.Utils
     /// </summary>
     internal class StackList : StackLayout
     {
-        public StackList()
-        {
-            Spacing = 0;
-        }
-
         // ItemsSource
         public static BindableProperty ItemsSourceProperty =
             BindableProperty.Create(
@@ -171,18 +166,24 @@ namespace DataGridSam.Utils
         /// <param name="container">StackList</param>
         private static View CreateChildViewFor(DataTemplate template, object item, BindableObject container)
         {
-            var self = (StackList)container;
 
             if (template is DataTemplateSelector selector)
                 template = selector.SelectTemplate(item, container);
 
-            //Binding context
-            template.SetValue(DataGridViewCell.DataGridProperty, self.DataGrid);
-            template.SetValue(BindableObject.BindingContextProperty, item);
 
             // Здесь происходит неявный вызов метода : DataGridViewCell.CreateView()
-            var res = template.CreateContent();
-            return (View)res;
+            var view = (View)template.CreateContent();
+
+            // Add event click
+            //var tapControll = new TapGestureRecognizer
+            //{
+            //    Command = self.DataGrid.CommandSelectedItem,
+            //    CommandParameter = item
+            //};
+            //view.GestureRecognizers.Add(tapControll);
+            //view.BindingContext = item;
+
+            return view;
         }
     }
 }

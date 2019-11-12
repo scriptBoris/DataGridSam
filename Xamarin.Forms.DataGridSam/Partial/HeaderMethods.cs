@@ -43,16 +43,14 @@ namespace DataGridSam
 
                     i++;
                 }
-
             }
         }
 
         private View GetHeaderViewForColumn(DataGridColumn column)
         {
-            column.HeaderLabel.Style = (Style)_headerView.Resources["HeaderDefaultStyle"];
+			column.HeaderLabel.Style = column.HeaderLabelStyle ?? this.HeaderLabelStyle ?? (Style)_headerView.Resources["HeaderDefaultStyle"];
 
             var container = new StackLayout();
-
             container.Children.Add(column.HeaderLabel);
 
             return container;
