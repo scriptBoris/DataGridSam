@@ -14,18 +14,33 @@
             <dg:DataGrid.Columns>
                 <!--Колонки-->
                 <dg:DataGridColumn Title="№" 
+                                   Width="40"
                                    PropertyName="Pos"/>
                 <dg:DataGridColumn Title="Наименование" 
+                                   Width="2*"
                                    PropertyName="Name"/>
                 <dg:DataGridColumn Title="Цена" 
+                                   Width="1*"
+                                   HorizontalTextAlignment="End"
                                    PropertyName="Price"/>
                 <dg:DataGridColumn Title="Вес" 
+                                   Width="1*"
                                    PropertyName="Weight"/>
             </dg:DataGrid.Columns>
         </dg:DataGrid>
+        
         <Button Text="Add"
                 BackgroundColor="Accent"
                 Clicked="Button_Clicked"/>
+        <Button Text="Remove last"
+                BackgroundColor="Yellow"
+                Clicked="Button_Clicked_1"/>
+        <Button Text="Add random"
+                BackgroundColor="Aqua"
+                Clicked="Button_Clicked_2"/>
+        <Button Text="Remove random"
+                BackgroundColor="GreenYellow"
+                Clicked="Button_Clicked_3"/>
     </StackLayout>
 
 </ContentPage>

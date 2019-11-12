@@ -11,13 +11,6 @@ namespace DataGridSam.Utils
 
         protected override DataTemplate OnSelectTemplate(object item, BindableObject container)
         {
-            //var stack = container as StackList;
-            //var par = stack.Parent?.Parent;
-            //var dataGrid = par;
-
-            //Template.SetValue(DataGridViewCell.DataGridProperty, dataGrid);
-            Template.SetValue(DataGridViewCell.RowContextProperty, item);
-
             return Template;
         }
     }

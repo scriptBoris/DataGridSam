@@ -51,6 +51,42 @@ namespace Sample
                 Weight = 0.86f,
             });
         }
+
+        private void Button_Clicked_1(object sender, EventArgs e)
+        {
+            if (Items != null && Items.Count > 0)
+            {
+                Items.Remove(Items.LastOrDefault());
+            }
+        }
+
+        private void Button_Clicked_2(object sender, EventArgs e)
+        {
+            int rand = new Random().Next(0, Items.Count - 1);
+            var item = new Item
+            {
+                Pos = rand,
+                Name = Guid.NewGuid().ToString(),
+                Price = 159.56f,
+                Weight = 0.86f,
+            };
+
+            Items.Insert(rand, item);
+        }
+
+        private void Button_Clicked_3(object sender, EventArgs e)
+        {
+            if (Items == null && Items.Count == 0)
+            {
+                return;
+            }
+
+            int rand = new Random().Next(0, Items.Count - 1);
+            var item = Items[rand];
+
+            Items.Remove(item);
+
+        }
     }
 
     public class Item

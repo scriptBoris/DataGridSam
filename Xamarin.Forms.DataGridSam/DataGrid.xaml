@@ -54,4 +54,10 @@
         <stack:StackList x:Name="stackList"
                          DataGrid="{Reference self}"/>
     </ScrollView>
+    
+    <Grid Grid.Row="1"
+          x:Name="verticalLines"
+          BackgroundColor="Transparent"
+          InputTransparent="True"
+          HeightRequest="{Binding HeightRequest, Source={Reference stackList}}"/>
 </Grid>

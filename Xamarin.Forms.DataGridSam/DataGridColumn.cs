@@ -60,7 +60,7 @@ namespace DataGridSam
 
         // Horizontal content aligment
         public static readonly BindableProperty HorizontalContentAlignmentProperty =
-            BindableProperty.Create(nameof(HorizontalContentAlignment), typeof(LayoutOptions), typeof(DataGridColumn), LayoutOptions.Center);
+            BindableProperty.Create(nameof(HorizontalContentAlignment), typeof(LayoutOptions), typeof(DataGridColumn), LayoutOptions.FillAndExpand);
         public LayoutOptions HorizontalContentAlignment
         {
             get { return (LayoutOptions)GetValue(HorizontalContentAlignmentProperty); }
@@ -69,11 +69,29 @@ namespace DataGridSam
 
         // Vertical content aligment
         public static readonly BindableProperty VerticalContentAlignmentProperty =
-            BindableProperty.Create(nameof(VerticalContentAlignment), typeof(LayoutOptions), typeof(DataGridColumn), LayoutOptions.Center);
+            BindableProperty.Create(nameof(VerticalContentAlignment), typeof(LayoutOptions), typeof(DataGridColumn), LayoutOptions.FillAndExpand);
         public LayoutOptions VerticalContentAlignment
         {
             get { return (LayoutOptions)GetValue(VerticalContentAlignmentProperty); }
             set { SetValue(VerticalContentAlignmentProperty, value); }
+        }
+
+        // Horizontal text aligment
+        public static readonly BindableProperty HorizontalTextAlignmentProperty =
+            BindableProperty.Create(nameof(HorizontalTextAlignment), typeof(TextAlignment), typeof(DataGridColumn), TextAlignment.Start);
+        public TextAlignment HorizontalTextAlignment
+        {
+            get { return (TextAlignment)GetValue(HorizontalTextAlignmentProperty); }
+            set { SetValue(HorizontalTextAlignmentProperty, value); }
+        }
+
+        // Vertical text aligment
+        public static readonly BindableProperty VerticalTextAlignmentProperty =
+            BindableProperty.Create(nameof(VerticalTextAlignment), typeof(TextAlignment), typeof(DataGridColumn), TextAlignment.Start);
+        public TextAlignment VerticalTextAlignment
+        {
+            get { return (TextAlignment)GetValue(VerticalTextAlignmentProperty); }
+            set { SetValue(VerticalTextAlignmentProperty, value); }
         }
 
         internal Label HeaderLabel { get; set; }

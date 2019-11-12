@@ -9,10 +9,10 @@ namespace DataGridSam.Utils
     {
         private Color backgroundColor = Color.White;
         private Color textColor = Color.Black;
+        private Color lineColor = Color.Blue;
 
         public DataGridViewCell()
         {
-            //CreateView();
         }
 
         #region properties
@@ -50,6 +50,13 @@ namespace DataGridSam.Utils
         #region Methods
         private void CreateView()
         {
+            RowSpacing = 0;
+            RowDefinitions = new RowDefinitionCollection
+            {
+                new RowDefinition { Height = GridLength.Auto },
+                new RowDefinition { Height = new GridLength(DataGrid.LinesWidth) },
+            };
+
             int index = 0;
             foreach (var column in DataGrid.Columns)
             {
@@ -59,6 +66,8 @@ namespace DataGridSam.Utils
                     TextColor = textColor,
                     HorizontalOptions = column.HorizontalContentAlignment,
                     VerticalOptions = column.VerticalContentAlignment,
+                    HorizontalTextAlignment = column.HorizontalTextAlignment,
+                    VerticalTextAlignment = column.VerticalTextAlignment,
                     LineBreakMode = LineBreakMode.WordWrap,
                 };
                 label.SetBinding(Label.TextProperty, new Binding(column.PropertyName, BindingMode.Default, stringFormat: column.StringFormat));
@@ -68,15 +77,32 @@ namespace DataGridSam.Utils
                 var cell = new ContentView
                 {
                     Padding = 0,
-                    //BackgroundColor = _bgColor,
                     Content = label,
                 };
-                Children.Add(cell);
-
                 SetColumn(cell, index);
+                SetRow(cell, 0);
+                Children.Add(cell);
                 index++;
             }
+
+            var line = CreateLine();
+            SetRow(line, 1);
+            SetColumn(line, 0);
+            SetColumnSpan(line, DataGrid.Columns.Count);
+            Children.Add(line);
         }
+
+        private View CreateLine()
+        {
+            var line = new BoxView
+            {
+                BackgroundColor = lineColor,
+                VerticalOptions = LayoutOptions.FillAndExpand,
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+            };
+            return line;
+        }
+
 
         //private void ChangeColor(Color color)
         //{

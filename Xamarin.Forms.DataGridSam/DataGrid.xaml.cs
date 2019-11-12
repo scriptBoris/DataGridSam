@@ -67,5 +67,15 @@ namespace DataGridSam
             get { return (ICommand)GetValue(CommandSelectedItemProperty); }
             set { SetValue(CommandSelectedItemProperty, value); }
         }
+
+        // Lines width
+        public static readonly BindableProperty LinesWidthProperty =
+            BindableProperty.Create(nameof(LinesWidth), typeof(double), typeof(DataGrid), 2.0, BindingMode.Default);
+
+        public double LinesWidth
+        {
+            get { return (double)GetValue(LinesWidthProperty); }
+            set { SetValue(LinesWidthProperty, value); }
+        }
     }
 }

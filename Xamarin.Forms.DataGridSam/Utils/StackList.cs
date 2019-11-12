@@ -13,6 +13,11 @@ namespace DataGridSam.Utils
     /// </summary>
     internal class StackList : StackLayout
     {
+        public StackList()
+        {
+            Spacing = 0;
+        }
+
         // ItemsSource
         public static BindableProperty ItemsSourceProperty =
             BindableProperty.Create(
@@ -107,7 +112,6 @@ namespace DataGridSam.Utils
                 foreach (var item in newValueAsEnumerable)
                 {
                     var view = CreateChildViewFor(control.ItemTemplate, item, control);
-
                     control.Children.Add(view);
                 }
             }
@@ -137,7 +141,8 @@ namespace DataGridSam.Utils
                         var item = e.NewItems[i];
                         var view = CreateChildViewFor(this.ItemTemplate, item, this);
 
-                        this.Children.Insert(i + e.NewStartingIndex, view);
+                        int index = i + e.NewStartingIndex;
+                        this.Children.Insert(index, view);
                     }
                 }
             }
@@ -158,26 +163,24 @@ namespace DataGridSam.Utils
             }
         }
 
-        private View CreateChildViewFor(object item)
-        {
-            this.ItemTemplate.SetValue(BindableObject.BindingContextProperty, item);
-            return (View)this.ItemTemplate.CreateContent();
-        }
-
+        /// <summary>
+        /// Создает строку для таблицы
+        /// </summary>
+        /// <param name="template">Шаблон который будет использован для создания элемента</param>
+        /// <param name="item">модель данных</param>
+        /// <param name="container">StackList</param>
         private static View CreateChildViewFor(DataTemplate template, object item, BindableObject container)
         {
-            if (template is DataTemplateSelector selector)
-            {
-                template = selector.SelectTemplate(item, container);
-            }
-
             var self = (StackList)container;
+
+            if (template is DataTemplateSelector selector)
+                template = selector.SelectTemplate(item, container);
 
             //Binding context
             template.SetValue(DataGridViewCell.DataGridProperty, self.DataGrid);
-            //template.SetValue(BindableObject.BindingContextProperty, item);
-            //template.SetValue(BindableObject.BindingContextProperty, item);
+            template.SetValue(BindableObject.BindingContextProperty, item);
 
+            // Здесь происходит неявный вызов метода : DataGridViewCell.CreateView()
             var res = template.CreateContent();
             return (View)res;
         }

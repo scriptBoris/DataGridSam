@@ -15,19 +15,35 @@ namespace DataGridSam
             _headerView.Children.Clear();
             _headerView.ColumnDefinitions.Clear();
 
+            verticalLines.Children.Clear();
+            verticalLines.ColumnDefinitions.Clear();
+
             //_headerView.ColumnSpacing = 0;
 
             if (Columns != null)
             {
+                int i = 0;
                 foreach (var col in Columns)
                 {
+                    // Header table
                     _headerView.ColumnDefinitions.Add(new ColumnDefinition { Width = col.Width });
-
                     var cell = GetHeaderViewForColumn(col);
-
                     _headerView.Children.Add(cell);
-                    Grid.SetColumn(cell, Columns.IndexOf(col));
+                    Grid.SetColumn(cell, i);
+
+                    // vertical lines (Table)
+                    verticalLines.ColumnDefinitions.Add(new ColumnDefinition { Width = col.Width });
+
+                    if (i < Columns.Count - 1)
+                    {
+                        var line = CreateLine();
+                        verticalLines.Children.Add(line);
+                        Grid.SetColumn(line, i);
+                    }
+
+                    i++;
                 }
+
             }
         }
 
@@ -40,6 +56,19 @@ namespace DataGridSam
             container.Children.Add(column.HeaderLabel);
 
             return container;
+        }
+
+        private View CreateLine()
+        {
+            var line = new BoxView
+            {
+                WidthRequest = LinesWidth,
+                VerticalOptions = LayoutOptions.FillAndExpand,
+                HorizontalOptions = LayoutOptions.EndAndExpand,
+                BackgroundColor = Color.Blue,
+                TranslationX = 5,
+            };
+            return line;
         }
 
         private void SetColumnsBindingContext()
