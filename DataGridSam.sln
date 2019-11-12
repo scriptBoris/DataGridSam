@@ -3,17 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29411.108
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.Android", "DataGridSam\DataGridSam.Android\Sample.Android.csproj", "{C214C041-C27E-4146-9870-8F2AF9CB07E9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.Android", "Sample\DataGridSam.Android\Sample.Android.csproj", "{C214C041-C27E-4146-9870-8F2AF9CB07E9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.iOS", "DataGridSam\DataGridSam.iOS\Sample.iOS.csproj", "{42EF259D-0CF8-4DE8-94BD-89CC78F10696}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.iOS", "Sample\DataGridSam.iOS\Sample.iOS.csproj", "{42EF259D-0CF8-4DE8-94BD-89CC78F10696}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample", "DataGridSam\DataGridSam\Sample.csproj", "{4448BD6A-8165-4F89-8308-4465358CE533}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample", "Sample\DataGridSam\Sample.csproj", "{4448BD6A-8165-4F89-8308-4465358CE533}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sample", "Sample", "{A1E2BDC2-7261-4645-B774-7D24BBE4F523}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Library", "Library", "{2F767FA6-895C-40FC-9CE3-3E1B8CA2EED7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataGridSam", "Xamarin.Forms.DataGridSam\DataGridSam.csproj", "{422D7B5E-953E-45A3-A838-14AB64523127}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataGridSam", "DataGridSam\DataGridSam.csproj", "{422D7B5E-953E-45A3-A838-14AB64523127}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -12,6 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Xamarin.Forms.DataGridSam\DataGridSam.csproj" />
+    <ProjectReference Include="..\..\DataGridSam\DataGridSam.csproj" />
   </ItemGroup>
 </Project>
