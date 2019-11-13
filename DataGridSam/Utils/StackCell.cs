@@ -103,16 +103,6 @@ namespace DataGridSam.Utils
             var tapControll = new TapGestureRecognizer { Command = DataGrid.CommandSelectedItem };
             tapControll.Tapped += TapControll_Tapped;
             GestureRecognizers.Add(tapControll);
-
-            // Add imitation thickness
-            if (DataGrid.RowsThickness > 0)
-            {
-                foreach (var item in Children)
-                {
-                    if (item is Layout layout)
-                        layout.Padding = new Thickness(0, DataGrid.RowsThickness/2.0, 0, DataGrid.RowsThickness/2.0);
-                }
-            }
         }
 
         private void TapControll_Tapped(object sender, EventArgs e)

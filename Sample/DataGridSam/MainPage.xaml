@@ -14,11 +14,10 @@
                      HeaderTextColor="White"
                      HeaderFontSize="16"
                      HeaderBackgroundColor="#2196F3"
-                     RowsThickness="20"
                      RowsColor="White"
                      RowsFontSize="16"
                      LinesColor="#2196F3"
-                     CellPadding="5,0,5,0"
+                     CellPadding="5,10,5,10"
                      CommandSelectedItem="{Binding CommandSelectItem}">
             <dg:DataGrid.Columns>
                 <!--Колонки-->

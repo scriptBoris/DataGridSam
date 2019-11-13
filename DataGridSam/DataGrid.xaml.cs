@@ -194,14 +194,5 @@ namespace DataGridSam
             get { return (double)GetValue(RowsFontSizeProperty); }
             set { SetValue(RowsFontSizeProperty, value); }
         }
-
-        // Rows thickness
-        public static readonly BindableProperty RowsThicknessProperty =
-            BindableProperty.Create(nameof(RowsThickness), typeof(double), typeof(DataGrid), defaultValue: 0.0);
-        public double RowsThickness
-        {
-            get { return (double)GetValue(RowsThicknessProperty); }
-            set { SetValue(RowsThicknessProperty, value); }
-        }
     }
 }
