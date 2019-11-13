@@ -11,6 +11,7 @@
 
         <!--Таблица-->
         <sam:DataGrid ItemsSource="{Binding Items}"
+                      VerticalOptions="FillAndExpand"
                      HeaderTextColor="White"
                      HeaderFontSize="16"
                      HeaderBackgroundColor="#2196F3"

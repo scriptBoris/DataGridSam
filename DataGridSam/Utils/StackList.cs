@@ -63,6 +63,33 @@ namespace DataGridSam.Utils
             set { SetValue(DataGridProperty, value); }
         }
 
+        // Column lines
+        public static readonly BindableProperty ColumnLinesProperty =
+            BindableProperty.Create(nameof(ColumnLines), typeof(Grid), typeof(StackList), null, 
+                propertyChanged: (b, o, n) => 
+                {
+                    var self = (StackList)b;
+                    var gridLines = (Grid)n;
+                    self.SizeChanged += (obj, e) =>
+                    {
+                        double value = 0;
+                        if (self.Height > gridLines.Height)
+                            value = gridLines.Height;
+                        else
+                            value = self.Height;
+
+                        foreach (var item in gridLines.Children)
+                        {
+                            item.HeightRequest = value;
+                        }
+                    };
+                });
+        public Grid ColumnLines
+        {
+            get { return (Grid)GetValue(ColumnLinesProperty); }
+            set { SetValue(ColumnLinesProperty, value); }
+        }
+
         private bool doneItemSourceChanged = false;
 
         private static void ItemsChanged(BindableObject bindable, object oldValue, object newValue)

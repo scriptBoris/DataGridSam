@@ -33,18 +33,22 @@
                 </Style>
             </ResourceDictionary>
         </Grid.Resources>
-        
     </Grid>
 
     <!--StackList-->
     <ScrollView Grid.Row="1">
         <stack:StackList x:Name="stackList"
+                         VerticalOptions="Start"
+                         ColumnLines="{Reference verticalLines}"
                          DataGrid="{Reference self}"/>
     </ScrollView>
-    
+
     <Grid Grid.Row="1"
           x:Name="verticalLines"
           BackgroundColor="Transparent"
-          InputTransparent="True"
-          HeightRequest="{Binding HeightRequest, Source={Reference stackList}}"/>
+          InputTransparent="True">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+    </Grid>
 </Grid>

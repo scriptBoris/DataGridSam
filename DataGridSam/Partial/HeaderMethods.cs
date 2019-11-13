@@ -37,7 +37,7 @@ namespace DataGridSam
                     _headerView.Children.Add(cell);
                     Grid.SetColumn(cell, i);
 
-                    // vertical lines (Table)
+                    // Create vertical lines (Table)
                     verticalLines.ColumnDefinitions.Add(new ColumnDefinition { Width = col.Width });
 
                     if (i < Columns.Count - 1)
@@ -45,6 +45,7 @@ namespace DataGridSam
                         var line = CreateColumnLine();
                         verticalLines.Children.Add(line);
                         Grid.SetColumn(line, i);
+                        Grid.SetRow(line, 0);
                     }
 
                     i++;
@@ -80,7 +81,7 @@ namespace DataGridSam
         {
             var line = new BoxView
             {
-                WidthRequest = LinesWidth,
+                WidthRequest = LinesWidth + 0.1,
                 VerticalOptions = LayoutOptions.FillAndExpand,
                 HorizontalOptions = LayoutOptions.EndAndExpand,
                 BackgroundColor = LinesColor,

@@ -10,8 +10,11 @@ namespace Sample
         {
             InitializeComponent();
 
-            HotReloader.Current.Run(this);
+            // Init DataGridSam
+            DataGridSam.DataGridSamInit.Init();
 
+            // TEMP Debug
+            HotReloader.Current.Run(this);
             MainPage = new MainPage();
         }
 
