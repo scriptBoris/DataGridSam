@@ -3,14 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:dg="clr-namespace:DataGridSam;assembly=DataGridSam"
+             xmlns:sam="clr-namespace:DataGridSam;assembly=DataGridSam"
              mc:Ignorable="d"
              x:Class="Sample.MainPage">
     <StackLayout>
         <!--HeaderBackgroundColor="#2196F3"-->
 
         <!--Таблица-->
-        <dg:DataGrid ItemsSource="{Binding Items}"
+        <sam:DataGrid ItemsSource="{Binding Items}"
                      HeaderTextColor="White"
                      HeaderFontSize="16"
                      HeaderBackgroundColor="#2196F3"
@@ -19,22 +19,22 @@
                      LinesColor="#2196F3"
                      CellPadding="5,10,5,10"
                      CommandSelectedItem="{Binding CommandSelectItem}">
-            <dg:DataGrid.Columns>
+            <sam:DataGrid.Columns>
                 <!--Колонки-->
-                <dg:DataGridColumn Title="№" 
+                <sam:DataGridColumn Title="№" 
                                    Width="40"
                                    PropertyName="Pos"/>
-                <dg:DataGridColumn Title="Наименование" 
+                <sam:DataGridColumn Title="Наименование" 
                                    Width="2*"
                                    PropertyName="Name"/>
-                <dg:DataGridColumn Title="Цена" 
+                <sam:DataGridColumn Title="Цена" 
                                    Width="1*"
                                    HorizontalTextAlignment="End"
                                    PropertyName="Price"/>
-                <dg:DataGridColumn Title="Вес" 
+                <sam:DataGridColumn Title="Вес" 
                                    Width="1*"
                                    PropertyName="Weight">
-                    <dg:DataGridColumn.CellTemplate>
+                    <sam:DataGridColumn.CellTemplate>
                         <DataTemplate>
                             <Grid>
                                 <Grid.Triggers>
@@ -46,10 +46,10 @@
                                        HorizontalTextAlignment="End"/>
                             </Grid>
                         </DataTemplate>
-                    </dg:DataGridColumn.CellTemplate>
-                </dg:DataGridColumn>
-            </dg:DataGrid.Columns>
-        </dg:DataGrid>
+                    </sam:DataGridColumn.CellTemplate>
+                </sam:DataGridColumn>
+            </sam:DataGrid.Columns>
+        </sam:DataGrid>
         
         <Button Text="Add"
                 BackgroundColor="Accent"
