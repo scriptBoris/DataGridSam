@@ -3,6 +3,14 @@ Simple and fast GUI element for Xamarin.Forms
 
 ![Repo_List](Screenshots/Head.png)
 
+## Nuget Installation
+
+[https://www.nuget.org/packages/DataGridSam/](https://www.nuget.org/packages/DataGridSam/)
+
+```bash
+Install-Package DataGridSam
+```
+
 ## Examle
 ```xml
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
@@ -33,8 +41,10 @@ Simple and fast GUI element for Xamarin.Forms
 
 
 ## Referenced source code
+
 * https://github.com/muak/AiForms.Layouts
 * https://github.com/akgulebubekir/Xamarin.Forms.DataGrid
 
 ## License
+
 MIT Licensed
