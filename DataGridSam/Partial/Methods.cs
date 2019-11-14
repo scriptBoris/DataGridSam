@@ -15,8 +15,8 @@ namespace DataGridSam
             SetColumnsBindingContext();
             
             // Set vertical thickness
-            verticalLines.ColumnSpacing = LinesWidth;
-            _headerView.ColumnSpacing = LinesWidth;
+            verticalLines.ColumnSpacing = BorderWidth;
+            _headerView.ColumnSpacing = BorderWidth;
 
             _headerView.Children.Clear();
             _headerView.ColumnDefinitions.Clear();
@@ -25,7 +25,7 @@ namespace DataGridSam
             verticalLines.ColumnDefinitions.Clear();
 
             // Imitation header lines and color
-            _headerView.BackgroundColor = LinesColor;
+            _headerView.BackgroundColor = BorderColor;
 
             if (Columns != null)
             {
@@ -82,11 +82,11 @@ namespace DataGridSam
         {
             var line = new BoxView
             {
-                WidthRequest = LinesWidth + 0.1,
+                WidthRequest = BorderWidth + 0.1,
                 VerticalOptions = LayoutOptions.FillAndExpand,
                 HorizontalOptions = LayoutOptions.EndAndExpand,
-                BackgroundColor = LinesColor,
-                TranslationX = LinesWidth,
+                BackgroundColor = BorderColor,
+                TranslationX = BorderWidth,
             };
             return line;
         }
