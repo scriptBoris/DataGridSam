@@ -1,7 +1,15 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Authors>Boris Krit</Authors>
+    <Company />
+    <Description>Onvenient and faster element for display DataGrid in Xamarin.Forms</Description>
+    <NeutralLanguage>en</NeutralLanguage>
+    <PackageTags>dataGrid, xamarin.forms, forms, xamarin, grid, DataGridSam</PackageTags>
+    <RepositoryUrl>https://github.com/scriptBoris/DataGridSam</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/scriptBoris/DataGridSam</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
   <ItemGroup>
