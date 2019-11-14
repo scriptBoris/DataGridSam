@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataGridSam.Utils;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -95,6 +96,22 @@ namespace DataGridSam
             if (Columns != null)
                 foreach (var c in Columns)
                     c.BindingContext = BindingContext;
+        }
+
+        internal static void CalcHeightColumnLines(StackList self, Grid gridLines)
+        {
+            double value;
+            if (gridLines.Height == -1.0)
+                return;
+            else if (self.Height > gridLines.Height)
+                value = gridLines.Height;
+            else
+                value = self.Height;
+
+            foreach (var item in gridLines.Children)
+            {
+                item.HeightRequest = value;
+            }
         }
     }
 }

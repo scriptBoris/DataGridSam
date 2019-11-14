@@ -21,6 +21,11 @@ namespace DataGridSam
             InitializeComponent();
             stackList.Spacing = 0;
             stackList.ItemTemplate = new StackListTemplateSelector();
+
+            verticalLines.SizeChanged += (obj, e) => 
+            {
+                CalcHeightColumnLines(stackList, verticalLines);
+            };
         }
 
         // Columns

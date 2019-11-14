@@ -72,16 +72,7 @@ namespace DataGridSam.Utils
                     var gridLines = (Grid)n;
                     self.SizeChanged += (obj, e) =>
                     {
-                        double value = 0;
-                        if (self.Height > gridLines.Height)
-                            value = gridLines.Height;
-                        else
-                            value = self.Height;
-
-                        foreach (var item in gridLines.Children)
-                        {
-                            item.HeightRequest = value;
-                        }
+                        DataGrid.CalcHeightColumnLines(self, gridLines);
                     };
                 });
         public Grid ColumnLines
