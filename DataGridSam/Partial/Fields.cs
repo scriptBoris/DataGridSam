@@ -7,6 +7,9 @@ namespace DataGridSam
 {
     public partial class DataGrid
     {
-        internal StackCell SelectedItem;
+        /// <summary>
+        /// Current time: selected cell by user
+        /// </summary>
+        internal StackCell SelectedCell;
     }
 }

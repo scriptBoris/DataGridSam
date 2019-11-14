@@ -15,6 +15,8 @@ namespace Sample
     {
         private ICommand commandSelectItem;
         private ObservableCollection<Ware> items;
+        private Ware selectedItem;
+
         public MainPage()
         {
             InitializeComponent();
@@ -62,11 +64,21 @@ namespace Sample
             } 
         }
 
+        public Ware SelectedItem
+        {
+            get => selectedItem;
+            set {
+                selectedItem = value;
+                OnPropertyChanged(nameof(SelectedItem));
+            }
+        }
+
         private void ActionSelectedItem(object param)
         {
             if (param is Ware ware)
             {
-                DisplayAlert("Selected item",$"№{ware.Pos} {ware.Name}","OK");
+                DisplayAlert("Action param",$"№{ware.Pos} {ware.Name}","OK");
+                DisplayAlert("Selected item",$"№{SelectedItem?.Pos} {SelectedItem?.Name}","OK");
             }
         }
 

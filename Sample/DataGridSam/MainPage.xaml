@@ -4,22 +4,28 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:sam="clr-namespace:DataGridSam;assembly=DataGridSam"
+             xmlns:local="clr-namespace:Sample"
              mc:Ignorable="d"
              x:Class="Sample.MainPage">
+    <d:ContentPage.BindingContext>
+        <local:MainPage/>
+    </d:ContentPage.BindingContext>
+    
     <StackLayout>
         <!--HeaderBackgroundColor="#2196F3"-->
 
         <!--Таблица-->
         <sam:DataGrid ItemsSource="{Binding Items}"
                       VerticalOptions="FillAndExpand"
-                     HeaderTextColor="White"
-                     HeaderFontSize="16"
-                     HeaderBackgroundColor="#2196F3"
-                     RowsColor="White"
-                     RowsFontSize="16"
-                     LinesColor="#2196F3"
-                     CellPadding="5,10,5,10"
-                     CommandSelectedItem="{Binding CommandSelectItem}">
+                      HeaderTextColor="White"
+                      HeaderFontSize="16"
+                      HeaderBackgroundColor="#2196F3"
+                      RowsColor="White"
+                      RowsFontSize="16"
+                      LinesColor="#2196F3"
+                      CellPadding="5,10,5,10"
+                      SelectedItem="{Binding SelectedItem}"
+                      CommandSelectedItem="{Binding CommandSelectItem}">
             <sam:DataGrid.Columns>
                 <!--Колонки-->
                 <sam:DataGridColumn Title="№" 

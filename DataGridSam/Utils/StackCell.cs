@@ -100,7 +100,7 @@ namespace DataGridSam.Utils
 
             // Add tap event
             // Set only tap command, setting CommandParameter - after changed "RowContext" :)
-            var tapControll = new TapGestureRecognizer { Command = DataGrid.CommandSelectedItem };
+            var tapControll = new TapGestureRecognizer();
             tapControll.Tapped += TapControll_Tapped;
             GestureRecognizers.Add(tapControll);
         }
@@ -109,7 +109,7 @@ namespace DataGridSam.Utils
         {
             var self = (StackCell)sender;
 
-            var last = self.DataGrid.SelectedItem;
+            var last = self.DataGrid.SelectedCell;
             if (last != null)
             {
                 foreach (var item in last.Children)
@@ -119,12 +119,16 @@ namespace DataGridSam.Utils
                 }
             }
 
-            self.DataGrid.SelectedItem = this;
+            self.DataGrid.SelectedCell = this;
+            self.DataGrid.SelectedItem = this.BindingContext;
             foreach (var item in self.Children)
             {
                 if (item is BoxView == false)
                     item.BackgroundColor = self.DataGrid.SelectedRowColor;
             }
+
+            // Run ICommand selected item
+            self.DataGrid.CommandSelectedItem?.Execute(this.BindingContext);
         }
 
         private BoxView CreateHorizontalLine()

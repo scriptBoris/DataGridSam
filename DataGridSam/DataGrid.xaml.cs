@@ -63,27 +63,22 @@ namespace DataGridSam
 
         // Command selected item 
         public static readonly BindableProperty CommandSelectedItemProperty =
-            BindableProperty.Create(nameof(CommandSelectedItem), typeof(ICommand), typeof(DataGrid), null,
-                propertyChanged: (b, o, n) =>
-                {
-                    var self = (DataGrid)b;
-                    if (self.stackList.Children == null)
-                        return;
-
-                    foreach (var child in self.stackList.Children)
-                    {
-                        var view = child;
-
-                        // Add event click
-                        var click = (TapGestureRecognizer)view.GestureRecognizers.FirstOrDefault();
-                        click.Command = n as ICommand;
-                    }
-                });
+            BindableProperty.Create(nameof(CommandSelectedItem), typeof(ICommand), typeof(DataGrid), null);
         public ICommand CommandSelectedItem
         {
             get { return (ICommand)GetValue(CommandSelectedItemProperty); }
             set { SetValue(CommandSelectedItemProperty, value); }
         }
+
+        // Selected item
+        public static readonly BindableProperty SelectedItemProperty =
+            BindableProperty.Create(nameof(SelectedItem), typeof(object), typeof(DataGrid), null, BindingMode.TwoWay);
+        public object SelectedItem 
+        { 
+            get { return GetValue(SelectedItemProperty); } 
+            set { SetValue(SelectedItemProperty, value); } 
+        }
+
 
         // Lines width
         public static readonly BindableProperty LinesWidthProperty =
