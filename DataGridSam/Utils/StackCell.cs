@@ -29,15 +29,22 @@ namespace DataGridSam.Utils
         // Row context
         public static readonly BindableProperty RowContextProperty =
             BindableProperty.Create(nameof(RowContext), typeof(object), typeof(StackCell),
-                propertyChanged: (b, o, n) =>
+                propertyChanged: (b, o, context) =>
                 {
                     var self = (StackCell)b;
                     var click = (TapGestureRecognizer)self.GestureRecognizers.FirstOrDefault();
                     // Triggers
-                    if (n is INotifyPropertyChanged model)
+                    if (context is INotifyPropertyChanged model)
                         model.PropertyChanged += self.Model_PropertyChanged;
 
-                    click.CommandParameter = n;
+                    if (self.DataGrid.RowTriggers.Count > 0)
+                    {
+                        foreach (var trigg in self.DataGrid.RowTriggers)
+                        {
+                            self.ThrowTriggerStyle(trigg.PropertyTrigger);
+                        }
+                    }
+                    click.CommandParameter = context;
                 });
         public object RowContext
         {
@@ -165,7 +172,11 @@ namespace DataGridSam.Utils
             {
                 if (propName == trigger.PropertyTrigger)
                 {
-                    var value = RowContext.GetType().GetProperty(trigger.PropertyTrigger).GetValue(RowContext);
+                    var p = RowContext.GetType().GetProperty(trigger.PropertyTrigger);
+                    if (p == null)
+                        continue;
+
+                    var value = p.GetValue(RowContext);
                     var t1 = value.GetType();
                     var t2 = trigger.Value.GetType();
 

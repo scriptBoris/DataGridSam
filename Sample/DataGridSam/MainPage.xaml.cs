@@ -83,6 +83,7 @@ namespace Sample
             }
         }
 
+        // Add
         private void Button_Clicked(object sender, EventArgs e)
         {
             Items.Add(new Ware
@@ -90,11 +91,12 @@ namespace Sample
                 Pos = 4,
                 Name = "Хлебцы в кисло-сладком соусе ВЕСОВЫЕ",
                 Price = 159.56f,
-                Weight = 0.86f,
+                Weight = 100.86f,
                 IsCompleted = true,
             });
         }
 
+        // Remove last
         private void Button_Clicked_1(object sender, EventArgs e)
         {
             if (Items != null && Items.Count > 0)
@@ -103,6 +105,7 @@ namespace Sample
             }
         }
 
+        // Add random
         private void Button_Clicked_2(object sender, EventArgs e)
         {
             int rand = new Random().Next(0, Items.Count - 1);
@@ -117,6 +120,7 @@ namespace Sample
             Items.Insert(rand, item);
         }
 
+        // Remove random
         private void Button_Clicked_3(object sender, EventArgs e)
         {
             if (Items == null && Items.Count == 0)
@@ -131,6 +135,7 @@ namespace Sample
 
         }
 
+        // Set completed
         private void Button_Clicked_4(object sender, EventArgs e)
         {
             if (Items == null && Items.Count == 0)
@@ -140,6 +145,7 @@ namespace Sample
 
             int rand = new Random().Next(0, Items.Count - 1);
             var item = Items[rand];
+
             if (item.IsCompleted)
                 item.IsCompleted = false;
             else

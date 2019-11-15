@@ -40,7 +40,6 @@
                                     Width="1*"
                                     PropertyName="Weight">
                 </sam:DataGridColumn>
-                
             </sam:DataGrid.Columns>
             
             <sam:DataGrid.RowTriggers>
@@ -48,6 +47,10 @@
                 <sam:RowTrigger PropertyTrigger="IsCompleted" Value="True"
                                 RowBackgroundColor="Accent"
                                 RowTextColor="White"/>
+                
+                <!--If item is Finish-->
+                <sam:RowTrigger PropertyTrigger="IsFinish" Value="True"
+                                RowBackgroundColor="Blue"/>
             </sam:DataGrid.RowTriggers>
         </sam:DataGrid>
 
