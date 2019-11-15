@@ -39,41 +39,21 @@
                 <sam:DataGridColumn Title="Вес" 
                                     Width="1*"
                                     PropertyName="Weight">
-                    <!--<sam:DataGridColumn.CellTemplate>
-                        <DataTemplate>
-                            <Grid>
-                                <Grid.Triggers>
-                                    <DataTrigger TargetType="Grid" Binding="{Binding IsCompleted}" Value="True">
-                                        <Setter Property="BackgroundColor" Value="GreenYellow"/>
-                                    </DataTrigger>
-                                </Grid.Triggers>
-                                <Label Text="{Binding Weight}"
-                                       HorizontalTextAlignment="End"/>
-                            </Grid>
-                        </DataTemplate>
-                    </sam:DataGridColumn.CellTemplate>-->
                 </sam:DataGridColumn>
                 
             </sam:DataGrid.Columns>
             
-            <!--Row triggers-->
-            <!--<sam:DataGrid.RowTriggers>
-                --><!--If item is complete--><!--
+            <sam:DataGrid.RowTriggers>
+                <!--If item is complete-->
                 <sam:RowTrigger PropertyTrigger="IsCompleted" Value="True"
                                 RowBackgroundColor="Accent"
                                 RowTextColor="White"/>
-            </sam:DataGrid.RowTriggers>-->
+            </sam:DataGrid.RowTriggers>
         </sam:DataGrid>
 
         <Button Text="Add"
                 BackgroundColor="Accent"
-                Clicked="Button_Clicked">
-            <!--<Button.Triggers>
-                <DataTrigger TargetType="Button" Binding="123" Value="123">
-                    <Setter Property="AnchorY" Value=""/>
-                </DataTrigger>
-            </Button.Triggers>-->
-        </Button>
+                Clicked="Button_Clicked"/>
         <Button Text="Remove last"
                 BackgroundColor="Yellow"
                 Clicked="Button_Clicked_1"/>
