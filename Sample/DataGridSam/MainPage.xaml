@@ -20,7 +20,7 @@
                       HeaderBackgroundColor="#2196F3"
                       RowsColor="White"
                       RowsFontSize="16"
-                      LinesColor="#2196F3"
+                      BorderColor="#2196F3"
                       CellPadding="5,10,5,10"
                       SelectedItem="{Binding SelectedItem}"
                       CommandSelectedItem="{Binding CommandSelectItem}">
