@@ -99,22 +99,22 @@ namespace DataGridSam
         }
 
 
-        // Lines width
-        public static readonly BindableProperty LinesWidthProperty =
-            BindableProperty.Create(nameof(LinesWidth), typeof(double), typeof(DataGrid), 2.0, BindingMode.Default);
+        // Border width
+        public static readonly BindableProperty BorderWidthProperty =
+            BindableProperty.Create(nameof(BorderWidth), typeof(double), typeof(DataGrid), 2.0, BindingMode.Default);
 
-        public double LinesWidth
+        public double BorderWidth
         {
-            get { return (double)GetValue(LinesWidthProperty); }
-            set { SetValue(LinesWidthProperty, value); }
+            get { return (double)GetValue(BorderWidthProperty); }
+            set { SetValue(BorderWidthProperty, value); }
         }
 
-        // Lines color
-        public static readonly BindableProperty LinesColorProperty =
-            BindableProperty.Create(nameof(LinesColor), typeof(Color), typeof(DataGrid), defaultValue: Color.Gray);
-        public Color LinesColor { 
-            get { return (Color)GetValue(LinesColorProperty); } 
-            set { SetValue(LinesColorProperty, value); } 
+        // Border color
+        public static readonly BindableProperty BorderColorProperty =
+            BindableProperty.Create(nameof(BorderColor), typeof(Color), typeof(DataGrid), defaultValue: Color.Gray);
+        public Color BorderColor { 
+            get { return (Color)GetValue(BorderColorProperty); } 
+            set { SetValue(BorderColorProperty, value); } 
         }
 
         // Header height

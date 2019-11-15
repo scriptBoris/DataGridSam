@@ -48,12 +48,12 @@ namespace DataGridSam.Utils
         private void CreateView()
         {
             RowSpacing = 0;
-            ColumnSpacing = DataGrid.LinesWidth;
+            ColumnSpacing = DataGrid.BorderWidth;
 
             RowDefinitions = new RowDefinitionCollection
             {
                 new RowDefinition { Height = GridLength.Auto },
-                new RowDefinition { Height = new GridLength(DataGrid.LinesWidth) },
+                new RowDefinition { Height = new GridLength(DataGrid.BorderWidth) },
             };
 
             int index = 0;
@@ -232,7 +232,7 @@ namespace DataGridSam.Utils
         {
             var line = new BoxView
             {
-                BackgroundColor = DataGrid.LinesColor,
+                BackgroundColor = DataGrid.BorderColor,
                 VerticalOptions = LayoutOptions.FillAndExpand,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
             };
