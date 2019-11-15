@@ -59,6 +59,15 @@ namespace DataGridSam
             set { SetValue(PropertyNameProperty, value); }
         }
 
+        // Cell text color
+        public static readonly BindableProperty CellTextColorProperty =
+            BindableProperty.Create(nameof(CellTextColor), typeof(Color?), typeof(DataGridColumn), null);
+        public Color? CellTextColor
+        {
+            get { return (Color?)GetValue(CellTextColorProperty); }
+            set { SetValue(CellTextColorProperty, value); }
+        }
+
         // Horizontal content aligment
         public static readonly BindableProperty HorizontalContentAlignmentProperty =
             BindableProperty.Create(nameof(HorizontalContentAlignment), typeof(LayoutOptions), typeof(DataGridColumn), LayoutOptions.FillAndExpand);

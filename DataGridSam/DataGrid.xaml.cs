@@ -45,6 +45,25 @@ namespace DataGridSam
             set { SetValue(ColumnsProperty, value); }
         }
 
+        // Row triggers
+        public static readonly BindableProperty RowTriggersProperty =
+            BindableProperty.Create(nameof(RowTriggers), typeof(List<RowTrigger>), typeof(DataGrid), 
+                defaultValue: new List<RowTrigger>(),
+                propertyChanged: (b, o, n) =>
+                {
+                    var self = (DataGrid)b;
+                    if (n == null)
+                    {
+                        self.RowTriggers.Clear();
+                        return;
+                    }
+                });
+        public List<RowTrigger> RowTriggers
+        {
+            get { return (List<RowTrigger>)GetValue(RowTriggersProperty); }
+            set { SetValue(RowTriggersProperty, value); }
+        }
+
 
         // Items source
         public static readonly BindableProperty ItemsSourceProperty =
@@ -184,6 +203,15 @@ namespace DataGridSam
         {
             get { return (Color)GetValue(RowsColorProperty); }
             set { SetValue(RowsColorProperty, value); }
+        }
+
+        //Rows text color
+        public static readonly BindableProperty RowsTextColorProperty =
+            BindableProperty.Create(nameof(RowsTextColor), typeof(Color), typeof(DataGrid), defaultValue: Color.Black);
+        public Color RowsTextColor
+        {
+            get { return (Color)GetValue(RowsTextColorProperty); }
+            set { SetValue(RowsTextColorProperty, value); }
         }
 
         // Rows text size

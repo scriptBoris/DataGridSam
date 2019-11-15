@@ -12,9 +12,7 @@
     </d:ContentPage.BindingContext>
     
     <StackLayout>
-        <!--HeaderBackgroundColor="#2196F3"-->
-
-        <!--Таблица-->
+        <!--Table-->
         <sam:DataGrid ItemsSource="{Binding Items}"
                       VerticalOptions="FillAndExpand"
                       HeaderTextColor="White"
@@ -27,21 +25,21 @@
                       SelectedItem="{Binding SelectedItem}"
                       CommandSelectedItem="{Binding CommandSelectItem}">
             <sam:DataGrid.Columns>
-                <!--Колонки-->
+                <!--Columns-->
                 <sam:DataGridColumn Title="№" 
-                                   Width="40"
-                                   PropertyName="Pos"/>
+                                    Width="40"
+                                    PropertyName="Pos"/>
                 <sam:DataGridColumn Title="Наименование" 
-                                   Width="2*"
-                                   PropertyName="Name"/>
+                                    Width="2*"
+                                    PropertyName="Name"/>
                 <sam:DataGridColumn Title="Цена" 
-                                   Width="1*"
-                                   HorizontalTextAlignment="End"
-                                   PropertyName="Price"/>
+                                    Width="1*"
+                                    HorizontalTextAlignment="End"
+                                    PropertyName="Price"/>
                 <sam:DataGridColumn Title="Вес" 
-                                   Width="1*"
-                                   PropertyName="Weight">
-                    <sam:DataGridColumn.CellTemplate>
+                                    Width="1*"
+                                    PropertyName="Weight">
+                    <!--<sam:DataGridColumn.CellTemplate>
                         <DataTemplate>
                             <Grid>
                                 <Grid.Triggers>
@@ -53,14 +51,29 @@
                                        HorizontalTextAlignment="End"/>
                             </Grid>
                         </DataTemplate>
-                    </sam:DataGridColumn.CellTemplate>
+                    </sam:DataGridColumn.CellTemplate>-->
                 </sam:DataGridColumn>
+                
             </sam:DataGrid.Columns>
+            
+            <!--Row triggers-->
+            <!--<sam:DataGrid.RowTriggers>
+                --><!--If item is complete--><!--
+                <sam:RowTrigger PropertyTrigger="IsCompleted" Value="True"
+                                RowBackgroundColor="Accent"
+                                RowTextColor="White"/>
+            </sam:DataGrid.RowTriggers>-->
         </sam:DataGrid>
-        
+
         <Button Text="Add"
                 BackgroundColor="Accent"
-                Clicked="Button_Clicked"/>
+                Clicked="Button_Clicked">
+            <!--<Button.Triggers>
+                <DataTrigger TargetType="Button" Binding="123" Value="123">
+                    <Setter Property="AnchorY" Value=""/>
+                </DataTrigger>
+            </Button.Triggers>-->
+        </Button>
         <Button Text="Remove last"
                 BackgroundColor="Yellow"
                 Clicked="Button_Clicked_1"/>
@@ -70,6 +83,9 @@
         <Button Text="Remove random"
                 BackgroundColor="GreenYellow"
                 Clicked="Button_Clicked_3"/>
+        <Button Text="Random IsCompleted"
+                BackgroundColor="Purple"
+                Clicked="Button_Clicked_4"/>
     </StackLayout>
 
 </ContentPage>

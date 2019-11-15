@@ -77,8 +77,9 @@ namespace Sample
         {
             if (param is Ware ware)
             {
-                DisplayAlert("Action param",$"№{ware.Pos} {ware.Name}","OK");
-                DisplayAlert("Selected item",$"№{SelectedItem?.Pos} {SelectedItem?.Name}","OK");
+                ware.IsCompleted = true;
+                //DisplayAlert("Action param",$"№{ware.Pos} {ware.Name}","OK");
+                //DisplayAlert("Selected item",$"№{SelectedItem?.Pos} {SelectedItem?.Name}","OK");
             }
         }
 
@@ -90,6 +91,7 @@ namespace Sample
                 Name = "Хлебцы в кисло-сладком соусе ВЕСОВЫЕ",
                 Price = 159.56f,
                 Weight = 0.86f,
+                IsCompleted = true,
             });
         }
 
@@ -127,6 +129,21 @@ namespace Sample
 
             Items.Remove(item);
 
+        }
+
+        private void Button_Clicked_4(object sender, EventArgs e)
+        {
+            if (Items == null && Items.Count == 0)
+            {
+                return;
+            }
+
+            int rand = new Random().Next(0, Items.Count - 1);
+            var item = Items[rand];
+            if (item.IsCompleted)
+                item.IsCompleted = false;
+            else
+                item.IsCompleted = true;
         }
     }
 }
