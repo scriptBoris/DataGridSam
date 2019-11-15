@@ -11,6 +11,43 @@ Simple and fast GUI element for Xamarin.Forms
 Install-Package DataGridSam
 ```
 
+## Supported Platforms
+ - Android
+ - iOS
+ - UWP
+
+
+## Install
+```c#
+    public partial class App : Application
+    {
+        public App()
+        {
+            InitializeComponent();
+
+            // Init DataGridSam
+            DataGridSam.DataGridSamInit.Init();
+
+            MainPage = new MainPage();
+        }
+
+        protected override void OnStart()
+        {
+            // Handle when your app starts
+        }
+
+        protected override void OnSleep()
+        {
+            // Handle when your app sleeps
+        }
+
+        protected override void OnResume()
+        {
+            // Handle when your app resumes
+        }
+    }
+```
+
 ## Examle
 ```xml
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
