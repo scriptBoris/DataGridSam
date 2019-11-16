@@ -30,18 +30,18 @@ namespace DataGridSam
 
         // Columns
         public static readonly BindableProperty ColumnsProperty =
-            BindableProperty.Create(nameof(Columns), typeof(ColumnCollection), typeof(DataGrid),
+            BindableProperty.Create(nameof(Columns), typeof(List<DataGridColumn>), typeof(DataGrid),
                 propertyChanged: (bindableObj, o, n) =>
                 {
                     (bindableObj as DataGrid).InitHeaderView();
                 },
                 defaultValueCreator: b =>
                 {
-                    return new ColumnCollection();
+                    return new List<DataGridColumn>();
                 });
-        public ColumnCollection Columns
+        public List<DataGridColumn> Columns
         {
-            get { return (ColumnCollection)GetValue(ColumnsProperty); }
+            get { return (List<DataGridColumn>)GetValue(ColumnsProperty); }
             set { SetValue(ColumnsProperty, value); }
         }
 
@@ -196,7 +196,7 @@ namespace DataGridSam
             set { SetValue(SelectedRowColorProperty, value); }
         }
 
-        // Rows color
+        // Rows color (Background)
         public static readonly BindableProperty RowsColorProperty =
             BindableProperty.Create(nameof(RowsColor), typeof(Color), typeof(DataGrid), defaultValue: Color.White);
         public Color RowsColor

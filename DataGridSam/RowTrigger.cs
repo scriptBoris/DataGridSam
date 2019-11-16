@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataGridSam.Utils;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Xamarin.Forms;
@@ -8,6 +9,7 @@ namespace DataGridSam
     [Xamarin.Forms.Internals.Preserve(AllMembers = true)]
     public sealed class RowTrigger : BindableObject
     {
+        #region BindProps
         // Property trigger
         public static readonly BindableProperty PropertyTriggerProperty =
             BindableProperty.Create(nameof(PropertyTrigger), typeof(string), typeof(RowTrigger), null);
@@ -66,5 +68,82 @@ namespace DataGridSam
             get { return (Color)GetValue(RowTextColorProperty); }
             set { SetValue(RowTextColorProperty, value); }
         }
+        #endregion
+
+        #region Getters
+        public Color? RowBackgroundColorValue
+        {
+            get { return (Color?)GetValue(RowBackgroundColorProperty); }
+            set { SetValue(RowBackgroundColorProperty, value); }
+        }
+
+        public Color? RowTextColorValue
+        {
+            get { return (Color?)GetValue(RowTextColorProperty); }
+            set { SetValue(RowTextColorProperty, value); }
+        }
+        #endregion
+
+        #region Methods
+        internal static bool TrySetTriggerStyleRow(Row row, string propName)
+        {
+            if (row.DataGrid.RowTriggers.Count == 0)
+                return false;
+
+            bool doneTriggerActivation = false;
+            foreach (var trigger in row.DataGrid.RowTriggers)
+            {
+                if (propName == trigger.PropertyTrigger)
+                {
+                    var matchProperty = row.BindingContext.GetType().GetProperty(trigger.PropertyTrigger);
+                    if (matchProperty == null)
+                        continue;
+
+                    var value = matchProperty.GetValue(row.BindingContext);
+
+                    if (value is IComparable valueComparable && trigger.Value is IComparable tvalueComparable)
+                    {
+                        if (valueComparable.CompareTo(tvalueComparable) == 0)
+                        {
+                            doneTriggerActivation = true;
+                            SetTriggerStyleRow(row, trigger);
+                        }
+                    }
+                }
+            }
+
+            if (!doneTriggerActivation && !row.isStyleDefault)
+            {
+                row.enableTrigger = null;
+                row.SetStyleDefault();
+            }
+
+            return doneTriggerActivation;
+        }
+
+        internal static void SetTriggerStyleRow(Row row, RowTrigger trigger)
+        {
+            // Not change style Row
+            // Selected row is has hight priority
+            if (!row.isSelected)
+            {
+                foreach (var item in row.cells)
+                {
+                    if (item.IsCustomTemplate)
+                        continue;
+
+                    // Text color
+                    if (trigger.RowTextColorValue != null)
+                        item.Label.TextColor = trigger.RowTextColor;
+
+                    // Row background
+                    if (trigger.RowBackgroundColorValue != null)
+                        item.Wrapper.BackgroundColor = trigger.RowBackgroundColor;
+                }
+            }
+            row.enableTrigger = trigger;
+            row.isStyleDefault = false;
+        }
+        #endregion
     }
 }

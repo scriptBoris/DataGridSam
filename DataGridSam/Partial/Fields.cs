@@ -10,6 +10,6 @@ namespace DataGridSam
         /// <summary>
         /// Current time: selected cell by user
         /// </summary>
-        internal StackCell SelectedCell;
+        internal Row SelectedRow;
     }
 }

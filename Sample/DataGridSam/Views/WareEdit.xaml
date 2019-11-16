@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:Sample.ViewModels"
+             mc:Ignorable="d"
+             x:Class="Sample.Views.WareEdit"
+             Title="Ware edit">
+    <d:ContentPage.BindingContext>
+        <vm:WareDetailVm/>
+    </d:ContentPage.BindingContext>
+    
+    <StackLayout>
+        <Label Text="Name"/>
+        <Entry Text="{Binding Ware.Name}"/>
+
+        <Label Text="Need"/>
+        <Entry Text="{Binding Ware.Need}"/>
+
+        <Label Text="Weight"/>
+        <Entry Text="{Binding Ware.Weight}"/>
+
+    </StackLayout>
+</ContentPage>

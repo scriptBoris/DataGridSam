@@ -12,17 +12,21 @@ namespace DataGridSam.Utils
 
         public StackListTemplateSelector()
         {
-            Template = new DataTemplate(typeof(StackCell));
+            Template = new DataTemplate(typeof(Row));
         }
 
         protected override DataTemplate OnSelectTemplate(object item, BindableObject container)
         {
             var self = (StackList)container;
 
-            //Binding context
-            Template.SetValue(StackCell.DataGridProperty, self.DataGrid);
-            Template.SetValue(StackCell.RowContextProperty, item);
-            Template.SetValue(StackCell.BindingContextProperty, item);
+            // Create row
+            Template.SetValue(Row.DataGridProperty, self.DataGrid);
+            
+            // Passing value context
+            Template.SetValue(Row.BindingContextProperty, item);
+
+            //Template.SetValue(Row.RowContextProperty, item);
+
             return Template;
         }
     }

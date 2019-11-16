@@ -4,41 +4,50 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:sam="clr-namespace:DataGridSam;assembly=DataGridSam"
-             xmlns:local="clr-namespace:Sample"
+             xmlns:vm="clr-namespace:Sample.ViewModels"
              mc:Ignorable="d"
-             x:Class="Sample.MainPage">
+             x:Class="Sample.Views.MainPage"
+             Title="DataGridSam">
+    
     <d:ContentPage.BindingContext>
-        <local:MainPage/>
+        <vm:MainPageVm/>
     </d:ContentPage.BindingContext>
     
     <StackLayout>
         <!--Table-->
         <sam:DataGrid ItemsSource="{Binding Items}"
+                      SelectedItem="{Binding SelectedItem}"
                       VerticalOptions="FillAndExpand"
                       HeaderTextColor="White"
                       HeaderFontSize="16"
                       HeaderBackgroundColor="#2196F3"
                       RowsColor="White"
                       RowsFontSize="16"
+                      RowsTextColor="Black"
                       BorderColor="#2196F3"
                       CellPadding="5,10,5,10"
-                      SelectedItem="{Binding SelectedItem}"
                       CommandSelectedItem="{Binding CommandSelectItem}">
             <sam:DataGrid.Columns>
                 <!--Columns-->
-                <sam:DataGridColumn Title="№" 
+                <sam:DataGridColumn Title="#" 
                                     Width="40"
                                     PropertyName="Pos"/>
-                <sam:DataGridColumn Title="Наименование" 
+                <sam:DataGridColumn Title="Name" 
                                     Width="2*"
+                                    CellTextColor="Purple"
                                     PropertyName="Name"/>
-                <sam:DataGridColumn Title="Цена" 
+                <sam:DataGridColumn Title="Need" 
+                                    Width="1*"
+                                    HorizontalTextAlignment="End"
+                                    PropertyName="Need"/>
+                <sam:DataGridColumn Title="Price" 
                                     Width="1*"
                                     HorizontalTextAlignment="End"
                                     PropertyName="Price"/>
-                <sam:DataGridColumn Title="Вес" 
+                <sam:DataGridColumn Title="Weight" 
                                     Width="1*"
-                                    PropertyName="Weight">
+                                    PropertyName="Weight"
+                                    HorizontalTextAlignment="End">
                 </sam:DataGridColumn>
             </sam:DataGrid.Columns>
             
@@ -48,27 +57,18 @@
                                 RowBackgroundColor="Accent"
                                 RowTextColor="White"/>
                 
-                <!--If item is Finish-->
-                <sam:RowTrigger PropertyTrigger="IsFinish" Value="True"
-                                RowBackgroundColor="Blue"/>
+                <!--If item is can completed-->
+                <sam:RowTrigger PropertyTrigger="IsCanCompleted" Value="True"
+                                RowBackgroundColor="#fbc02d"/>
             </sam:DataGrid.RowTriggers>
         </sam:DataGrid>
 
+        <Button Text="Open selected item"
+                Command="{Binding CommandOpenWare}"/>
         <Button Text="Add"
-                BackgroundColor="Accent"
-                Clicked="Button_Clicked"/>
+                Command="{Binding CommandAddItem}"/>
         <Button Text="Remove last"
-                BackgroundColor="Yellow"
-                Clicked="Button_Clicked_1"/>
-        <Button Text="Add random"
-                BackgroundColor="Aqua"
-                Clicked="Button_Clicked_2"/>
-        <Button Text="Remove random"
-                BackgroundColor="GreenYellow"
-                Clicked="Button_Clicked_3"/>
-        <Button Text="Random IsCompleted"
-                BackgroundColor="Purple"
-                Clicked="Button_Clicked_4"/>
+                Command="{Binding CommandRemoveItem}"/>
     </StackLayout>
 
 </ContentPage>

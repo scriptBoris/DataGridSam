@@ -14,4 +14,16 @@
   <ItemGroup>
     <ProjectReference Include="..\..\DataGridSam\DataGridSam.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Views\WareEdit.xaml.cs">
+      <DependentUpon>WareEdit.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Views\WareEdit.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
 </Project>

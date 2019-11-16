@@ -61,11 +61,20 @@ namespace DataGridSam
 
         // Cell text color
         public static readonly BindableProperty CellTextColorProperty =
-            BindableProperty.Create(nameof(CellTextColor), typeof(Color?), typeof(DataGridColumn), null);
-        public Color? CellTextColor
+            BindableProperty.Create(nameof(CellTextColor), typeof(Color), typeof(DataGridColumn), null);
+        public Color CellTextColor
         {
-            get { return (Color?)GetValue(CellTextColorProperty); }
+            get { return (Color)GetValue(CellTextColorProperty); }
             set { SetValue(CellTextColorProperty, value); }
+        }
+
+        // Cell background color
+        public static readonly BindableProperty CellBackgroundColorProperty =
+            BindableProperty.Create(nameof(CellBackgroundColor), typeof(Color), typeof(DataGridColumn), null);
+        public Color CellBackgroundColor
+        {
+            get { return (Color)GetValue(CellBackgroundColorProperty); }
+            set { SetValue(CellBackgroundColorProperty, value); }
         }
 
         // Horizontal content aligment
@@ -127,13 +136,26 @@ namespace DataGridSam
             set { SetValue(CellTemplateProperty, value); }
         }
 
-
-
+        #region Other
         internal Label HeaderLabel { get; set; }
+
+
+        internal Color? CellTextColorNullable
+        {
+            get { return (Color)GetValue(CellTextColorProperty); }
+            set { SetValue(CellTextColorProperty, value); }
+        }
+
+        internal Color? CellBackgroundColorNullable
+        {
+            get { return (Color)GetValue(CellBackgroundColorProperty); }
+            set { SetValue(CellBackgroundColorProperty, value); }
+        }
 
         void OnSizeChanged()
         {
             SizeChanged?.Invoke(this, EventArgs.Empty);
         }
+        #endregion
     }
 }

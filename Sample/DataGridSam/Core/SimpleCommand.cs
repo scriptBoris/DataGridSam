@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Input;
 
-namespace Sample
+namespace Sample.Core
 {
-    public class CommandVm : ICommand
+    public class SimpleCommand : ICommand
     {
         private readonly Action<object> action;
 
-        public CommandVm(Action<object> action)
+        public SimpleCommand(Action<object> action)
         {
             this.action = action;
         }
