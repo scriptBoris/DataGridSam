@@ -68,16 +68,26 @@ namespace DataGridSam
             get { return (Color)GetValue(RowTextColorProperty); }
             set { SetValue(RowTextColorProperty, value); }
         }
+
+        // Row text attribute (bold, italic)
+        public static readonly BindableProperty RowTextAttributeProperty =
+            BindableProperty.Create(nameof(RowTextAttribute), typeof(FontAttributes), typeof(DataGrid), null);
+        public FontAttributes RowTextAttribute
+        {
+            get { return (FontAttributes)GetValue(RowTextAttributeProperty); }
+            set { SetValue(RowTextAttributeProperty, value); }
+        }
         #endregion
 
         #region Methods
-        internal static bool TrySetTriggerStyleRow(Row row, string propName)
+        internal static RowTrigger TrySetTriggerStyleRow(Row row, string propName, bool canUpdate = true)
         {
             if (row.DataGrid.RowTriggers.Count == 0)
-                return false;
+                return null;
 
             // Any trigger is activated
-            bool doneTriggerActivation = false;
+            RowTrigger matchedTrigger = null;
+
             // Does this "propName" have anything to do with triggers
             bool isPropBeAnyTrigger = false;
 
@@ -87,7 +97,7 @@ namespace DataGridSam
                 {
                     isPropBeAnyTrigger = true;
 
-                    var matchProperty = row.BindingContext.GetType().GetProperty(trigger.PropertyTrigger);
+                    var matchProperty = row.bindingTypeModel.GetProperty(trigger.PropertyTrigger);
                     if (matchProperty == null)
                         continue;
 
@@ -97,42 +107,38 @@ namespace DataGridSam
                     {
                         if (valueComparable.CompareTo(tvalueComparable) == 0)
                         {
-                            doneTriggerActivation = true;
-                            SetTriggerStyleRow(row, trigger);
+                            matchedTrigger = trigger;
+
+                            if (!canUpdate)
+                                return matchedTrigger;
+
+                            break;
                         }
                     }
                 }
             }
 
-            if (isPropBeAnyTrigger && !doneTriggerActivation && !row.isStyleDefault)
+            if (!canUpdate)
+                return null;
+
+            if (!isPropBeAnyTrigger)
+                return null;
+
+            if (matchedTrigger != null)
             {
-                row.enableTrigger = null;
-                row.SetStyleDefault();
+                if (row.enableTrigger == null || row.enableTrigger.PropertyTrigger == propName)
+                    row.enableTrigger = matchedTrigger;
             }
-
-            return doneTriggerActivation;
-        }
-
-        internal static void SetTriggerStyleRow(Row row, RowTrigger trigger)
-        {
-            // Not change style Row
-            // Selected row is has hight priority
-            if (!row.isSelected)
+            else
             {
-                foreach (var item in row.cells)
-                {
-                    if (item.IsCustomTemplate)
-                        continue;
-
-                    // Text color
-                    item.Label.TextColor = ColorSelector.NoDefault(trigger.RowTextColor, row.DataGrid.RowsTextColor);
-
-                    // Row background
-                    item.Wrapper.BackgroundColor = ColorSelector.NoDefault(trigger.RowBackgroundColor, row.DataGrid.RowsColor);
-                }
+                if (row.enableTrigger == null)
+                    return null;
+                else if (row.enableTrigger.PropertyTrigger == propName)
+                    row.enableTrigger = null;
             }
-            row.enableTrigger = trigger;
-            row.isStyleDefault = false;
+            row.UpdateStyle();
+
+            return matchedTrigger;
         }
         #endregion
     }

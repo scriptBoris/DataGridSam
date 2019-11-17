@@ -168,7 +168,6 @@ namespace DataGridSam.Utils
                     if (this.DataGrid.SelectedRow != null)
                     {
                         this.DataGrid.SelectedItem = null;
-                        this.DataGrid.SelectedRow = null;
                     }
                 }
             }

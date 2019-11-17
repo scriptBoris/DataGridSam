@@ -9,13 +9,13 @@ namespace Sample.Models
     public class Ware : BaseNotify
     {
         private string name;
-        private float need = 100f;
+        private float need;
         private int pos;
         private bool isCompleted;
         private float weight;
         private float price;
 
-        public bool IsCanCompleted => (Weight >= Need);
+        public bool IsCanCompleted => (Need > 0 && Weight >= Need);
 
         public bool IsCompleted { 
             get=>isCompleted; 

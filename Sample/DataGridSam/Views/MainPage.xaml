@@ -21,6 +21,7 @@
                       HeaderTextColor="White"
                       HeaderFontSize="16"
                       HeaderBackgroundColor="#2196F3"
+                      SelectedRowAttribute="Bold"
                       RowsColor="White"
                       RowsFontSize="16"
                       RowsTextColor="Black"
@@ -52,23 +53,50 @@
             </sam:DataGrid.Columns>
             
             <sam:DataGrid.RowTriggers>
+                <!--If item is can completed-->
+                <sam:RowTrigger PropertyTrigger="IsCanCompleted" Value="True"
+                                RowBackgroundColor="#fbc02d"/>
+                
                 <!--If item is complete-->
                 <sam:RowTrigger PropertyTrigger="IsCompleted" Value="True"
                                 RowBackgroundColor="Accent"
                                 RowTextColor="White"/>
-                
-                <!--If item is can completed-->
-                <sam:RowTrigger PropertyTrigger="IsCanCompleted" Value="True"
-                                RowBackgroundColor="#fbc02d"/>
             </sam:DataGrid.RowTriggers>
         </sam:DataGrid>
 
-        <Button Text="Open selected item"
-                Command="{Binding CommandOpenWare}"/>
-        <Button Text="Add"
-                Command="{Binding CommandAddItem}"/>
-        <Button Text="Remove last"
-                Command="{Binding CommandRemoveItem}"/>
+        <StackLayout BackgroundColor="Gray">
+            <StackLayout Orientation="Horizontal">
+                <Label Text="{Binding SelectedItem.Pos}"
+                       TextColor="Black"/>
+                <Label Text="{Binding SelectedItem.Name}"
+                       TextColor="Black"/>
+            </StackLayout>
+
+            <Label Text="{Binding SelectedItem.IsCanCompleted, StringFormat='Is can completed: {0} (if Weight > Need)'}"
+                   TextColor="Black"/>
+
+            <StackLayout>
+                <Label Text="{Binding SelectedItem.IsCompleted, StringFormat='Is completed: {0}'}"
+                       TextColor="Black"/>
+                <Switch IsToggled="{Binding SelectedItem.IsCompleted}"/>
+            </StackLayout>
+        
+            <StackLayout Orientation="Horizontal">
+                <Label Text="Weight"
+                       TextColor="Black"/>
+                <Entry Text="{Binding SelectedItem.Weight}"
+                       HorizontalOptions="FillAndExpand"
+                       Keyboard="Numeric"/>
+            </StackLayout>
+
+
+            <Button Text="Open selected item"
+                    Command="{Binding CommandOpenWare}"/>
+            <Button Text="Add"
+                    Command="{Binding CommandAddItem}"/>
+            <Button Text="Remove last"
+                    Command="{Binding CommandRemoveItem}"/>
+        </StackLayout>
     </StackLayout>
 
 </ContentPage>

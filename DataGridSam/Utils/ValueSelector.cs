@@ -6,9 +6,9 @@ using Xamarin.Forms;
 
 namespace DataGridSam.Utils
 {
-    internal static class ColorSelector
+    internal static class ValueSelector
     {
-        internal static Color NoDefault(params Color[] colors)
+        internal static Color Color(params Color[] colors)
         {
             foreach (var item in colors)
             {
@@ -18,14 +18,14 @@ namespace DataGridSam.Utils
             return colors.LastOrDefault();
         }
 
-        internal static Color NoTransperent(params Color[] colors)
+        internal static FontAttributes FontAttribute(params FontAttributes[] values)
         {
-            foreach (var item in colors)
+            foreach (var item in values)
             {
-                if (item.A != 1)
+                if (item != FontAttributes.None)
                     return item;
             }
-            return colors.LastOrDefault();
+            return values.LastOrDefault();
         }
     }
 }

@@ -30,32 +30,32 @@ namespace Sample.ViewModels
             CommandOpenWare = new SimpleCommand(ActionOpenWare);
             CommandAddItem = new SimpleCommand(ActionAddItem);
             commandRemoveItem = new SimpleCommand(ActionRemoveItem);
-            Items = new ObservableCollection<Ware>();
+            var temp = new ObservableCollection<Ware>();
 
-            Items.Add(new Ware
+            temp.Add(new Ware
             {
                 Pos = 1,
                 Name = "Stainless steel bottle MBI-A",
                 Price = 47.1f,
-                Weight = 0.3f,
-            });
-            Items.Add(new Ware
-            {
-                Pos = 2,
-                Name = "Toaster oven kaj-B",
-                Price = 87.4f,
-                Weight = 0.15f,
+                Weight = 0.0f,
                 IsCompleted = true,
             });
-            Items.Add(new Ware
-            {
-                Pos = 3,
-                Name = "Thermal magic cooker NFI-A",
-                Price = 159.56f,
-                Weight = 0.86f,
-            });
+            //temp.Add(new Ware
+            //{
+            //    Pos = 2,
+            //    Name = "Toaster oven kaj-B",
+            //    Price = 87.4f,
+            //    Weight = 0f,
+            //});
+            //temp.Add(new Ware
+            //{
+            //    Pos = 3,
+            //    Name = "Thermal magic cooker NFI-A",
+            //    Price = 159.56f,
+            //    Weight = 14.00f,
+            //});
 
-
+            Items = temp;
             SelectedItem = Items[0];
         }
 
@@ -125,7 +125,7 @@ namespace Sample.ViewModels
         {
             if (param is Ware ware)
             {
-                view.DisplayAlert("Select", $"You are selected {ware.Pos} {ware.Name}", "OK");
+                //view.DisplayAlert("Select", $"You are selected {ware.Pos} {ware.Name}", "OK");
             }
         }
 

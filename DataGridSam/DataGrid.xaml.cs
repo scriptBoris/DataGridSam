@@ -93,19 +93,20 @@ namespace DataGridSam
         // Selected item
         public static readonly BindableProperty SelectedItemProperty =
             BindableProperty.Create(nameof(SelectedItem), typeof(object), typeof(DataGrid), null, BindingMode.TwoWay,
-                propertyChanged: (b, o, newSelectedRow)=>
+                propertyChanged: (b, o, newSelectedRow) =>
                 {
                     var self = (DataGrid)b;
+
+                    // no action, if we do internal work
+                    if (self.blockThrowPropChanged)
+                        return;
+
                     var lastRow = self.SelectedRow;
 
                     if (newSelectedRow == null && lastRow != null)
                     {
                         lastRow.isSelected = false;
-
-                        if (lastRow.enableTrigger != null)
-                            RowTrigger.SetTriggerStyleRow(lastRow, lastRow.enableTrigger);
-                        else
-                            lastRow.SetStyleDefault();
+                        lastRow.UpdateStyle();
 
                         self.SelectedRow = null;
                     }
@@ -116,7 +117,7 @@ namespace DataGridSam
                         {
                             var row = (Row)self.stackList.Children[match];
                             row.isSelected = true;
-                            row.SetStyleSelected();
+                            row.UpdateStyle();
 
                             self.SelectedRow = row;
                         }
@@ -218,11 +219,29 @@ namespace DataGridSam
 
         // Selected row color
         public static readonly BindableProperty SelectedRowColorProperty =
-            BindableProperty.Create(nameof(SelectedRowColor), typeof(Color), typeof(DataGrid), defaultValue: Color.Beige);
+            BindableProperty.Create(nameof(SelectedRowColor), typeof(Color), typeof(DataGrid), null);
         public Color SelectedRowColor
         {
             get { return (Color)GetValue(SelectedRowColorProperty); }
             set { SetValue(SelectedRowColorProperty, value); }
+        }
+
+        // Selected row text color
+        public static readonly BindableProperty SelectedRowTextColorProperty =
+            BindableProperty.Create(nameof(SelectedRowTextColor), typeof(Color), typeof(DataGrid), null);
+        public Color SelectedRowTextColor
+        {
+            get { return (Color)GetValue(SelectedRowTextColorProperty); }
+            set { SetValue(SelectedRowTextColorProperty, value); }
+        }
+
+        // Selected row attribute
+        public static readonly BindableProperty SelectedRowAttributeProperty =
+            BindableProperty.Create(nameof(SelectedRowAttribute), typeof(FontAttributes), typeof(DataGrid), null);
+        public FontAttributes SelectedRowAttribute
+        {
+            get { return (FontAttributes)GetValue(SelectedRowAttributeProperty); }
+            set { SetValue(SelectedRowAttributeProperty, value); }
         }
 
         // Rows color (Background)
@@ -253,6 +272,15 @@ namespace DataGridSam
         {
             get { return (double)GetValue(RowsFontSizeProperty); }
             set { SetValue(RowsFontSizeProperty, value); }
+        }
+
+        // Rows text attribute
+        public static readonly BindableProperty RowsFontAttributeProperty =
+            BindableProperty.Create(nameof(RowsFontAttribute), typeof(FontAttributes), typeof(DataGrid), null);
+        public FontAttributes RowsFontAttribute
+        {
+            get { return (FontAttributes)GetValue(RowsFontAttributeProperty); }
+            set { SetValue(RowsFontAttributeProperty, value); }
         }
     }
 }

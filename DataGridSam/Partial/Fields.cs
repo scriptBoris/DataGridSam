@@ -12,5 +12,13 @@ namespace DataGridSam
         /// Current time: selected cell by user
         /// </summary>
         internal Row SelectedRow;
+
+        /// <summary>
+        /// For INTERNAL USING
+        /// Can block event property changed for property 
+        /// "SelectedItem"
+        /// </summary>
+        internal bool blockThrowPropChanged;
+
     }
 }

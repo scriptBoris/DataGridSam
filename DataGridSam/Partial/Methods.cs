@@ -86,7 +86,7 @@ namespace DataGridSam
                 VerticalOptions = LayoutOptions.FillAndExpand,
                 HorizontalOptions = LayoutOptions.EndAndExpand,
                 BackgroundColor = BorderColor,
-                TranslationX = BorderWidth,
+                TranslationX = BorderWidth + 0.2,
             };
             return line;
         }
