@@ -54,6 +54,9 @@ namespace Sample.ViewModels
                 Price = 159.56f,
                 Weight = 0.86f,
             });
+
+
+            SelectedItem = Items[0];
         }
 
         #region Props

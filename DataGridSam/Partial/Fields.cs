@@ -8,6 +8,7 @@ namespace DataGridSam
     public partial class DataGrid
     {
         /// <summary>
+        /// For INTERNAL USING
         /// Current time: selected cell by user
         /// </summary>
         internal Row SelectedRow;

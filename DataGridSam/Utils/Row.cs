@@ -170,8 +170,8 @@ namespace DataGridSam.Utils
                 if (item.IsCustomTemplate)
                     continue;
 
-                item.Label.TextColor = item.Column.CellTextColorNullable ?? DataGrid.RowsTextColor;
-                item.Wrapper.BackgroundColor = item.Column.CellBackgroundColorNullable ?? DataGrid.RowsColor;
+                item.Label.TextColor = ColorSelector.NoDefault(item.Column.CellTextColor, DataGrid.RowsTextColor);
+                item.Wrapper.BackgroundColor = ColorSelector.NoDefault(item.Column.CellBackgroundColor, DataGrid.RowsColor);
             }
         }
 
@@ -185,7 +185,19 @@ namespace DataGridSam.Utils
                 if (item.IsCustomTemplate)
                     continue;
 
-                item.Wrapper.BackgroundColor = DataGrid.SelectedRowColor;
+                if (enableTrigger != null && DataGrid.SelectedRowColor.IsDefault)
+                {
+                    item.Wrapper.BackgroundColor = enableTrigger.RowBackgroundColor;
+                }
+                else if (!DataGrid.SelectedRowColor.IsDefault)
+                {
+                    item.Wrapper.BackgroundColor = DataGrid.SelectedRowColor;
+                }
+                else
+                {
+                    item.Wrapper.BackgroundColor = DataGrid.RowsColor;
+                }
+
             }
         }
 

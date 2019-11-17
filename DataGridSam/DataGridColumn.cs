@@ -139,19 +139,6 @@ namespace DataGridSam
         #region Other
         internal Label HeaderLabel { get; set; }
 
-
-        internal Color? CellTextColorNullable
-        {
-            get { return (Color)GetValue(CellTextColorProperty); }
-            set { SetValue(CellTextColorProperty, value); }
-        }
-
-        internal Color? CellBackgroundColorNullable
-        {
-            get { return (Color)GetValue(CellBackgroundColorProperty); }
-            set { SetValue(CellBackgroundColorProperty, value); }
-        }
-
         void OnSizeChanged()
         {
             SizeChanged?.Invoke(this, EventArgs.Empty);

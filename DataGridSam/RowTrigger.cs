@@ -70,20 +70,6 @@ namespace DataGridSam
         }
         #endregion
 
-        #region Getters
-        public Color? RowBackgroundColorValue
-        {
-            get { return (Color?)GetValue(RowBackgroundColorProperty); }
-            set { SetValue(RowBackgroundColorProperty, value); }
-        }
-
-        public Color? RowTextColorValue
-        {
-            get { return (Color?)GetValue(RowTextColorProperty); }
-            set { SetValue(RowTextColorProperty, value); }
-        }
-        #endregion
-
         #region Methods
         internal static bool TrySetTriggerStyleRow(Row row, string propName)
         {
@@ -139,12 +125,10 @@ namespace DataGridSam
                         continue;
 
                     // Text color
-                    if (trigger.RowTextColorValue != null)
-                        item.Label.TextColor = trigger.RowTextColor;
+                    item.Label.TextColor = ColorSelector.NoDefault(trigger.RowTextColor, row.DataGrid.RowsTextColor);
 
                     // Row background
-                    if (trigger.RowBackgroundColorValue != null)
-                        item.Wrapper.BackgroundColor = trigger.RowBackgroundColor;
+                    item.Wrapper.BackgroundColor = ColorSelector.NoDefault(trigger.RowBackgroundColor, row.DataGrid.RowsColor);
                 }
             }
             row.enableTrigger = trigger;

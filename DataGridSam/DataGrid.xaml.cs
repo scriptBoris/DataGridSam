@@ -46,6 +46,7 @@ namespace DataGridSam
         }
 
         // Row triggers
+        // TODO Fix bugs when data grid overflow more count triggers
         public static readonly BindableProperty RowTriggersProperty =
             BindableProperty.Create(nameof(RowTriggers), typeof(List<RowTrigger>), typeof(DataGrid), 
                 defaultValue: new List<RowTrigger>(),
@@ -72,7 +73,7 @@ namespace DataGridSam
                 {
                     DataGrid self = thisObject as DataGrid;
 
-                    self.stackList.ItemsSource = newValue as IEnumerable;
+                    self.stackList.ItemsSource = newValue as ICollection;
                 });
         public IEnumerable ItemsSource
         {
@@ -91,13 +92,41 @@ namespace DataGridSam
 
         // Selected item
         public static readonly BindableProperty SelectedItemProperty =
-            BindableProperty.Create(nameof(SelectedItem), typeof(object), typeof(DataGrid), null, BindingMode.TwoWay);
+            BindableProperty.Create(nameof(SelectedItem), typeof(object), typeof(DataGrid), null, BindingMode.TwoWay,
+                propertyChanged: (b, o, newSelectedRow)=>
+                {
+                    var self = (DataGrid)b;
+                    var lastRow = self.SelectedRow;
+
+                    if (newSelectedRow == null && lastRow != null)
+                    {
+                        lastRow.isSelected = false;
+
+                        if (lastRow.enableTrigger != null)
+                            RowTrigger.SetTriggerStyleRow(lastRow, lastRow.enableTrigger);
+                        else
+                            lastRow.SetStyleDefault();
+
+                        self.SelectedRow = null;
+                    }
+                    else if (self.stackList.ItemsSource is IList list)
+                    {
+                        var match = list.IndexOf(newSelectedRow);
+                        if (match >= 0)
+                        {
+                            var row = (Row)self.stackList.Children[match];
+                            row.isSelected = true;
+                            row.SetStyleSelected();
+
+                            self.SelectedRow = row;
+                        }
+                    }
+                });
         public object SelectedItem 
         { 
             get { return GetValue(SelectedItemProperty); } 
             set { SetValue(SelectedItemProperty, value); } 
         }
-
 
         // Border width
         public static readonly BindableProperty BorderWidthProperty =
@@ -199,6 +228,9 @@ namespace DataGridSam
         // Rows color (Background)
         public static readonly BindableProperty RowsColorProperty =
             BindableProperty.Create(nameof(RowsColor), typeof(Color), typeof(DataGrid), defaultValue: Color.White);
+        /// <summary>
+        /// Rows color (Background)
+        /// </summary>
         public Color RowsColor
         {
             get { return (Color)GetValue(RowsColorProperty); }

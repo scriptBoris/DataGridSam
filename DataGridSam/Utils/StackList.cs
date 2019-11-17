@@ -165,6 +165,11 @@ namespace DataGridSam.Utils
                 if (e.OldItems != null)
                 {
                     this.Children.RemoveAt(e.OldStartingIndex);
+                    if (this.DataGrid.SelectedRow != null)
+                    {
+                        this.DataGrid.SelectedItem = null;
+                        this.DataGrid.SelectedRow = null;
+                    }
                 }
             }
             else if (e.Action == NotifyCollectionChangedAction.Reset)
