@@ -90,11 +90,17 @@ namespace DataGridSam
             if (row.DataGrid.RowTriggers.Count == 0)
                 return false;
 
+            // Any trigger is activated
             bool doneTriggerActivation = false;
+            // Does this "propName" have anything to do with triggers
+            bool isPropBeAnyTrigger = false;
+
             foreach (var trigger in row.DataGrid.RowTriggers)
             {
                 if (propName == trigger.PropertyTrigger)
                 {
+                    isPropBeAnyTrigger = true;
+
                     var matchProperty = row.BindingContext.GetType().GetProperty(trigger.PropertyTrigger);
                     if (matchProperty == null)
                         continue;
@@ -112,7 +118,7 @@ namespace DataGridSam
                 }
             }
 
-            if (!doneTriggerActivation && !row.isStyleDefault)
+            if (isPropBeAnyTrigger && !doneTriggerActivation && !row.isStyleDefault)
             {
                 row.enableTrigger = null;
                 row.SetStyleDefault();

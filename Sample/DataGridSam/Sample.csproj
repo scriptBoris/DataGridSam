@@ -12,7 +12,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\DataGridSam\DataGridSam.csproj" />
+    <Reference Include="DataGridSam">
+      <HintPath>..\..\DataGridSam\bin\Debug\netstandard2.0\DataGridSam.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>
