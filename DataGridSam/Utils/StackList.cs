@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Text;
 using Xamarin.Forms;
 
@@ -16,15 +17,8 @@ namespace DataGridSam.Utils
     {
         // ItemsSource
         public static BindableProperty ItemsSourceProperty =
-            BindableProperty.Create(
-                nameof(ItemsSource),
-                typeof(IEnumerable),
-                typeof(StackList),
-                null,
-                defaultBindingMode: BindingMode.OneWay,
-                propertyChanged: ItemsChanged
-            );
-
+            BindableProperty.Create(nameof(ItemsSource), typeof(IEnumerable), typeof(StackList), null, defaultBindingMode: BindingMode.OneWay,
+                propertyChanged: ItemsChanged);
         public IEnumerable ItemsSource
         {
             get { return (IEnumerable)GetValue(ItemsSourceProperty); }
@@ -33,11 +27,7 @@ namespace DataGridSam.Utils
 
         // ItemTemplate
         public static BindableProperty ItemTemplateProperty =
-            BindableProperty.Create(
-                nameof(ItemTemplate),
-                typeof(DataTemplate),
-                typeof(StackList),
-                default(DataTemplate),
+            BindableProperty.Create(nameof(ItemTemplate), typeof(DataTemplate), typeof(StackList), default(DataTemplate),
                 propertyChanged: (bindable, oldValue, newValue) =>
                 {
                     var control = (StackList)bindable;
@@ -64,74 +54,138 @@ namespace DataGridSam.Utils
         }
 
         // Column lines
-        public static readonly BindableProperty ColumnLinesProperty =
-            BindableProperty.Create(nameof(ColumnLines), typeof(Grid), typeof(StackList), null, 
-                propertyChanged: (b, o, n) => 
-                {
-                    var self = (StackList)b;
-                    var gridLines = (Grid)n;
-                    self.SizeChanged += (obj, e) =>
-                    {
-                        DataGrid.CalcHeightColumnLines(self, gridLines);
-                    };
-                });
-        public Grid ColumnLines
-        {
-            get { return (Grid)GetValue(ColumnLinesProperty); }
-            set { SetValue(ColumnLinesProperty, value); }
-        }
+        //public static readonly BindableProperty ColumnLinesProperty =
+        //    BindableProperty.Create(nameof(ColumnLines), typeof(Grid), typeof(StackList), null, 
+        //        propertyChanged: (b, o, n) => 
+        //        {
+        //            var self = (StackList)b;
+        //            var gridLines = (Grid)n;
+        //            self.SizeChanged += (obj, e) =>
+        //            {
+        //                DataGrid.CalcHeightColumnLines(self, gridLines);
+        //            };
+        //        });
+        //public Grid ColumnLines
+        //{
+        //    get { return (Grid)GetValue(ColumnLinesProperty); }
+        //    set { SetValue(ColumnLinesProperty, value); }
+        //}
+
+        // Pagination item count
+        //public static readonly BindableProperty PaginationItemCountProperty =
+        //    BindableProperty.Create(nameof(PaginationItemCount), typeof(int), typeof(StackList), 0);
+        //public int PaginationItemCount
+        //{
+        //    get { return (int)GetValue(PaginationItemCountProperty); }
+        //    set { SetValue(PaginationItemCountProperty, value); }
+        //}
 
         private bool doneItemSourceChanged = false;
 
         private static void ItemsChanged(BindableObject bindable, object oldValue, object newValue)
         {
-            var control = (StackList)bindable;
+            var self = (StackList)bindable;
             // when to occur propertychanged earlier ItemsSource than ItemTemplate, do nothing.
-            if (control.ItemTemplate == null)
+            if (self.ItemTemplate == null)
             {
-                control.doneItemSourceChanged = false;
+                self.doneItemSourceChanged = false;
                 return;
             }
 
-            control.doneItemSourceChanged = true;
+            self.doneItemSourceChanged = true;
 
-            IEnumerable newValueAsEnumerable;
+            IEnumerable newList;
             try
             {
-                newValueAsEnumerable = newValue as IEnumerable;
+                newList = newValue as IEnumerable;
             }
             catch (Exception e)
             {
                 throw e;
             }
 
-            var oldObservableCollection = oldValue as INotifyCollectionChanged;
-
-            if (oldObservableCollection != null)
+            if (oldValue is INotifyCollectionChanged oldObservableCollection)
             {
-                oldObservableCollection.CollectionChanged -= control.OnItemsSourceCollectionChanged;
+                oldObservableCollection.CollectionChanged -= self.OnItemsSourceCollectionChanged;
             }
 
-            var newObservableCollection = newValue as INotifyCollectionChanged;
-
-            if (newObservableCollection != null)
+            if (newValue is INotifyCollectionChanged newObservableCollection)
             {
-                newObservableCollection.CollectionChanged += control.OnItemsSourceCollectionChanged;
+                newObservableCollection.CollectionChanged += self.OnItemsSourceCollectionChanged;
             }
 
-            control.Children.Clear();
-
-            if (newValueAsEnumerable != null)
+            self.Children.Clear();
+            if (newList != null)
             {
-                foreach (var item in newValueAsEnumerable)
+                int paginationCount = self.DataGrid.PaginationItemCount;
+                if (paginationCount == 0)
                 {
-                    var view = CreateChildViewFor(control.ItemTemplate, item, control);
-                    control.Children.Add(view);
+                    foreach (var item in newList)
+                    {
+                        var view = CreateChildViewFor(self.ItemTemplate, item, self);
+                        self.Children.Add(view);
+                    }
+                }
+                else if (paginationCount > 0)
+                {
+                    self.RedrawForPage(paginationCount, selectPage:1);
+                    //// TODO Check low perfomance
+                    //var transformList = ((IEnumerable)newValue).Cast<object>().ToArray();
+                    //int selectedIndex = 0;
+                    //int startedIndex = 0;
+                    //int startPage = 1;
+                    //int count = transformList.Length;
+                    //int pages = 1;
+                    //if (self.DataGrid.SelectedItem != null && newList is IList list)
+                    //{
+                    //    selectedIndex = list.IndexOf(self.DataGrid.SelectedItem);
+                    //}
+
+                    //// Calc pages count
+                    //if (count > 0)
+                    //{
+                    //    int calc = (count / paginationCount);
+                    //    pages = (calc == 0) ? 1 : calc;
+                    //}
+
+                    //// Calc start page and start index
+                    //if (selectedIndex > 0 && count > 0)
+                    //{
+                    //    startPage = (selectedIndex / count) * pages + 1;
+                    //    if (startPage > pages)
+                    //        startPage = pages;
+
+                    //    if (startPage > 1)
+                    //    {
+                    //        startedIndex = (startPage / pages) * count - paginationCount;
+                    //    }
+                    //}
+
+                    //self.DataGrid.PaginationCurrentPage = startPage;
+                    //self.DataGrid.PaginationCurrentPageStartIndex = startedIndex;
+
+                    //// Show buttons
+                    //if (startPage > 1)
+                    //    self.DataGrid.ShowPaginationBackButton(true);
+                    //if (startPage < pages)
+                    //    self.DataGrid.ShowPaginationNextButton(true);
+
+
+                    //int endIndex = (startPage == pages) ? count : startPage * paginationCount;
+                    //for (int i = startedIndex; i < endIndex; i++)
+                    //{
+                    //    var view = CreateChildViewFor(self.ItemTemplate, transformList[i], self);
+                    //    self.Children.Add(view);
+                    //}
+                }
+                else
+                {
+                    throw new Exception("DataGridSam: PaginationItemCount cant be under zero");
                 }
             }
 
-            control.UpdateChildrenLayout();
-            control.InvalidateLayout();
+            self.UpdateChildrenLayout();
+            self.InvalidateLayout();
         }
 
         private void OnItemsSourceCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -181,6 +235,61 @@ namespace DataGridSam.Utils
             }
         }
 
+        internal void RedrawForPage(int paginationCount, int selectPage = 1, object selectedItem = null)
+        {
+            if (selectPage <= 0)
+                throw new Exception("DataGridSam: SelectedPage dont be under or equal zero");
+            if (paginationCount <= 0)
+                throw new Exception("DataGridSam: PaginationItemCount cant be under zero");
+
+            // Clear old items
+            Children.Clear();
+
+            // TODO Check low perfomance
+            var transformList = ItemsSource.Cast<object>().ToArray();
+            int count = transformList.Length;
+            int pages = 1;
+
+            // Calc count pages by itemList count
+            if (count > 0)
+            {
+                int calc = (count / paginationCount);
+                pages = (calc == 0) ? 1 : calc;
+            }
+
+            // SelectedItem hight priopity than selectPage
+            if (selectedItem != null && ItemsSource is IList list)
+            {
+                int selectedItemIndex = list.IndexOf(selectedItem);
+                if (selectedItemIndex > 0 && count > 0)
+                {
+                    selectPage = (selectedItemIndex / count) * pages + 1;
+                    if (selectPage > pages)
+                        selectPage = pages;
+                }
+            }
+
+            // Calculate start index by selected page
+            //decimal d = selectPage / pages;
+            double c = ((double)selectPage/pages) * count;
+            int startedIndex = (int)c - paginationCount;
+
+            DataGrid.PaginationCurrentPage = selectPage;
+            DataGrid.PaginationCurrentPageStartIndex = startedIndex;
+
+            // Show buttons
+            DataGrid.ShowPaginationBackButton(selectPage > 1);
+            DataGrid.ShowPaginationNextButton(selectPage < pages);
+
+
+            int endIndex = (selectPage == pages) ? count : selectPage * paginationCount;
+            for (int i = startedIndex; i < endIndex; i++)
+            {
+                var view = CreateChildViewFor(ItemTemplate, transformList[i], this);
+                Children.Add(view);
+            }
+        }
+
         /// <summary>
         /// Создает строку для таблицы
         /// </summary>
@@ -189,24 +298,14 @@ namespace DataGridSam.Utils
         /// <param name="container">StackList</param>
         private static View CreateChildViewFor(DataTemplate template, object item, BindableObject container)
         {
-
             if (template is DataTemplateSelector selector)
                 template = selector.SelectTemplate(item, container);
-
 
             // Здесь происходит неявный вызов метода : DataGridViewCell.CreateView()
             var view = (View)template.CreateContent();
 
-            // Add event click
-            //var tapControll = new TapGestureRecognizer
-            //{
-            //    Command = self.DataGrid.CommandSelectedItem,
-            //    CommandParameter = item
-            //};
-            //view.GestureRecognizers.Add(tapControll);
-            //view.BindingContext = item;
-
             return view;
         }
+
     }
 }

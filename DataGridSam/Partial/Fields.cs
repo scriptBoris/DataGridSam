@@ -20,5 +20,10 @@ namespace DataGridSam
         /// </summary>
         internal bool blockThrowPropChanged;
 
+        /// <summary>
+        /// For INTERNAL USING
+        /// </summary>
+        internal int PaginationCurrentPageStartIndex;
+
     }
 }

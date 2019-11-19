@@ -32,14 +32,25 @@ namespace Sample.ViewModels
             commandRemoveItem = new SimpleCommand(ActionRemoveItem);
             var temp = new ObservableCollection<Ware>();
 
-            temp.Add(new Ware
+            for (int i = 0; i < 50; i++)
             {
-                Pos = 1,
-                Name = "Stainless steel bottle MBI-A",
-                Price = 47.1f,
-                Weight = 0.0f,
-                IsCompleted = true,
-            });
+                temp.Add(new Ware
+                {
+                    Pos = i + 1,
+                    Name = Guid.NewGuid().ToString(),
+                    Price = 47.1f,
+                    Weight = 0.0f,
+                });
+            }
+
+            //temp.Add(new Ware
+            //{
+            //    Pos = 1,
+            //    Name = "Stainless steel bottle MBI-A",
+            //    Price = 47.1f,
+            //    Weight = 0.0f,
+            //    IsCompleted = true,
+            //});
             //temp.Add(new Ware
             //{
             //    Pos = 2,
@@ -56,7 +67,7 @@ namespace Sample.ViewModels
             //});
 
             Items = temp;
-            SelectedItem = Items[0];
+            SelectedItem = Items[48];
         }
 
         #region Props
