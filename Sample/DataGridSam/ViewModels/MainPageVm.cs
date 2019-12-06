@@ -17,6 +17,8 @@ namespace Sample.ViewModels
         private ICommand commandOpenWare;
         private ICommand commandAddItem;
         private ICommand commandRemoveItem;
+        private ICommand commandAddWeight;
+        private ICommand commandRemoveWeight;
         private ObservableCollection<Ware> items;
         private Ware selectedItem;
         private readonly Page view;
@@ -30,6 +32,8 @@ namespace Sample.ViewModels
             CommandOpenWare = new SimpleCommand(ActionOpenWare);
             CommandAddItem = new SimpleCommand(ActionAddItem);
             commandRemoveItem = new SimpleCommand(ActionRemoveItem);
+            CommandAddWeight = new SimpleCommand(ActionAddWeight);
+            CommandRemoveWeight = new SimpleCommand(ActionRemoveWeight);
             var temp = new ObservableCollection<Ware>();
 
             temp.Add(new Ware
@@ -38,22 +42,24 @@ namespace Sample.ViewModels
                 Name = "Stainless steel bottle MBI-A",
                 Price = 47.1f,
                 Weight = 0.0f,
-                IsCompleted = true,
+                Need = 100,
             });
-            //temp.Add(new Ware
-            //{
-            //    Pos = 2,
-            //    Name = "Toaster oven kaj-B",
-            //    Price = 87.4f,
-            //    Weight = 0f,
-            //});
-            //temp.Add(new Ware
-            //{
-            //    Pos = 3,
-            //    Name = "Thermal magic cooker NFI-A",
-            //    Price = 159.56f,
-            //    Weight = 14.00f,
-            //});
+            temp.Add(new Ware
+            {
+                Pos = 2,
+                Name = "Toaster oven kaj-B",
+                Price = 87.4f,
+                Weight = 0f,
+                Need = 150,
+            });
+            temp.Add(new Ware
+            {
+                Pos = 3,
+                Name = "Thermal magic cooker NFI-A",
+                Price = 159.56f,
+                Weight = 100.00f,
+                Need = 100,
+            });
 
             Items = temp;
             SelectedItem = Items[0];
@@ -76,6 +82,26 @@ namespace Sample.ViewModels
             {
                 commandSelectItem = value;
                 OnPropertyChanged(nameof(CommandSelectItem));
+            }
+        }
+
+        public ICommand CommandAddWeight
+        {
+            get => commandAddWeight;
+            set
+            {
+                commandAddWeight = value;
+                OnPropertyChanged(nameof(CommandAddWeight));
+            }
+        }
+
+        public ICommand CommandRemoveWeight
+        {
+            get => commandRemoveWeight;
+            set
+            {
+                commandRemoveWeight = value;
+                OnPropertyChanged(nameof(CommandRemoveWeight));
             }
         }
 
@@ -153,6 +179,26 @@ namespace Sample.ViewModels
             if (Items != null && Items.Count > 0)
             {
                 Items.Remove(Items.LastOrDefault());
+            }
+        }
+
+        private void ActionAddWeight(object obj)
+        {
+            if (SelectedItem != null)
+            {
+                SelectedItem.Weight += 50;
+            }
+        }
+
+        private void ActionRemoveWeight(object obj)
+        {
+            if (SelectedItem != null)
+            {
+                var res = SelectedItem.Weight - 50;
+                if (res < 0)
+                    SelectedItem.Weight = 0;
+                else
+                    SelectedItem.Weight = res;
             }
         }
         #endregion

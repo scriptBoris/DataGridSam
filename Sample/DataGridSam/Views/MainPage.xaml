@@ -53,14 +53,17 @@
             </sam:DataGrid.Columns>
             
             <sam:DataGrid.RowTriggers>
-                <!--If item is can completed-->
-                <sam:RowTrigger PropertyTrigger="IsCanCompleted" Value="True"
-                                RowBackgroundColor="#fbc02d"/>
-                
                 <!--If item is complete-->
                 <sam:RowTrigger PropertyTrigger="IsCompleted" Value="True"
-                                RowBackgroundColor="Accent"
-                                RowTextColor="White"/>
+                                RowBackgroundColor="#c8e6c9"/>
+                
+                <!--If item is overload-->
+                <sam:RowTrigger PropertyTrigger="IsOverload" Value="True"
+                                RowBackgroundColor="#e57373"/>
+                
+                <!--If item is process-->
+                <sam:RowTrigger PropertyTrigger="IsProcess" Value="True"
+                                RowBackgroundColor="#f0f4c3"/>
             </sam:DataGrid.RowTriggers>
         </sam:DataGrid>
 
@@ -72,15 +75,18 @@
                        TextColor="Black"/>
             </StackLayout>
 
-            <Label Text="{Binding SelectedItem.IsCanCompleted, StringFormat='Is can completed: {0} (if Weight > Need)'}"
+            <Label Text="{Binding SelectedItem.IsProcess, StringFormat='Is process: {0} (if Weight less Need)'}"
+                   TextColor="Black"/>
+            <Label Text="{Binding SelectedItem.IsCompleted, StringFormat='Is completed: {0} (if Weight == Need)'}"
+                   TextColor="Black"/>
+            <Label Text="{Binding SelectedItem.IsOverload, StringFormat='Is overload: {0} (if Weight more Need)'}"
                    TextColor="Black"/>
 
-            <StackLayout>
-                <Label Text="{Binding SelectedItem.IsCompleted, StringFormat='Is completed: {0}'}"
-                       TextColor="Black"/>
-                <Switch IsToggled="{Binding SelectedItem.IsCompleted}"/>
-            </StackLayout>
-        
+            <Button Text="Add +50 weight"
+                    Command="{Binding CommandAddWeight}"/>
+            <Button Text="Add -50 weight"
+                    Command="{Binding CommandRemoveWeight}"/>
+
             <StackLayout Orientation="Horizontal">
                 <Label Text="Weight"
                        TextColor="Black"/>

@@ -11,19 +11,45 @@ namespace Sample.Models
         private string name;
         private float need;
         private int pos;
-        private bool isCompleted;
         private float weight;
         private float price;
 
-        public bool IsCanCompleted => (Need > 0 && Weight >= Need);
+        public bool IsProcess {
+            get {
+                if (Need == 0)
+                    return false;
 
-        public bool IsCompleted { 
-            get=>isCompleted; 
-            set {
-                isCompleted = value;
-                OnPropertyChanged(nameof(IsCompleted));
+                if (Weight < Need && Weight > 0)
+                    return true;
+                else
+                    return false;
             }
         }
+
+        public bool IsCompleted {
+            get {
+                if (Need == 0)
+                    return false;
+
+                if (Weight == Need)
+                    return true;
+                else
+                    return false;
+            }
+        }
+
+        public bool IsOverload {
+            get {
+                if (Need == 0)
+                    return false;
+
+                if (Weight > Need)
+                    return true;
+                else
+                    return false;
+            }
+        }
+
         public int Pos { 
             get => pos;
             set {
@@ -42,7 +68,9 @@ namespace Sample.Models
             get => need; 
             set { need = value;
                 OnPropertyChanged(nameof(Need));
-                OnPropertyChanged(nameof(IsCanCompleted));
+                OnPropertyChanged(nameof(IsProcess));
+                OnPropertyChanged(nameof(IsCompleted));
+                OnPropertyChanged(nameof(IsOverload));
             }
         }
 
@@ -58,7 +86,9 @@ namespace Sample.Models
             set {
                 weight = value;
                 OnPropertyChanged(nameof(Weight));
-                OnPropertyChanged(nameof(IsCanCompleted));
+                OnPropertyChanged(nameof(IsProcess));
+                OnPropertyChanged(nameof(IsCompleted));
+                OnPropertyChanged(nameof(IsOverload));
             }
         }
     }

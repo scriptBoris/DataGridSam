@@ -38,6 +38,7 @@ namespace DataGridSam
                     _headerView.Children.Add(cell);
                     Grid.SetColumn(cell, i);
 
+
                     // Create vertical lines (Table)
                     verticalLines.ColumnDefinitions.Add(new ColumnDefinition { Width = col.Width });
 
