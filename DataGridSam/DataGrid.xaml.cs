@@ -21,11 +21,6 @@ namespace DataGridSam
             InitializeComponent();
             stackList.Spacing = 0;
             stackList.ItemTemplate = new StackListTemplateSelector();
-
-            verticalLines.SizeChanged += (obj, e) => 
-            {
-                CalcHeightColumnLines(stackList, verticalLines);
-            };
         }
 
         // Columns
@@ -113,13 +108,39 @@ namespace DataGridSam
                     else if (self.stackList.ItemsSource is IList list)
                     {
                         var match = list.IndexOf(newSelectedRow);
-                        if (match >= 0)
-                        {
-                            var row = (Row)self.stackList.Children[match];
-                            row.isSelected = true;
-                            row.UpdateStyle();
 
-                            self.SelectedRow = row;
+                        // Without pagination
+                        if (self.PaginationItemCount == 0)
+                        {
+                            if (match >= 0 && self.stackList.Children.Count > 0)
+                            {
+                                var row = (Row)self.stackList.Children[match];
+                                row.isSelected = true;
+                                row.UpdateStyle();
+
+                                self.SelectedRow = row;
+                            }
+                            else
+                                self.SelectedItem = null;
+                        }
+                        // With pagination
+                        else
+                        {
+                            int pageStart = self.PaginationCurrentPageStartIndex;
+                            int dif = match - self.PaginationCurrentPageStartIndex;
+
+                            if (dif >= 0 && dif <= pageStart+self.PaginationItemCount-1)
+                            {
+                                var row = (Row)self.stackList.Children[dif];
+                                row.isSelected = true;
+                                row.UpdateStyle();
+
+                                self.SelectedRow = row;
+                            }
+                            else
+                            {
+                                self.SelectedItem = null;
+                            }
                         }
                     }
                 });
@@ -127,6 +148,24 @@ namespace DataGridSam
         { 
             get { return GetValue(SelectedItemProperty); } 
             set { SetValue(SelectedItemProperty, value); } 
+        }
+
+        // Pagination items count
+        public static readonly BindableProperty PaginationItemCountProperty =
+            BindableProperty.Create(nameof(PaginationItemCount), typeof(int), typeof(DataGrid), 0);
+        public int PaginationItemCount
+        {
+            get { return (int)GetValue(PaginationItemCountProperty); }
+            set { SetValue(PaginationItemCountProperty, value); }
+        }
+
+        // Pagination current page
+        public static readonly BindableProperty PaginationCurrentPageProperty =
+            BindableProperty.Create(nameof(PaginationCurrentPage), typeof(int), typeof(DataGrid), 1);
+        public int PaginationCurrentPage
+        {
+            get { return (int)GetValue(PaginationCurrentPageProperty); }
+            set { SetValue(PaginationCurrentPageProperty, value); }
         }
 
         // Border width
@@ -204,13 +243,7 @@ namespace DataGridSam
 
         // Cell padding
         public static readonly BindableProperty CellPaddingProperty =
-            BindableProperty.Create(nameof(CellPadding), typeof(Thickness), typeof(DataGrid), defaultValue: new Thickness(0,0,0,0),
-                propertyChanged: (b, o, n)=> 
-                {
-                    var self = (DataGrid)b;
-                    if (n is Thickness value)
-                        self.UpdatePadding(value);
-                });
+            BindableProperty.Create(nameof(CellPadding), typeof(Thickness), typeof(DataGrid), defaultValue: new Thickness(5));
         public Thickness CellPadding 
         { 
             get { return (Thickness)GetValue(CellPaddingProperty); }

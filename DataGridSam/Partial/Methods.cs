@@ -99,20 +99,25 @@ namespace DataGridSam
                     c.BindingContext = BindingContext;
         }
 
-        internal static void CalcHeightColumnLines(StackList self, Grid gridLines)
+        internal void ShowPaginationBackButton(bool isVisible)
         {
-            double value;
-            if (gridLines.Height == -1.0)
-                return;
-            else if (self.Height > gridLines.Height)
-                value = gridLines.Height;
-            else
-                value = self.Height;
+            buttonLatest.IsVisible = isVisible;
+        }
+        internal void ShowPaginationNextButton(bool isVisible)
+        {
+            buttonNext.IsVisible = isVisible;
+        }
 
-            foreach (var item in gridLines.Children)
-            {
-                item.HeightRequest = value;
-            }
+        private void OnButtonLatestClicked(object sender, EventArgs e)
+        {
+            stackList.RedrawForPage(PaginationItemCount, selectPage: PaginationCurrentPage-1);
+            scrollTable.ScrollToAsync(0, stackList.Height, false);
+        }
+
+        private void OnButtonNextClicked(object sender, EventArgs e)
+        {
+            stackList.RedrawForPage(PaginationItemCount, selectPage: PaginationCurrentPage+1);
+            scrollTable.ScrollToAsync(0, 0, false);
         }
     }
 }

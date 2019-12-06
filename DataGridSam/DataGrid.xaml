@@ -36,19 +36,34 @@
     </Grid>
 
     <!--StackList-->
-    <ScrollView Grid.Row="1">
-        <stack:StackList x:Name="stackList"
-                         VerticalOptions="Start"
-                         ColumnLines="{Reference verticalLines}"
-                         DataGrid="{Reference self}"/>
+    <ScrollView Grid.Row="1" 
+                x:Name="scrollTable">
+        <StackLayout Spacing="0">
+            <Button Text="Show latest"
+                    TextColor="{Binding HeaderTextColor, Source={Reference self}}"
+                    BackgroundColor="{Binding HeaderBackgroundColor, Source={Reference self}}"
+                    IsVisible="False"
+                    x:Name="buttonLatest"
+                    Clicked="OnButtonLatestClicked"/>
+            <Grid>
+                <stack:StackList x:Name="stackList"
+                                 VerticalOptions="Start"
+                                 DataGrid="{Reference self}"/>
+                <Grid x:Name="verticalLines" 
+                      BackgroundColor="Transparent"
+                      InputTransparent="True">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                </Grid>
+            </Grid>
+            <Button Text="Show next"
+                    TextColor="{Binding HeaderTextColor, Source={Reference self}}"
+                    BackgroundColor="{Binding HeaderBackgroundColor, Source={Reference self}}"
+                    IsVisible="False"
+                    x:Name="buttonNext"
+                    Clicked="OnButtonNextClicked"/>
+        </StackLayout>
     </ScrollView>
 
-    <Grid Grid.Row="1"
-          x:Name="verticalLines"
-          BackgroundColor="Transparent"
-          InputTransparent="True">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-    </Grid>
 </Grid>
