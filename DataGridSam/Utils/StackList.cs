@@ -217,10 +217,9 @@ namespace DataGridSam.Utils
 
             // Calculate end index
             int endIndex = (selectPage == pages) ? itemCount-1 : selectPage * paginationCount;
-            //if (endIndex > itemCount - 1)
-            //    endIndex = itemCount - 1;
 
-            for (int i = startedIndex; i < endIndex; i++)
+            // Create rows
+            for (int i = startedIndex; i <= endIndex; i++)
             {
                 var view = CreateChildViewFor(ItemTemplate, itemList[i], this);
                 Children.Add(view);
