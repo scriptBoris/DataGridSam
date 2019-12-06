@@ -53,33 +53,6 @@ namespace DataGridSam.Utils
             set { SetValue(DataGridProperty, value); }
         }
 
-        // Column lines
-        //public static readonly BindableProperty ColumnLinesProperty =
-        //    BindableProperty.Create(nameof(ColumnLines), typeof(Grid), typeof(StackList), null, 
-        //        propertyChanged: (b, o, n) => 
-        //        {
-        //            var self = (StackList)b;
-        //            var gridLines = (Grid)n;
-        //            self.SizeChanged += (obj, e) =>
-        //            {
-        //                DataGrid.CalcHeightColumnLines(self, gridLines);
-        //            };
-        //        });
-        //public Grid ColumnLines
-        //{
-        //    get { return (Grid)GetValue(ColumnLinesProperty); }
-        //    set { SetValue(ColumnLinesProperty, value); }
-        //}
-
-        // Pagination item count
-        //public static readonly BindableProperty PaginationItemCountProperty =
-        //    BindableProperty.Create(nameof(PaginationItemCount), typeof(int), typeof(StackList), 0);
-        //public int PaginationItemCount
-        //{
-        //    get { return (int)GetValue(PaginationItemCountProperty); }
-        //    set { SetValue(PaginationItemCountProperty, value); }
-        //}
-
         private bool doneItemSourceChanged = false;
 
         private static void ItemsChanged(BindableObject bindable, object oldValue, object newValue)
@@ -129,54 +102,6 @@ namespace DataGridSam.Utils
                 else if (paginationCount > 0)
                 {
                     self.RedrawForPage(paginationCount, selectPage:1);
-                    //// TODO Check low perfomance
-                    //var transformList = ((IEnumerable)newValue).Cast<object>().ToArray();
-                    //int selectedIndex = 0;
-                    //int startedIndex = 0;
-                    //int startPage = 1;
-                    //int count = transformList.Length;
-                    //int pages = 1;
-                    //if (self.DataGrid.SelectedItem != null && newList is IList list)
-                    //{
-                    //    selectedIndex = list.IndexOf(self.DataGrid.SelectedItem);
-                    //}
-
-                    //// Calc pages count
-                    //if (count > 0)
-                    //{
-                    //    int calc = (count / paginationCount);
-                    //    pages = (calc == 0) ? 1 : calc;
-                    //}
-
-                    //// Calc start page and start index
-                    //if (selectedIndex > 0 && count > 0)
-                    //{
-                    //    startPage = (selectedIndex / count) * pages + 1;
-                    //    if (startPage > pages)
-                    //        startPage = pages;
-
-                    //    if (startPage > 1)
-                    //    {
-                    //        startedIndex = (startPage / pages) * count - paginationCount;
-                    //    }
-                    //}
-
-                    //self.DataGrid.PaginationCurrentPage = startPage;
-                    //self.DataGrid.PaginationCurrentPageStartIndex = startedIndex;
-
-                    //// Show buttons
-                    //if (startPage > 1)
-                    //    self.DataGrid.ShowPaginationBackButton(true);
-                    //if (startPage < pages)
-                    //    self.DataGrid.ShowPaginationNextButton(true);
-
-
-                    //int endIndex = (startPage == pages) ? count : startPage * paginationCount;
-                    //for (int i = startedIndex; i < endIndex; i++)
-                    //{
-                    //    var view = CreateChildViewFor(self.ItemTemplate, transformList[i], self);
-                    //    self.Children.Add(view);
-                    //}
                 }
                 else
                 {
@@ -235,6 +160,12 @@ namespace DataGridSam.Utils
             }
         }
 
+        /// <summary>
+        /// Update list for selectedPage (Pagination)
+        /// </summary>
+        /// <param name="paginationCount"></param>
+        /// <param name="selectPage"></param>
+        /// <param name="selectedItem"></param>
         internal void RedrawForPage(int paginationCount, int selectPage = 1, object selectedItem = null)
         {
             if (selectPage <= 0)
@@ -246,14 +177,14 @@ namespace DataGridSam.Utils
             Children.Clear();
 
             // TODO Check low perfomance
-            var transformList = ItemsSource.Cast<object>().ToArray();
-            int count = transformList.Length;
+            var itemList = ItemsSource.Cast<object>().ToArray();
+            int itemCount = itemList.Length;
             int pages = 1;
 
             // Calc count pages by itemList count
-            if (count > 0)
+            if (itemCount > 0)
             {
-                int calc = (count / paginationCount);
+                int calc = (itemCount / paginationCount);
                 pages = (calc == 0) ? 1 : calc;
             }
 
@@ -261,9 +192,9 @@ namespace DataGridSam.Utils
             if (selectedItem != null && ItemsSource is IList list)
             {
                 int selectedItemIndex = list.IndexOf(selectedItem);
-                if (selectedItemIndex > 0 && count > 0)
+                if (selectedItemIndex > 0 && itemCount > 0)
                 {
-                    selectPage = (selectedItemIndex / count) * pages + 1;
+                    selectPage = (selectedItemIndex / itemCount) * pages + 1;
                     if (selectPage > pages)
                         selectPage = pages;
                 }
@@ -271,8 +202,10 @@ namespace DataGridSam.Utils
 
             // Calculate start index by selected page
             //decimal d = selectPage / pages;
-            double c = ((double)selectPage/pages) * count;
+            double c = ((double)selectPage/pages) * itemCount;
             int startedIndex = (int)c - paginationCount;
+            if (startedIndex < 0)
+                startedIndex = 0;
 
             DataGrid.PaginationCurrentPage = selectPage;
             DataGrid.PaginationCurrentPageStartIndex = startedIndex;
@@ -282,10 +215,14 @@ namespace DataGridSam.Utils
             DataGrid.ShowPaginationNextButton(selectPage < pages);
 
 
-            int endIndex = (selectPage == pages) ? count : selectPage * paginationCount;
+            // Calculate end index
+            int endIndex = (selectPage == pages) ? itemCount-1 : selectPage * paginationCount;
+            //if (endIndex > itemCount - 1)
+            //    endIndex = itemCount - 1;
+
             for (int i = startedIndex; i < endIndex; i++)
             {
-                var view = CreateChildViewFor(ItemTemplate, transformList[i], this);
+                var view = CreateChildViewFor(ItemTemplate, itemList[i], this);
                 Children.Add(view);
             }
         }
