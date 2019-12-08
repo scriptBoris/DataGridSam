@@ -80,65 +80,82 @@ namespace DataGridSam
         #endregion
 
         #region Methods
-        internal static RowTrigger TrySetTriggerStyleRow(Row row, string propName, bool canUpdate = true)
+        internal static RowTrigger TrySetTriggerStyleRow(Row row, string propName, bool isNeedUpdate = true)
         {
             if (row.DataGrid.RowTriggers.Count == 0)
                 return null;
 
             // Any trigger is activated
-            RowTrigger matchedTrigger = null;
-
-            // Does this "propName" have anything to do with triggers
-            bool isPropBeAnyTrigger = false;
+            RowTrigger activeTrigger = null;
+            bool isTriggerActive = false;
 
             foreach (var trigger in row.DataGrid.RowTriggers)
             {
                 if (propName == trigger.PropertyTrigger)
                 {
-                    isPropBeAnyTrigger = true;
-
                     var matchProperty = row.bindingTypeModel.GetProperty(trigger.PropertyTrigger);
                     if (matchProperty == null)
                         continue;
 
+                    activeTrigger = trigger;
                     var value = matchProperty.GetValue(row.BindingContext);
-
                     if (value is IComparable valueComparable && trigger.Value is IComparable tvalueComparable)
                     {
                         if (valueComparable.CompareTo(tvalueComparable) == 0)
                         {
-                            matchedTrigger = trigger;
-
-                            if (!canUpdate)
-                                return matchedTrigger;
-
-                            break;
+                            isTriggerActive = true;
+                            if (!isNeedUpdate) 
+                                return activeTrigger;
                         }
                     }
+                    break;
                 }
             }
 
-            if (!canUpdate)
+            if (!isNeedUpdate)
                 return null;
 
-            if (!isPropBeAnyTrigger)
+            if (activeTrigger == null)
                 return null;
 
-            if (matchedTrigger != null)
+            if (activeTrigger != null && (row.enableTrigger==activeTrigger || row.enableTrigger==null) )
             {
-                if (row.enableTrigger == null || row.enableTrigger.PropertyTrigger == propName)
-                    row.enableTrigger = matchedTrigger;
+                if (isTriggerActive)
+                {
+                    row.enableTrigger = activeTrigger;
+                    row.UpdateStyle();
+                }
+                else
+                {
+                    row.enableTrigger = TrySetTriggerStyleRow(row);
+                    row.UpdateStyle();
+                }
             }
-            else
-            {
-                if (row.enableTrigger == null)
-                    return null;
-                else if (row.enableTrigger.PropertyTrigger == propName)
-                    row.enableTrigger = null;
-            }
-            row.UpdateStyle();
 
-            return matchedTrigger;
+            return activeTrigger;
+        }
+
+        private static RowTrigger TrySetTriggerStyleRow(Row row)
+        {
+            foreach (var trigger in row.DataGrid.RowTriggers)
+            {
+                var matchProperty = row.bindingTypeModel.GetProperty(trigger.PropertyTrigger);
+                if (matchProperty == null)
+                    continue;
+
+                var value = matchProperty.GetValue(row.BindingContext);
+                if (value is IComparable valueComparable && trigger.Value is IComparable tvalueComparable)
+                {
+                    if (valueComparable.CompareTo(tvalueComparable) == 0)
+                    {
+                        row.enableTrigger = trigger;
+                        row.UpdateStyle();
+
+                        return trigger;
+                    }
+                }
+            }
+            return null;
         }
         #endregion
     }
