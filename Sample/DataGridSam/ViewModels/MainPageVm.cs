@@ -121,7 +121,7 @@ namespace Sample.ViewModels
         {
             if (SelectedItem != null)
             {
-                SelectedItem.Weight += 50;
+                SelectedItem.Weight += 10;
             }
         }
 
@@ -129,7 +129,7 @@ namespace Sample.ViewModels
         {
             if (SelectedItem != null)
             {
-                var res = SelectedItem.Weight - 50;
+                var res = SelectedItem.Weight - 10;
                 if (res < 0)
                     SelectedItem.Weight = 0;
                 else

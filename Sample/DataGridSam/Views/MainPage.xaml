@@ -78,10 +78,11 @@
                        TextColor="Black"/>
             </StackLayout>
 
+            <!--Trigger controll-->
             <StackLayout Orientation="Horizontal">
-                <Button Text="Add +50 weight"
+                <Button Text="Add +10 weight"
                         Command="{Binding CommandAddWeight}"/>
-                <Button Text="Add -50 weight"
+                <Button Text="Add -10 weight"
                         Command="{Binding CommandRemoveWeight}"/>
             </StackLayout>
 
