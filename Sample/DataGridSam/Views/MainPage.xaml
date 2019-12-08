@@ -98,12 +98,19 @@
                     Command="{Binding CommandOpenWare}"/>
             <Button Text="Add"
                     Command="{Binding CommandAddItem}"/>
+
+            <!--Selected index-->
             <StackLayout Orientation="Horizontal">
-                <Entry Text="{Binding SelectedIndex}"/>
-                <Button Text="Add 5 elements"
-                        Command="{Binding CommandAddItems}"/>
+                <Label Text="Selected index"/>
+                <Entry Text="{Binding SelectedIndex}" WidthRequest="120"/>
             </StackLayout>
-            <Button Text="Remove last"
+            
+            <!--Add 5 items-->
+            <Button Text="Add 5 elements"
+                    Command="{Binding CommandAddItems}"/>
+            
+            <!--Remove item-->
+            <Button Text="Remove item"
                     Command="{Binding CommandRemoveItem}"/>
         </StackLayout>
     </StackLayout>

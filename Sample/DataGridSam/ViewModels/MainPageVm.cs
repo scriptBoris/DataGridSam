@@ -101,15 +101,19 @@ namespace Sample.ViewModels
 
         private void ActionAddItems(object obj)
         {
-            //var l = new List<int>();
-            //l.AddRange()
         }
 
         private void ActionRemoveItem(object obj)
         {
             if (Items != null && Items.Count > 0)
             {
-                Items.Remove(Items.LastOrDefault());
+                try
+                {
+                    Items.RemoveAt(SelectedIndex);
+                }
+                catch (Exception)
+                {
+                }
             }
         }
 
