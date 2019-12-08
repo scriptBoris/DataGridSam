@@ -71,22 +71,19 @@
         <StackLayout BackgroundColor="Gray">
             <StackLayout Orientation="Horizontal">
                 <Label Text="{Binding SelectedItem.Pos}"
+                       FontSize="20"
                        TextColor="Black"/>
                 <Label Text="{Binding SelectedItem.Name}"
+                       FontSize="20"
                        TextColor="Black"/>
             </StackLayout>
 
-            <Label Text="{Binding SelectedItem.IsProcess, StringFormat='Is process: {0} (if Weight less Need)'}"
-                   TextColor="Black"/>
-            <Label Text="{Binding SelectedItem.IsCompleted, StringFormat='Is completed: {0} (if Weight == Need)'}"
-                   TextColor="Black"/>
-            <Label Text="{Binding SelectedItem.IsOverload, StringFormat='Is overload: {0} (if Weight more Need)'}"
-                   TextColor="Black"/>
-
-            <Button Text="Add +50 weight"
-                    Command="{Binding CommandAddWeight}"/>
-            <Button Text="Add -50 weight"
-                    Command="{Binding CommandRemoveWeight}"/>
+            <StackLayout Orientation="Horizontal">
+                <Button Text="Add +50 weight"
+                        Command="{Binding CommandAddWeight}"/>
+                <Button Text="Add -50 weight"
+                        Command="{Binding CommandRemoveWeight}"/>
+            </StackLayout>
 
             <StackLayout Orientation="Horizontal">
                 <Label Text="Weight"
@@ -101,6 +98,11 @@
                     Command="{Binding CommandOpenWare}"/>
             <Button Text="Add"
                     Command="{Binding CommandAddItem}"/>
+            <StackLayout Orientation="Horizontal">
+                <Entry Text="{Binding SelectedIndex}"/>
+                <Button Text="Add 5 elements"
+                        Command="{Binding CommandAddItems}"/>
+            </StackLayout>
             <Button Text="Remove last"
                     Command="{Binding CommandRemoveItem}"/>
         </StackLayout>

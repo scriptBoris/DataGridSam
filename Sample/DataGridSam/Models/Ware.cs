@@ -8,12 +8,7 @@ namespace Sample.Models
 {
     public class Ware : BaseNotify
     {
-        private string name;
-        private float need;
-        private int pos;
-        private float weight;
-        private float price;
-
+        #region Support & XAML
         public bool IsProcess {
             get {
                 if (Need == 0)
@@ -49,21 +44,13 @@ namespace Sample.Models
                     return false;
             }
         }
+        #endregion
 
-        public int Pos { 
-            get => pos;
-            set {
-                pos = value;
-                OnPropertyChanged(nameof(Pos));
-            }
-        }
-        public string Name { get => name;
-            set {
-                name = value;
-                OnPropertyChanged(nameof(Name));
-            }
-        }
+        public int Pos { get; set; }
+        public string Name { get; set; }
+        public float Price { get; set; }
 
+        private float need;
         public float Need { 
             get => need; 
             set { need = value;
@@ -74,13 +61,7 @@ namespace Sample.Models
             }
         }
 
-        public float Price {
-            get => price;
-            set {
-                price = value;
-                OnPropertyChanged(nameof(Price));
-            }
-        }
+        private float weight;
         public float Weight { 
             get => weight;
             set {

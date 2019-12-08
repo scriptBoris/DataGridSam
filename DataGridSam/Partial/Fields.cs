@@ -25,5 +25,15 @@ namespace DataGridSam
         /// </summary>
         internal int PaginationCurrentPageStartIndex;
 
+        /// <summary>
+        /// For INTERNAL USING
+        /// </summary>
+        internal int PaginationCurrentPageItemsEndIndex;
+
+
+        /// <summary>
+        /// For INTERNAL USING
+        /// </summary>
+        internal int PaginationCurrentPageEndIndex;
     }
 }

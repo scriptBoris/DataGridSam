@@ -129,6 +129,20 @@ namespace DataGridSam.Utils
             {
                 if (e.NewItems != null)
                 {
+                    int startIndex = e.NewStartingIndex;
+                    int endIndex = e.NewStartingIndex + e.NewItems.Count-1;
+                    
+                    if (startIndex > DataGrid.PaginationCurrentPageEndIndex)
+                    {
+                        DataGrid.ShowPaginationNextButton(true);
+                        return;
+                    }
+
+                    if (endIndex < DataGrid.PaginationCurrentPageStartIndex)
+                    {
+                        return;
+                    }
+
                     for (var i = 0; i < e.NewItems.Count; ++i)
                     {
                         var item = e.NewItems[i];
@@ -168,10 +182,11 @@ namespace DataGridSam.Utils
         /// <param name="selectedItem"></param>
         internal void RedrawForPage(int paginationCount, int selectPage = 1, object selectedItem = null)
         {
-            if (selectPage <= 0)
-                throw new Exception("DataGridSam: SelectedPage dont be under or equal zero");
             if (paginationCount <= 0)
-                throw new Exception("DataGridSam: PaginationItemCount cant be under zero");
+                throw new Exception("DataGridSam: PaginationItemCount cant be under or equal zero");
+
+            if (selectPage <= 0)
+                selectPage = 1;
 
             // Clear old items
             Children.Clear();
@@ -184,7 +199,11 @@ namespace DataGridSam.Utils
             // Calc count pages by itemList count
             if (itemCount > 0)
             {
-                int calc = (itemCount / paginationCount);
+                float f = (float)itemCount / (float)paginationCount;
+                int calc = (int)f;
+                if (f > calc)
+                    calc++;
+
                 pages = (calc == 0) ? 1 : calc;
             }
 
@@ -200,23 +219,25 @@ namespace DataGridSam.Utils
                 }
             }
 
-            // Calculate start index by selected page
-            //decimal d = selectPage / pages;
-            double c = ((double)selectPage/pages) * itemCount;
-            int startedIndex = (int)c - paginationCount;
+            // Calculate start index
+            //double c = ((double)selectPage/pages) * itemCount;
+            //int startedIndex = (int)c - paginationCount;
+            int startedIndex = (selectPage * paginationCount) - paginationCount;
             if (startedIndex < 0)
                 startedIndex = 0;
 
+            // Calculate end index
+            int endIndex = (selectPage == pages) ? itemCount-1 : selectPage * paginationCount;
+
+            // Save system data
             DataGrid.PaginationCurrentPage = selectPage;
             DataGrid.PaginationCurrentPageStartIndex = startedIndex;
+            DataGrid.PaginationCurrentPageItemsEndIndex = endIndex;
+            DataGrid.PaginationCurrentPageEndIndex = (selectPage * paginationCount)-1;
 
             // Show buttons
             DataGrid.ShowPaginationBackButton(selectPage > 1);
             DataGrid.ShowPaginationNextButton(selectPage < pages);
-
-
-            // Calculate end index
-            int endIndex = (selectPage == pages) ? itemCount-1 : selectPage * paginationCount;
 
             // Create rows
             for (int i = startedIndex; i <= endIndex; i++)

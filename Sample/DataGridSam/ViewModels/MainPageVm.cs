@@ -13,14 +13,6 @@ namespace Sample.ViewModels
 {
     public class MainPageVm : BaseNotify
     {
-        private ICommand commandSelectItem;
-        private ICommand commandOpenWare;
-        private ICommand commandAddItem;
-        private ICommand commandRemoveItem;
-        private ICommand commandAddWeight;
-        private ICommand commandRemoveWeight;
-        private ObservableCollection<Ware> items;
-        private Ware selectedItem;
         private readonly Page view;
 
         [Obsolete("Only for IntelliSense XAML helper")]
@@ -31,7 +23,8 @@ namespace Sample.ViewModels
             CommandSelectItem = new SimpleCommand(ActionSelectedItem);
             CommandOpenWare = new SimpleCommand(ActionOpenWare);
             CommandAddItem = new SimpleCommand(ActionAddItem);
-            commandRemoveItem = new SimpleCommand(ActionRemoveItem);
+            CommandAddItems = new SimpleCommand(ActionAddItems);
+            CommandRemoveItem = new SimpleCommand(ActionRemoveItem);
             CommandAddWeight = new SimpleCommand(ActionAddWeight);
             CommandRemoveWeight = new SimpleCommand(ActionRemoveWeight);
             var temp = new ObservableCollection<Ware>();
@@ -66,84 +59,16 @@ namespace Sample.ViewModels
         }
 
         #region Props
-        public ObservableCollection<Ware> Items
-        {
-            get => items;
-            set
-            {
-                items = value;
-                OnPropertyChanged(nameof(Items));
-            }
-        }
-        public ICommand CommandSelectItem
-        {
-            get => commandSelectItem;
-            set
-            {
-                commandSelectItem = value;
-                OnPropertyChanged(nameof(CommandSelectItem));
-            }
-        }
-
-        public ICommand CommandAddWeight
-        {
-            get => commandAddWeight;
-            set
-            {
-                commandAddWeight = value;
-                OnPropertyChanged(nameof(CommandAddWeight));
-            }
-        }
-
-        public ICommand CommandRemoveWeight
-        {
-            get => commandRemoveWeight;
-            set
-            {
-                commandRemoveWeight = value;
-                OnPropertyChanged(nameof(CommandRemoveWeight));
-            }
-        }
-
-        public ICommand CommandOpenWare
-        {
-            get => commandOpenWare;
-            set
-            {
-                commandOpenWare = value;
-                OnPropertyChanged(nameof(CommandOpenWare));
-            }
-        }
-
-        public ICommand CommandAddItem
-        {
-            get => commandAddItem;
-            set
-            {
-                commandAddItem = value;
-                OnPropertyChanged(nameof(CommandAddItem));
-            }
-        }
-
-        public ICommand CommandRemoveItem
-        {
-            get => commandRemoveItem;
-            set
-            {
-                commandRemoveItem = value;
-                OnPropertyChanged(nameof(CommandRemoveItem));
-            }
-        }
-
-        public Ware SelectedItem
-        {
-            get => selectedItem;
-            set
-            {
-                selectedItem = value;
-                OnPropertyChanged(nameof(SelectedItem));
-            }
-        }
+        public ObservableCollection<Ware> Items { get; set; }
+        public Ware SelectedItem { get; set; }
+        public int SelectedIndex { get; set; }
+        public ICommand CommandSelectItem { get; set; }
+        public ICommand CommandAddWeight { get; set; }
+        public ICommand CommandRemoveWeight { get; set; }
+        public ICommand CommandOpenWare { get; set; }
+        public ICommand CommandAddItem { get; set; }
+        public ICommand CommandAddItems { get; set; }
+        public ICommand CommandRemoveItem { get; set; }
         #endregion
 
         #region Actions
@@ -174,6 +99,12 @@ namespace Sample.ViewModels
             });
         }
 
+        private void ActionAddItems(object obj)
+        {
+            //var l = new List<int>();
+            //l.AddRange()
+        }
+
         private void ActionRemoveItem(object obj)
         {
             if (Items != null && Items.Count > 0)
@@ -202,6 +133,5 @@ namespace Sample.ViewModels
             }
         }
         #endregion
-
     }
 }
