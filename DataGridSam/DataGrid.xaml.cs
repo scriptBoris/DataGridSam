@@ -94,7 +94,7 @@ namespace DataGridSam
 
         // Selected item
         public static readonly BindableProperty SelectedItemProperty =
-            BindableProperty.Create(nameof(SelectedItem), typeof(object), typeof(DataGrid), null, BindingMode.TwoWay,
+            BindableProperty.Create(nameof(SelectedItem), typeof(object), typeof(DataGrid), null, BindingMode.OneWay,
                 propertyChanged: (b, o, newSelectedRow) =>
                 {
                     var self = (DataGrid)b;
