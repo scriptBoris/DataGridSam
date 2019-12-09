@@ -94,7 +94,7 @@ namespace DataGridSam
 
         // Selected item
         public static readonly BindableProperty SelectedItemProperty =
-            BindableProperty.Create(nameof(SelectedItem), typeof(object), typeof(DataGrid), null, BindingMode.OneWay,
+            BindableProperty.Create(nameof(SelectedItem), typeof(object), typeof(DataGrid), null, BindingMode.TwoWay,
                 propertyChanged: (b, o, newSelectedRow) =>
                 {
                     var self = (DataGrid)b;
@@ -127,8 +127,6 @@ namespace DataGridSam
 
                                 self.SelectedRow = row;
                             }
-                            else
-                                self.SelectedItem = null;
                         }
                         // With pagination
                         else
@@ -143,10 +141,6 @@ namespace DataGridSam
                                 row.UpdateStyle();
 
                                 self.SelectedRow = row;
-                            }
-                            else
-                            {
-                                self.SelectedItem = null;
                             }
                         }
                     }
