@@ -4,6 +4,7 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Sample.ViewModels"
+             xmlns:sam="clr-namespace:DataGridSam;assembly=DataGridSam"
              mc:Ignorable="d"
              x:Class="Sample.Views.WareEdit"
              Title="Ware edit">
@@ -20,6 +21,61 @@
 
         <Label Text="Weight"/>
         <Entry Text="{Binding Ware.Weight}"/>
+
+        <!--Table-->
+        <sam:DataGrid ItemsSource="{Binding Items}"
+                      SelectedItem="{Binding SelectedItem}"
+                      PaginationItemCount="10"
+                      VerticalOptions="FillAndExpand"
+                      HeaderTextColor="White"
+                      HeaderFontSize="16"
+                      HeaderBackgroundColor="#2196F3"
+                      SelectedRowAttribute="Bold"
+                      RowsColor="White"
+                      RowsFontSize="16"
+                      RowsTextColor="Black"
+                      BorderColor="#2196F3"
+                      CellPadding="5,10,5,10"
+                      CommandSelectedItem="{Binding CommandSelectItem}">
+            <sam:DataGrid.Columns>
+                <!--Columns-->
+                <sam:DataGridColumn Title="#" 
+                                    Width="40"
+                                    PropertyName="Pos"/>
+                <sam:DataGridColumn Title="Name" 
+                                    Width="2*"
+                                    CellTextColor="Purple"
+                                    PropertyName="Name"/>
+                <sam:DataGridColumn Title="Need" 
+                                    Width="1*"
+                                    HorizontalTextAlignment="End"
+                                    PropertyName="Need"/>
+                <sam:DataGridColumn Title="Price" 
+                                    Width="1*"
+                                    HorizontalTextAlignment="End"
+                                    PropertyName="Price"/>
+                <sam:DataGridColumn Title="Weight" 
+                                    Width="1*"
+                                    PropertyName="Weight"
+                                    HorizontalTextAlignment="End">
+                </sam:DataGridColumn>
+            </sam:DataGrid.Columns>
+
+            <sam:DataGrid.RowTriggers>
+                <!--If item is process-->
+                <sam:RowTrigger PropertyTrigger="IsProcess" Value="True"
+                                RowBackgroundColor="#f0f4c3"/>
+
+                <!--If item is complete-->
+                <sam:RowTrigger PropertyTrigger="IsCompleted" Value="True"
+                                RowBackgroundColor="#c8e6c9"/>
+
+                <!--If item is overload-->
+                <sam:RowTrigger PropertyTrigger="IsOverload" Value="True"
+                                RowBackgroundColor="#e57373"/>
+
+            </sam:DataGrid.RowTriggers>
+        </sam:DataGrid>
 
     </StackLayout>
 </ContentPage>

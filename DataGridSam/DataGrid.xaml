@@ -47,8 +47,7 @@
                     Clicked="OnButtonLatestClicked"/>
             <Grid>
                 <stack:StackList x:Name="stackList"
-                                 VerticalOptions="Start"
-                                 DataGrid="{Reference self}"/>
+                                 VerticalOptions="Start"/>
                 <Grid x:Name="verticalLines" 
                       BackgroundColor="Transparent"
                       InputTransparent="True">

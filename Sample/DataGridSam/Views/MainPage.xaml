@@ -54,6 +54,10 @@
             </sam:DataGrid.Columns>
             
             <sam:DataGrid.RowTriggers>
+                <!--If item is process-->
+                <sam:RowTrigger PropertyTrigger="IsProcess" Value="True"
+                                RowBackgroundColor="#f0f4c3"/>
+                
                 <!--If item is complete-->
                 <sam:RowTrigger PropertyTrigger="IsCompleted" Value="True"
                                 RowBackgroundColor="#c8e6c9"/>
@@ -62,9 +66,6 @@
                 <sam:RowTrigger PropertyTrigger="IsOverload" Value="True"
                                 RowBackgroundColor="#e57373"/>
                 
-                <!--If item is process-->
-                <sam:RowTrigger PropertyTrigger="IsProcess" Value="True"
-                                RowBackgroundColor="#f0f4c3"/>
             </sam:DataGrid.RowTriggers>
         </sam:DataGrid>
 

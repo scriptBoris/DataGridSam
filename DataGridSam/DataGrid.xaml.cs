@@ -19,9 +19,13 @@ namespace DataGridSam
         public DataGrid()
         {
             InitializeComponent();
+            stackList.DataGrid = this;
             stackList.Spacing = 0;
             stackList.ItemTemplate = new StackListTemplateSelector();
         }
+
+        // TODO Test
+        public string Name = Guid.NewGuid().ToString();
 
         // Columns
         public static readonly BindableProperty ColumnsProperty =
@@ -43,8 +47,11 @@ namespace DataGridSam
         // Row triggers
         // TODO Fix bugs when data grid overflow more count triggers
         public static readonly BindableProperty RowTriggersProperty =
-            BindableProperty.Create(nameof(RowTriggers), typeof(List<RowTrigger>), typeof(DataGrid), 
-                defaultValue: new List<RowTrigger>(),
+            BindableProperty.Create(nameof(RowTriggers), typeof(List<RowTrigger>), typeof(DataGrid), null,
+                defaultValueCreator: b=>
+                {
+                    return new List<RowTrigger>();
+                },
                 propertyChanged: (b, o, n) =>
                 {
                     var self = (DataGrid)b;
