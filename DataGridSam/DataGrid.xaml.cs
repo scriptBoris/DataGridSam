@@ -92,6 +92,30 @@ namespace DataGridSam
             set { SetValue(CommandSelectedItemProperty, value); }
         }
 
+        // Command double click selected item 
+        public static readonly BindableProperty CommandDoubleClickItemProperty =
+            BindableProperty.Create(nameof(CommandDoubleClickItem), typeof(ICommand), typeof(DataGrid), null);
+        public ICommand CommandDoubleClickItem
+        {
+            get { return (ICommand)GetValue(CommandDoubleClickItemProperty); }
+            set { SetValue(CommandDoubleClickItemProperty, value); }
+        }
+
+        // Command double click interval item 
+        public static readonly BindableProperty CommandDoubleClickIntervalProperty =
+            BindableProperty.Create(nameof(DoubleClickInterval), typeof(double), typeof(DataGrid), 300, 
+                propertyChanged: (b, o, n) =>
+                {
+                    double value = (double)n;
+                    if (value <= 0)
+                        throw new Exception("Interval double click can not be less than zero or equal zero");
+                });
+        public double DoubleClickInterval
+        {
+            get { return (double)GetValue(CommandDoubleClickIntervalProperty); }
+            set { SetValue(CommandDoubleClickIntervalProperty, value); }
+        }
+
         // Selected item
         public static readonly BindableProperty SelectedItemProperty =
             BindableProperty.Create(nameof(SelectedItem), typeof(object), typeof(DataGrid), null, BindingMode.TwoWay,

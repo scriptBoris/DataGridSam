@@ -15,6 +15,8 @@ namespace DataGridSam.Utils
         internal List<GridCell> cells = new List<GridCell>();
         internal RowTrigger enableTrigger;
         internal bool isStyleDefault = true;
+        private bool isCanDoubleClick;
+        private bool isDoneDoubleClick;
 
         // Data grid (host)
         public static readonly BindableProperty DataGridProperty =
@@ -145,33 +147,59 @@ namespace DataGridSam.Utils
         private void RowTapped(object sender, EventArgs e)
         {
             var rowTapped = (Row)sender;
-            // Avoid useless actions
-            if (DataGrid.SelectedRow != this)
+            var lastTapped = DataGrid.SelectedRow;
+
+            // GUI Unselected last row
+            if (lastTapped != null && lastTapped != rowTapped)
             {
-                // GUI Unselected last row
-                var lastRow = DataGrid.SelectedRow;
-                if (lastRow != null)
-                {
-                    lastRow.isSelected = false;
-                    lastRow.UpdateStyle();
-                }
+                lastTapped.isSelected = false;
+                lastTapped.UpdateStyle();
+            }
 
-                // system block prop changed
-                //DataGrid.blockThrowPropChanged = true;
-
-                // GUI Selected row
+            // GUI Selected row
+            if (lastTapped != rowTapped)
+            {
                 DataGrid.SelectedRow = rowTapped;
                 DataGrid.SelectedItem = BindingContext;
 
                 rowTapped.isSelected = true;
                 rowTapped.UpdateStyle();
 
-                // return enable system block prop changed
-                //DataGrid.blockThrowPropChanged = false;
+                if (lastTapped != null)
+                {
+                    lastTapped.isDoneDoubleClick = false;
+                    lastTapped.isCanDoubleClick = false;
+                }
             }
 
-            // Run ICommand selected item
-            DataGrid.CommandSelectedItem?.Execute(BindingContext);
+            // Double click
+            if (isCanDoubleClick)
+            {
+                DataGrid.CommandDoubleClickItem?.Execute(BindingContext);
+                isDoneDoubleClick = true;
+            }
+            // Can double click
+            else
+            {
+                isCanDoubleClick = true;
+                Device.StartTimer(TimeSpan.FromMilliseconds(DataGrid.DoubleClickInterval), () =>
+                {
+                    isCanDoubleClick = false;
+                    return false;
+                });
+            }
+
+
+            if (!isDoneDoubleClick)
+            {
+                // Run ICommand selected item
+                DataGrid.CommandSelectedItem?.Execute(BindingContext);
+            }
+            else
+            {
+                isDoneDoubleClick = false;
+                isCanDoubleClick = false;
+            }
         }
 
         internal void UpdateStyle()

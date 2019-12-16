@@ -28,7 +28,8 @@
                       RowsTextColor="Black"
                       BorderColor="#2196F3"
                       CellPadding="5,10,5,10"
-                      CommandSelectedItem="{Binding CommandSelectItem}">
+                      CommandSelectedItem="{Binding CommandSelectItem}"
+                      CommandDoubleClickItem="{Binding CommandDoubleClick}">
             <sam:DataGrid.Columns>
                 <!--Columns-->
                 <sam:DataGridColumn Title="#" 
