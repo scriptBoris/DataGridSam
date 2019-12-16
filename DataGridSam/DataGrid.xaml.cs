@@ -103,7 +103,7 @@ namespace DataGridSam
 
         // Command double click interval item 
         public static readonly BindableProperty DoubleClickIntervalProperty =
-            BindableProperty.Create(nameof(DoubleClickInterval), typeof(double), typeof(DataGrid), 300, 
+            BindableProperty.Create(nameof(DoubleClickInterval), typeof(double), typeof(DataGrid), (double)300, 
                 propertyChanged: (b, o, n) =>
                 {
                     double value = (double)n;
