@@ -193,10 +193,14 @@ namespace DataGridSam
             set { SetValue(PaginationCurrentPageProperty, value); }
         }
 
-        // Border width
+        /// <summary>
+        ///  Border width (default: 2)
+        /// </summary>
         public static readonly BindableProperty BorderWidthProperty =
             BindableProperty.Create(nameof(BorderWidth), typeof(double), typeof(DataGrid), 2.0, BindingMode.Default);
-
+        /// <summary>
+        /// default: 2
+        /// </summary>
         public double BorderWidth
         {
             get { return (double)GetValue(BorderWidthProperty); }

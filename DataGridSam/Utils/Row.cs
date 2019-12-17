@@ -172,33 +172,39 @@ namespace DataGridSam.Utils
                 }
             }
 
-            // Double click
-            if (isCanDoubleClick)
+            if (DataGrid.CommandDoubleClickItem != null)
             {
-                DataGrid.CommandDoubleClickItem?.Execute(BindingContext);
-                isDoneDoubleClick = true;
-            }
-            // Can double click
-            else
-            {
-                isCanDoubleClick = true;
-                Device.StartTimer(TimeSpan.FromMilliseconds(DataGrid.DoubleClickInterval), () =>
+                // Can double click
+                if (!isCanDoubleClick)
                 {
-                    isCanDoubleClick = false;
-                    return false;
-                });
-            }
+                    isCanDoubleClick = true;
+                    Device.StartTimer(TimeSpan.FromMilliseconds(DataGrid.DoubleClickInterval), () =>
+                    {
+                        // Run ICommand selected item
+                        if (!isDoneDoubleClick && isCanDoubleClick)
+                        {
+                            DataGrid.CommandSelectedItem?.Execute(BindingContext);
+                        }
 
+                        isCanDoubleClick = false;
+                        isDoneDoubleClick = false;
 
-            if (!isDoneDoubleClick)
-            {
-                // Run ICommand selected item
-                DataGrid.CommandSelectedItem?.Execute(BindingContext);
+                        return false;
+                    });
+
+                    
+                }
+                // Double click
+                else
+                {
+                    DataGrid.CommandDoubleClickItem?.Execute(BindingContext);
+                    isDoneDoubleClick = true;
+                }
             }
+            // Single click
             else
             {
-                isDoneDoubleClick = false;
-                isCanDoubleClick = false;
+                DataGrid.CommandSelectedItem?.Execute(BindingContext);
             }
         }
 

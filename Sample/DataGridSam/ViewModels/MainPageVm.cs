@@ -78,7 +78,7 @@ namespace Sample.ViewModels
         {
             if (param is Ware ware)
             {
-                //view.DisplayAlert("Select", $"You are selected {ware.Pos} {ware.Name}", "OK");
+                view.DisplayAlert("Select", $"You are selected {ware.Pos} {ware.Name}", "OK");
             }
         }
 
