@@ -11,7 +11,7 @@ namespace Sample
             InitializeComponent();
 
             // Init DataGridSam
-            DataGridSam.DataGridSamInit.Init();
+            //DataGridSam.DataGridSamInit.Init();
 
             // TEMP Debug
             HotReloader.Current.Run(this);

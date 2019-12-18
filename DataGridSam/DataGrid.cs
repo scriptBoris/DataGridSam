@@ -2,26 +2,56 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
 
 namespace DataGridSam
 {
     [Xamarin.Forms.Internals.Preserve(AllMembers = true)]
-    [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class DataGrid : Grid
     {
+
         public DataGrid()
         {
-            InitializeComponent();
-            stackList.DataGrid = this;
+            RowSpacing = 0;
+            RowDefinitions.Add(new RowDefinition{ Height = GridLength.Auto });
+            RowDefinitions.Add(new RowDefinition{ Height = GridLength.Star });
+
+            // Head
+            headGrid = new Grid();
+            headGrid.BackgroundColor = HeaderBackgroundColor;
+            //headGrid.SetBinding(Grid.BackgroundColorProperty, new Binding(nameof(HeaderBackgroundColor), source:this));
+            SetRow(headGrid, 0);
+            Children.Add(headGrid);
+
+            // Scroll
+            scroll = new ScrollView();
+            SetRow(scroll, 1);
+            Children.Add(scroll);
+
+            // Body
+            bodyGrid = new Grid();
+            bodyGrid.VerticalOptions = LayoutOptions.Start;
+            bodyGrid.BackgroundColor = Color.Accent;
+            scroll.Content = bodyGrid;
+
+            // Stack list
+            stackList = new StackList();
             stackList.Spacing = 0;
+            stackList.DataGrid = this;
             stackList.ItemTemplate = new StackListTemplateSelector();
+            bodyGrid.Children.Add(stackList);
+
+            // Mask
+            maskGrid = new Grid();
+            maskGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
+            maskGrid.ColumnSpacing = 0;
+            maskGrid.BackgroundColor = Color.Transparent;
+            maskGrid.InputTransparent = true;
+
+            bodyGrid.Children.Add(maskGrid);
         }
 
         // Columns
@@ -44,7 +74,7 @@ namespace DataGridSam
         // Row triggers
         public static readonly BindableProperty RowTriggersProperty =
             BindableProperty.Create(nameof(RowTriggers), typeof(List<RowTrigger>), typeof(DataGrid), null,
-                defaultValueCreator: b=>
+                defaultValueCreator: b =>
                 {
                     return new List<RowTrigger>();
                 },
@@ -99,7 +129,7 @@ namespace DataGridSam
 
         // Command double click interval item 
         public static readonly BindableProperty DoubleClickIntervalProperty =
-            BindableProperty.Create(nameof(DoubleClickInterval), typeof(double), typeof(DataGrid), (double)300, 
+            BindableProperty.Create(nameof(DoubleClickInterval), typeof(double), typeof(DataGrid), (double)300,
                 propertyChanged: (b, o, n) =>
                 {
                     double value = (double)n;
@@ -120,7 +150,7 @@ namespace DataGridSam
                     var self = (DataGrid)b;
 
                     // no action, if we do internal work
-                    if (self.blockThrowPropChanged)
+                    if (self.isBlockThrowPropChanged)
                         return;
 
                     var lastRow = self.SelectedRow;
@@ -154,7 +184,7 @@ namespace DataGridSam
                             int pageStart = self.PaginationCurrentPageStartIndex;
                             int dif = match - self.PaginationCurrentPageStartIndex;
 
-                            if (dif >= 0 && dif <= pageStart+self.PaginationItemCount-1)
+                            if (dif >= 0 && dif <= pageStart + self.PaginationItemCount - 1)
                             {
                                 var row = (Row)self.stackList.Children[dif];
                                 row.isSelected = true;
@@ -165,10 +195,10 @@ namespace DataGridSam
                         }
                     }
                 });
-        public object SelectedItem 
-        { 
-            get { return GetValue(SelectedItemProperty); } 
-            set { SetValue(SelectedItemProperty, value); } 
+        public object SelectedItem
+        {
+            get { return GetValue(SelectedItemProperty); }
+            set { SetValue(SelectedItemProperty, value); }
         }
 
         // Pagination items count
@@ -205,30 +235,34 @@ namespace DataGridSam
 
         // Border color
         public static readonly BindableProperty BorderColorProperty =
-            BindableProperty.Create(nameof(BorderColor), typeof(Color), typeof(DataGrid), defaultValue: Color.Gray);
-        public Color BorderColor { 
-            get { return (Color)GetValue(BorderColorProperty); } 
-            set { SetValue(BorderColorProperty, value); } 
+            BindableProperty.Create(nameof(BorderColor), typeof(Color), typeof(DataGrid), Color.Gray);
+        /// <summary>
+        /// Border color (default: Color.Gray)
+        /// </summary>
+        public Color BorderColor
+        {
+            get { return (Color)GetValue(BorderColorProperty); }
+            set { SetValue(BorderColorProperty, value); }
         }
 
         // Header height
         public static readonly BindableProperty HeaderHeightProperty =
             BindableProperty.Create(nameof(HeaderHeight), typeof(int), typeof(DataGrid), 0,
-                propertyChanged: (b, o, n) => 
+                propertyChanged: (b, o, n) =>
                 {
                     var self = b as DataGrid;
-                    var r = self.RowDefinitions.First();
+                    var row = self.RowDefinitions.First();
                     int value = (int)n;
 
                     if (value == 0)
-                        r.Height = GridLength.Auto;
+                        row.Height = GridLength.Auto;
                     else if (value > 0)
-                        r.Height = new GridLength(value);
+                        row.Height = new GridLength(value);
                 });
         public int HeaderHeight
         {
             get { return (int)GetValue(HeaderHeightProperty); }
-            set { SetValue(HeaderHeightProperty, value); } 
+            set { SetValue(HeaderHeightProperty, value); }
         }
 
         // Header background color
@@ -237,7 +271,8 @@ namespace DataGridSam
         /// <summary>
         /// Header background color. Default: Gray
         /// </summary>
-        public Color HeaderBackgroundColor { 
+        public Color HeaderBackgroundColor
+        {
             get { return (Color)GetValue(HeaderBackgroundColorProperty); }
             set { SetValue(HeaderBackgroundColorProperty, value); }
         }
@@ -268,7 +303,12 @@ namespace DataGridSam
 
         // Header label style
         public static readonly BindableProperty HeaderLabelStyleProperty =
-            BindableProperty.Create(nameof(HeaderLabelStyle), typeof(Style), typeof(DataGrid));
+            BindableProperty.Create(nameof(HeaderLabelStyle), typeof(Style), typeof(DataGrid),
+                propertyChanged: (b,o,n) =>
+                {
+                    var self = (DataGrid)b;
+                    self.UpdateHeaderStyle(n as Style);
+                });
         /// <summary>
         /// Header label style. Default: null
         /// </summary>
@@ -284,8 +324,8 @@ namespace DataGridSam
         /// <summary>
         /// Cell padding (thickness). Default: {5,5,5,5}
         /// </summary>
-        public Thickness CellPadding 
-        { 
+        public Thickness CellPadding
+        {
             get { return (Thickness)GetValue(CellPaddingProperty); }
             set { SetValue(CellPaddingProperty, value); }
         }

@@ -2,38 +2,77 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Xamarin.Forms;
 
 namespace DataGridSam
 {
     public partial class DataGrid
     {
         /// <summary>
-        /// For INTERNAL USING
-        /// Current time: selected cell by user
+        /// Main scroll. Contains: bodyGrid, mainStackLayout 
+        /// (if enable pagination)
+        /// </summary>
+        internal ScrollView scroll;
+
+        /// <summary>
+        /// For imitate columns lines
+        /// </summary>
+        internal Grid maskGrid;
+
+        /// <summary>
+        /// Main GUI component that display rows
+        /// </summary>
+        internal StackList stackList;
+
+        /// <summary>
+        /// Heads
+        /// </summary>
+        internal Grid headGrid;
+
+        /// <summary>
+        /// Contains: maskGrid, stackList
+        /// </summary>
+        internal Grid bodyGrid;
+
+
+
+
+        /// <summary>
+        /// Current time: selected row by user
         /// </summary>
         internal Row SelectedRow;
 
         /// <summary>
-        /// For INTERNAL USING
         /// Can block event property changed for property 
         /// "SelectedItem"
         /// </summary>
-        internal bool blockThrowPropChanged;
+        internal bool isBlockThrowPropChanged;
+
+
 
         /// <summary>
-        /// For INTERNAL USING
+        /// Only for pagination
         /// </summary>
         internal int PaginationCurrentPageStartIndex;
 
         /// <summary>
-        /// For INTERNAL USING
+        /// Only for pagination
         /// </summary>
         internal int PaginationCurrentPageItemsEndIndex;
 
-
         /// <summary>
-        /// For INTERNAL USING
+        /// Only for pagination
         /// </summary>
         internal int PaginationCurrentPageEndIndex;
+
+        /// <summary>
+        /// For pagination
+        /// </summary>
+        internal Button buttonLatest;
+
+        /// <summary>
+        /// For pagination
+        /// </summary>
+        internal Button buttonNext;
     }
 }
