@@ -20,11 +20,12 @@ namespace Sample.UWP
     /// <summary>
     /// Пустая страница, которую можно использовать саму по себе или для перехода внутри фрейма.
     /// </summary>
-    public sealed partial class MainPage : Page
+    public sealed partial class MainPage
     {
         public MainPage()
         {
             this.InitializeComponent();
+            LoadApplication(new Sample.App());
         }
     }
 }

@@ -47,8 +47,9 @@ namespace Sample.UWP
             {
                 // Создание фрейма, который станет контекстом навигации, и переход к первой странице
                 rootFrame = new Frame();
-
                 rootFrame.NavigationFailed += OnNavigationFailed;
+                Xamarin.Forms.Forms.Init(e);
+
 
                 if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
                 {
