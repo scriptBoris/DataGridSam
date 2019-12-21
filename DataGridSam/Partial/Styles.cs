@@ -7,7 +7,7 @@ namespace DataGridSam
 {
     public partial class DataGrid
     {
-        private static Style headerDefaultStyle = new Style(typeof(Label));
+        private static Style headerDefaultStyle;
 
         internal static Style HeaderDefaultStyle { 
             get

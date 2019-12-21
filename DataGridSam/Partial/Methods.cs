@@ -63,8 +63,6 @@ namespace DataGridSam
             column.HeaderLabel.TextColor = HeaderTextColor;
             column.HeaderLabel.FontSize = HeaderFontSize;
 
-            // TODO Add column header style
-            // Detect styles (if has - override latest parameters)
 			column.HeaderLabel.Style = column.HeaderLabelStyle ?? this.HeaderLabelStyle ?? HeaderDefaultStyle;
 
             // Drop in wrap container
