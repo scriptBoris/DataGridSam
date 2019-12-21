@@ -89,7 +89,7 @@
     <Folder Include="Resources\drawable\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DataGridSam\Sample.csproj">
+    <ProjectReference Include="..\Sample\Sample.csproj">
       <Project>{4448BD6A-8165-4F89-8308-4465358CE533}</Project>
       <Name>Sample</Name>
     </ProjectReference>
