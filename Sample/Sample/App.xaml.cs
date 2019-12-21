@@ -9,12 +9,6 @@ namespace Sample
         public App()
         {
             InitializeComponent();
-
-            // Init DataGridSam
-            //DataGridSam.DataGridSamInit.Init();
-
-            // TEMP Debug
-            HotReloader.Current.Run(this);
             MainPage = new NavigationPage(new Views.MainPage());
         }
 
