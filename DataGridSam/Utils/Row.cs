@@ -294,6 +294,7 @@ namespace DataGridSam.Utils
                 BackgroundColor = DataGrid.BorderColor,
                 VerticalOptions = LayoutOptions.FillAndExpand,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
+                HeightRequest = DataGrid.BorderWidth,
             };
             return line;
         }

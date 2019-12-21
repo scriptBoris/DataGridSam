@@ -106,6 +106,9 @@
             <StackLayout Orientation="Horizontal">
                 <Label Text="Selected index"/>
                 <Entry Text="{Binding SelectedIndex}" WidthRequest="120"/>
+
+                <Label Text="{Binding ItemsCount, StringFormat='ItemsCount: {0}'}"
+                       Margin="20,0,10,0"/>
             </StackLayout>
             
             <!--Add 5 items-->

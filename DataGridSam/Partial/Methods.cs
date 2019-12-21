@@ -33,8 +33,8 @@ namespace DataGridSam
                     // Header table
                     headGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = col.Width });
                     var headCell = CreateColumnHeader(col);
-                    headGrid.Children.Add(headCell);
                     Grid.SetColumn(headCell, i);
+                    headGrid.Children.Add(headCell);
 
 
                     // Create vertical lines (Table)
@@ -79,11 +79,11 @@ namespace DataGridSam
         {
             var line = new BoxView
             {
-                WidthRequest = BorderWidth * 1.05,
+                WidthRequest = BorderWidth,
                 VerticalOptions = LayoutOptions.FillAndExpand,
                 HorizontalOptions = LayoutOptions.EndAndExpand,
                 BackgroundColor = BorderColor,
-                TranslationX = BorderWidth * 1.10,
+                //TranslationX = BorderWidth * 1.10,
             };
             return line;
         }

@@ -130,6 +130,9 @@ namespace DataGridSam
         // Cell template
         public static readonly BindableProperty CellTemplateProperty =
             BindableProperty.Create(nameof(CellTemplate), typeof(DataTemplate), typeof(DataGridColumn), null);
+        /// <summary>
+        /// Custom cell template (default: null)
+        /// </summary>
         public DataTemplate CellTemplate
         {
             get { return (DataTemplate)GetValue(CellTemplateProperty); }

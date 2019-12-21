@@ -19,38 +19,35 @@ namespace DataGridSam
             RowDefinitions.Add(new RowDefinition{ Height = GridLength.Auto });
             RowDefinitions.Add(new RowDefinition{ Height = GridLength.Star });
 
-            // Head
+            // Head Grid (1)
             headGrid = new Grid();
             headGrid.BackgroundColor = HeaderBackgroundColor;
-            //headGrid.SetBinding(Grid.BackgroundColorProperty, new Binding(nameof(HeaderBackgroundColor), source:this));
             SetRow(headGrid, 0);
             Children.Add(headGrid);
 
-            // Scroll
+            // Scroll (1)
             scroll = new ScrollView();
             SetRow(scroll, 1);
             Children.Add(scroll);
 
-            // Body
+            // Body Grid (2)
             bodyGrid = new Grid();
             bodyGrid.VerticalOptions = LayoutOptions.Start;
-            bodyGrid.BackgroundColor = Color.Accent;
             scroll.Content = bodyGrid;
 
-            // Stack list
+            // Stack list (3)
             stackList = new StackList();
             stackList.Spacing = 0;
             stackList.DataGrid = this;
             stackList.ItemTemplate = new StackListTemplateSelector();
             bodyGrid.Children.Add(stackList);
 
-            // Mask
+            // Mask Grid (3)
             maskGrid = new Grid();
             maskGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
             maskGrid.ColumnSpacing = 0;
             maskGrid.BackgroundColor = Color.Transparent;
             maskGrid.InputTransparent = true;
-
             bodyGrid.Children.Add(maskGrid);
         }
 
@@ -186,6 +183,12 @@ namespace DataGridSam
 
                             if (dif >= 0 && dif <= pageStart + self.PaginationItemCount - 1)
                             {
+                                // Safe
+                                if (dif >= self.stackList.Children.Count)
+                                {
+
+                                }
+
                                 var row = (Row)self.stackList.Children[dif];
                                 row.isSelected = true;
                                 row.UpdateStyle();
@@ -363,11 +366,11 @@ namespace DataGridSam
             set { SetValue(SelectedRowAttributeProperty, value); }
         }
 
-        // Rows color (Background)
+        // Rows background color
         public static readonly BindableProperty RowsColorProperty =
             BindableProperty.Create(nameof(RowsColor), typeof(Color), typeof(DataGrid), defaultValue: Color.White);
         /// <summary>
-        /// Rows color (Background). Default: Color.White
+        /// Rows background color. Default: Color.White
         /// </summary>
         public Color RowsColor
         {

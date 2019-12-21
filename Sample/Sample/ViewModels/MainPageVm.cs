@@ -57,12 +57,23 @@ namespace Sample.ViewModels
 
             Items = temp;
             SelectedItem = Items[0];
+
+            temp.CollectionChanged += (o, n) =>
+            {
+                OnPropertyChanged(nameof(ItemsCount));
+                int i = 1;
+                foreach (var item in Items)
+                {
+                    item.Pos = i++;
+                }
+            };
         }
 
         #region Props
         public ObservableCollection<Ware> Items { get; set; }
         public Ware SelectedItem { get; set; }
         public int SelectedIndex { get; set; }
+        public int ItemsCount => Items.Count;
         public ICommand CommandSelectItem { get; set; }
         public ICommand CommandDoubleClick { get; set; }
         public ICommand CommandAddWeight { get; set; }
