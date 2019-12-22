@@ -16,8 +16,8 @@ namespace DataGridSam
             SetColumnsBindingContext();
             
             // Set vertical thickness
-            maskGrid.ColumnSpacing = BorderWidth;
-            headGrid.ColumnSpacing = BorderWidth;
+            maskGrid.ColumnSpacing = 0;
+            headGrid.ColumnSpacing = 0;
 
             // Clear GUI header & mask
             headGrid.Children.Clear();
@@ -51,6 +51,8 @@ namespace DataGridSam
                     i++;
                 }
             }
+
+            
         }
 
         /// <summary>
@@ -109,6 +111,45 @@ namespace DataGridSam
             }
         }
 
+        private void UpdateWrapper()
+        {
+            if (IsWrapped)
+            {
+                Children.Add(wrapper.left);
+                Children.Add(wrapper.top);
+                Children.Add(wrapper.right);
+                Children.Add(wrapper.bottom);
+                maskGrid.Children.Add(wrapper.leftScroll);
+                maskGrid.Children.Add(wrapper.rightScroll);
+
+                stackList.SizeChanged += CheckWrapperBottomVisible;
+                mainScroll.SizeChanged += CheckWrapperBottomVisible;
+            }
+            else
+            {
+                Children.Remove(wrapper.left);
+                Children.Remove(wrapper.top);
+                Children.Remove(wrapper.right);
+                Children.Remove(wrapper.bottom);
+                maskGrid.Children.Remove(wrapper.leftScroll);
+                maskGrid.Children.Remove(wrapper.rightScroll);
+                stackList.SizeChanged -= CheckWrapperBottomVisible;
+                mainScroll.SizeChanged -= CheckWrapperBottomVisible;
+            }
+        }
+
+        private void CheckWrapperBottomVisible(object obj, EventArgs e)
+        {
+            if (mainScroll.Height > stackList.Height)
+            {
+                wrapper.bottom.IsVisible = false;
+            }
+            else
+            {
+                wrapper.bottom.IsVisible = true;
+            }
+        }
+
         internal void ShowPaginationBackButton(bool isVisible)
         {
             if (buttonLatest != null)
@@ -123,13 +164,13 @@ namespace DataGridSam
         private void OnButtonLatestClicked(object sender, EventArgs e)
         {
             stackList.RedrawForPage(PaginationItemCount, selectPage: PaginationCurrentPage-1);
-            scroll.ScrollToAsync(0, stackList.Height, false);
+            mainScroll.ScrollToAsync(0, stackList.Height, false);
         }
 
         private void OnButtonNextClicked(object sender, EventArgs e)
         {
             stackList.RedrawForPage(PaginationItemCount, selectPage: PaginationCurrentPage+1);
-            scroll.ScrollToAsync(0, 0, false);
+            mainScroll.ScrollToAsync(0, 0, false);
         }
     }
 }

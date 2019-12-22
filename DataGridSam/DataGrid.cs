@@ -12,7 +12,6 @@ namespace DataGridSam
     [Xamarin.Forms.Internals.Preserve(AllMembers = true)]
     public partial class DataGrid : Grid
     {
-
         public DataGrid()
         {
             RowSpacing = 0;
@@ -26,14 +25,14 @@ namespace DataGridSam
             Children.Add(headGrid);
 
             // Scroll (1)
-            scroll = new ScrollView();
-            SetRow(scroll, 1);
-            Children.Add(scroll);
+            mainScroll = new ScrollView();
+            SetRow(mainScroll, 1);
+            Children.Add(mainScroll);
 
             // Body Grid (2)
             bodyGrid = new Grid();
             bodyGrid.VerticalOptions = LayoutOptions.Start;
-            scroll.Content = bodyGrid;
+            mainScroll.Content = bodyGrid;
 
             // Stack list (3)
             stackList = new StackList();
@@ -49,6 +48,11 @@ namespace DataGridSam
             maskGrid.BackgroundColor = Color.Transparent;
             maskGrid.InputTransparent = true;
             bodyGrid.Children.Add(maskGrid);
+
+            // Wrapper (1)
+            wrapper = new BorderWrapper(this);
+            Grid.SetRow(wrapper.bottom, 1);
+            UpdateWrapper();
         }
 
         // Columns
@@ -146,10 +150,6 @@ namespace DataGridSam
                 {
                     var self = (DataGrid)b;
 
-                    // no action, if we do internal work
-                    if (self.isBlockThrowPropChanged)
-                        return;
-
                     var lastRow = self.SelectedRow;
 
                     if (newSelectedRow == null && lastRow != null)
@@ -246,6 +246,22 @@ namespace DataGridSam
         {
             get { return (Color)GetValue(BorderColorProperty); }
             set { SetValue(BorderColorProperty, value); }
+        }
+
+        // Is wrapped by borders
+        public static readonly BindableProperty IsWrappedProperty =
+            BindableProperty.Create(nameof(IsWrapped), typeof(bool), typeof(DataGrid), true,
+                propertyChanged: (b, o, n) =>
+                {
+                    (b as DataGrid).UpdateWrapper();
+                });
+        /// <summary>
+        /// Is wrapped by borders (default: true)
+        /// </summary>
+        public bool IsWrapped
+        {
+            get { return (bool)GetValue(IsWrappedProperty); }
+            set { SetValue(IsWrappedProperty, value); }
         }
 
         // Header height

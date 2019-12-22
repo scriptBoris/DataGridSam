@@ -197,9 +197,9 @@ namespace DataGridSam.Utils
                             return;
                         }
 
-                        startIndex = DataGrid.PaginationCurrentPageEndIndex + 1;
-                        int end = startIndex + e.OldItems.Count;
-                        for (int i=startIndex; i<end; i++)
+                        startIndex = DataGrid.PaginationCurrentPageEndIndex;
+                        int end = startIndex + e.OldItems.Count - 1;
+                        for (int i=startIndex; i<=end; i++)
                         {
                             if (i >= source.Count - 1)
                                 DataGrid.ShowPaginationNextButton(false);

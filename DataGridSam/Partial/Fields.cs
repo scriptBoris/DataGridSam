@@ -12,7 +12,7 @@ namespace DataGridSam
         /// Main scroll. Contains: bodyGrid, mainStackLayout 
         /// (if enable pagination)
         /// </summary>
-        internal ScrollView scroll;
+        internal ScrollView mainScroll;
 
         /// <summary>
         /// For imitate columns lines
@@ -30,10 +30,14 @@ namespace DataGridSam
         internal Grid headGrid;
 
         /// <summary>
-        /// Contains: maskGrid, stackList
+        /// Contains: stackList, maskGrid
         /// </summary>
         internal Grid bodyGrid;
 
+        /// <summary>
+        /// Group of BoxViews imitate wrapper (for max FPS)
+        /// </summary>
+        internal BorderWrapper wrapper;
 
 
 
@@ -41,12 +45,6 @@ namespace DataGridSam
         /// Current time: selected row by user
         /// </summary>
         internal Row SelectedRow;
-
-        /// <summary>
-        /// Can block event property changed for property 
-        /// "SelectedItem"
-        /// </summary>
-        internal bool isBlockThrowPropChanged;
 
 
 
