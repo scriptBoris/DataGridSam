@@ -76,7 +76,7 @@ namespace DataGridSam.Utils
         private void CreateRow()
         {
             RowSpacing = 0;
-            ColumnSpacing = DataGrid.BorderWidth;
+            ColumnSpacing = 0;
 
             RowDefinitions = new RowDefinitionCollection
             {
@@ -117,6 +117,8 @@ namespace DataGridSam.Utils
                     cell.Wrapper = new ContentView
                     {
                         Padding = DataGrid.CellPadding,
+                        HorizontalOptions = LayoutOptions.FillAndExpand,
+                        VerticalOptions = LayoutOptions.FillAndExpand,
                         Content = label,
                     };
                     cell.Label = label;

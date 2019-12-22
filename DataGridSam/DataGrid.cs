@@ -228,7 +228,7 @@ namespace DataGridSam
         public static readonly BindableProperty BorderWidthProperty =
             BindableProperty.Create(nameof(BorderWidth), typeof(double), typeof(DataGrid), 1.0, BindingMode.Default);
         /// <summary>
-        /// default: 2
+        /// default: 1
         /// </summary>
         public double BorderWidth
         {
