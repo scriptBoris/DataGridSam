@@ -129,6 +129,9 @@ namespace DataGridSam
         }
 
         // Command double click interval item 
+        /// <summary>
+        /// Default: 300 ms
+        /// </summary>
         public static readonly BindableProperty DoubleClickIntervalProperty =
             BindableProperty.Create(nameof(DoubleClickInterval), typeof(double), typeof(DataGrid), (double)300,
                 propertyChanged: (b, o, n) =>
@@ -137,6 +140,9 @@ namespace DataGridSam
                     if (value <= 0)
                         throw new Exception("Interval double click can not be less than zero or equal zero");
                 });
+        /// <summary>
+        /// Default: 300 ms
+        /// </summary>
         public double DoubleClickInterval
         {
             get { return (double)GetValue(DoubleClickIntervalProperty); }
