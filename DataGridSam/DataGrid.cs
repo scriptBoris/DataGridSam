@@ -55,6 +55,8 @@ namespace DataGridSam
             UpdateWrapper();
         }
 
+
+
         // Columns
         public static readonly BindableProperty ColumnsProperty =
             BindableProperty.Create(nameof(Columns), typeof(List<DataGridColumn>), typeof(DataGrid),
@@ -71,6 +73,8 @@ namespace DataGridSam
             get { return (List<DataGridColumn>)GetValue(ColumnsProperty); }
             set { SetValue(ColumnsProperty, value); }
         }
+
+
 
         // Row triggers
         public static readonly BindableProperty RowTriggersProperty =
@@ -110,6 +114,8 @@ namespace DataGridSam
             set { SetValue(ItemsSourceProperty, value); }
         }
 
+
+
         // Command selected item 
         public static readonly BindableProperty CommandSelectedItemProperty =
             BindableProperty.Create(nameof(CommandSelectedItem), typeof(ICommand), typeof(DataGrid), null);
@@ -118,6 +124,8 @@ namespace DataGridSam
             get { return (ICommand)GetValue(CommandSelectedItemProperty); }
             set { SetValue(CommandSelectedItemProperty, value); }
         }
+
+
 
         // Command double click selected item 
         public static readonly BindableProperty CommandDoubleClickItemProperty =
@@ -128,14 +136,39 @@ namespace DataGridSam
             set { SetValue(CommandDoubleClickItemProperty, value); }
         }
 
+
+
         // Command long tap item
         public static readonly BindableProperty CommandLongTapItemProperty =
-            BindableProperty.Create(nameof(CommandLongTapItem), typeof(ICommand), typeof(DataGrid), null);
+            BindableProperty.Create(nameof(CommandLongTapItem), typeof(ICommand), typeof(DataGrid), null,
+                propertyChanged: (b, o, n) =>
+                {
+                    var self = b as DataGrid;
+                    self.BindLongTapCommand(n as ICommand);
+                });
         public ICommand CommandLongTapItem
         {
             get { return (ICommand)GetValue(CommandLongTapItemProperty); }
             set { SetValue(CommandLongTapItemProperty, value); }
         }
+
+
+
+        /// <summary>
+        /// Color when user taped on item (Default: Accent)
+        /// </summary>
+        public static readonly BindableProperty LongTapColorProperty =
+            BindableProperty.Create(nameof(LongTapColor), typeof(Color), typeof(DataGrid), Color.Accent);
+        /// <summary>
+        /// Color when user taped on item (Default: Accent)
+        /// </summary>
+        public Color LongTapColor
+        {
+            get { return (Color)GetValue(LongTapColorProperty); }
+            set { SetValue(LongTapColorProperty, value); }
+        }
+
+
 
         /// <summary>
         /// Command double click interval item 
@@ -157,6 +190,8 @@ namespace DataGridSam
             get { return (double)GetValue(DoubleClickIntervalProperty); }
             set { SetValue(DoubleClickIntervalProperty, value); }
         }
+
+
 
         // Selected item
         public static readonly BindableProperty SelectedItemProperty =
@@ -219,6 +254,8 @@ namespace DataGridSam
             set { SetValue(SelectedItemProperty, value); }
         }
 
+
+
         // Pagination items count
         public static readonly BindableProperty PaginationItemCountProperty =
             BindableProperty.Create(nameof(PaginationItemCount), typeof(int), typeof(DataGrid), 0);
@@ -227,6 +264,8 @@ namespace DataGridSam
             get { return (int)GetValue(PaginationItemCountProperty); }
             set { SetValue(PaginationItemCountProperty, value); }
         }
+
+
 
         // Pagination current page
         public static readonly BindableProperty PaginationCurrentPageProperty =
@@ -239,6 +278,8 @@ namespace DataGridSam
             get { return (int)GetValue(PaginationCurrentPageProperty); }
             set { SetValue(PaginationCurrentPageProperty, value); }
         }
+
+
 
         /// <summary>
         ///  Border width (default: 1)
@@ -254,6 +295,8 @@ namespace DataGridSam
             set { SetValue(BorderWidthProperty, value); }
         }
 
+
+
         // Border color
         public static readonly BindableProperty BorderColorProperty =
             BindableProperty.Create(nameof(BorderColor), typeof(Color), typeof(DataGrid), Color.Gray);
@@ -265,6 +308,8 @@ namespace DataGridSam
             get { return (Color)GetValue(BorderColorProperty); }
             set { SetValue(BorderColorProperty, value); }
         }
+
+
 
         // Is wrapped by borders
         public static readonly BindableProperty IsWrappedProperty =
@@ -281,6 +326,8 @@ namespace DataGridSam
             get { return (bool)GetValue(IsWrappedProperty); }
             set { SetValue(IsWrappedProperty, value); }
         }
+
+
 
         // Header height
         public static readonly BindableProperty HeaderHeightProperty =
@@ -302,6 +349,8 @@ namespace DataGridSam
             set { SetValue(HeaderHeightProperty, value); }
         }
 
+
+
         // Header background color
         public static readonly BindableProperty HeaderBackgroundColorProperty =
             BindableProperty.Create(nameof(HeaderBackgroundColor), typeof(Color), typeof(DataGrid), defaultValue: Color.Gray);
@@ -313,6 +362,8 @@ namespace DataGridSam
             get { return (Color)GetValue(HeaderBackgroundColorProperty); }
             set { SetValue(HeaderBackgroundColorProperty, value); }
         }
+
+
 
         // Header text color
         public static readonly BindableProperty HeaderTextColorProperty =
@@ -326,6 +377,8 @@ namespace DataGridSam
             set { SetValue(HeaderTextColorProperty, value); }
         }
 
+
+
         // Header font size
         public static readonly BindableProperty HeaderFontSizeProperty =
             BindableProperty.Create(nameof(HeaderFontSize), typeof(double), typeof(DataGrid), defaultValue: 14.0);
@@ -337,6 +390,8 @@ namespace DataGridSam
             get { return (double)GetValue(HeaderFontSizeProperty); }
             set { SetValue(HeaderFontSizeProperty, value); }
         }
+
+
 
         // Header label style
         public static readonly BindableProperty HeaderLabelStyleProperty =
@@ -355,6 +410,8 @@ namespace DataGridSam
             set { SetValue(HeaderLabelStyleProperty, value); }
         }
 
+
+
         // Cell padding
         public static readonly BindableProperty CellPaddingProperty =
             BindableProperty.Create(nameof(CellPadding), typeof(Thickness), typeof(DataGrid), defaultValue: new Thickness(5));
@@ -367,6 +424,8 @@ namespace DataGridSam
             set { SetValue(CellPaddingProperty, value); }
         }
 
+
+
         // Selected row color
         public static readonly BindableProperty SelectedRowColorProperty =
             BindableProperty.Create(nameof(SelectedRowColor), typeof(Color), typeof(DataGrid), null);
@@ -375,6 +434,8 @@ namespace DataGridSam
             get { return (Color)GetValue(SelectedRowColorProperty); }
             set { SetValue(SelectedRowColorProperty, value); }
         }
+
+
 
         // Selected row text color
         public static readonly BindableProperty SelectedRowTextColorProperty =
@@ -388,6 +449,8 @@ namespace DataGridSam
             set { SetValue(SelectedRowTextColorProperty, value); }
         }
 
+
+
         // Selected row attribute
         public static readonly BindableProperty SelectedRowAttributeProperty =
             BindableProperty.Create(nameof(SelectedRowAttribute), typeof(FontAttributes), typeof(DataGrid), null);
@@ -399,6 +462,8 @@ namespace DataGridSam
             get { return (FontAttributes)GetValue(SelectedRowAttributeProperty); }
             set { SetValue(SelectedRowAttributeProperty, value); }
         }
+
+
 
         // Rows background color
         public static readonly BindableProperty RowsColorProperty =
@@ -412,6 +477,8 @@ namespace DataGridSam
             set { SetValue(RowsColorProperty, value); }
         }
 
+
+
         //Rows text color
         public static readonly BindableProperty RowsTextColorProperty =
             BindableProperty.Create(nameof(RowsTextColor), typeof(Color), typeof(DataGrid), defaultValue: Color.Black);
@@ -424,6 +491,8 @@ namespace DataGridSam
             set { SetValue(RowsTextColorProperty, value); }
         }
 
+
+
         // Rows font size
         public static readonly BindableProperty RowsFontSizeProperty =
             BindableProperty.Create(nameof(RowsFontSize), typeof(double), typeof(DataGrid), defaultValue: 14.0);
@@ -435,6 +504,8 @@ namespace DataGridSam
             get { return (double)GetValue(RowsFontSizeProperty); }
             set { SetValue(RowsFontSizeProperty, value); }
         }
+
+
 
         // Rows text attribute
         public static readonly BindableProperty RowsFontAttributeProperty =

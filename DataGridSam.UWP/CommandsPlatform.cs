@@ -19,7 +19,7 @@ namespace DataGridSam.UWP
         {
             if (View != null)
             {
-                View.Tapped += OnTapped;
+                //View.Tapped += OnTapped;
                 View.RightTapped += OnRightTapped;
             }
         }
@@ -31,15 +31,15 @@ namespace DataGridSam.UWP
 
             if (View != null)
             {
-                View.Tapped -= OnTapped;
+                //View.Tapped -= OnTapped;
                 View.RightTapped -= OnRightTapped;
             }
         }
 
-        private void OnTapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
-        {
-            ClickHandler();
-        }
+        //private void OnTapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        //{
+        //    ClickHandler();
+        //}
 
         private void OnRightTapped(object sender, Windows.UI.Xaml.Input.RightTappedRoutedEventArgs e)
         {
@@ -49,13 +49,13 @@ namespace DataGridSam.UWP
                 cmd.Execute(param);
         }
 
-        private void ClickHandler()
-        {
-            var cmd = Commands.GetTap(Element);
-            var param = Commands.GetTapParameter(Element);
-            if (cmd?.CanExecute(param) ?? false)
-                cmd.Execute(param);
-        }
+        //private void ClickHandler()
+        //{
+        //    var cmd = Commands.GetTap(Element);
+        //    var param = Commands.GetTapParameter(Element);
+        //    if (cmd?.CanExecute(param) ?? false)
+        //        cmd.Execute(param);
+        //}
 
         public static void Init()
         {

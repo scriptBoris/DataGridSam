@@ -13,6 +13,20 @@ namespace DataGridSam.Platform
         {
         }
 
+
+        public static readonly BindableProperty ColorProperty =
+            BindableProperty.CreateAttached("Color", typeof(Color), typeof(Commands), Color.Accent);
+        public static void SetColor(BindableObject view, Color value)
+        {
+            view.SetValue(ColorProperty, value);
+        }
+        public static Color GetColor(BindableObject view)
+        {
+            return (Color)view.GetValue(ColorProperty);
+        }
+
+
+
         public static readonly BindableProperty TapProperty =
             BindableProperty.CreateAttached(
                 "Tap",
@@ -21,23 +35,23 @@ namespace DataGridSam.Platform
                 default(ICommand),
                 propertyChanged: PropertyChanged
             );
-
         public static void SetTap(BindableObject view, ICommand value)
         {
             view.SetValue(TapProperty, value);
         }
-
         public static ICommand GetTap(BindableObject view)
         {
             return (ICommand)view.GetValue(TapProperty);
         }
+
+
 
         public static readonly BindableProperty TapParameterProperty =
             BindableProperty.CreateAttached(
                 "TapParameter",
                 typeof(object),
                 typeof(Commands),
-                default(object),
+                default,
                 propertyChanged: PropertyChanged
             );
 
@@ -45,11 +59,13 @@ namespace DataGridSam.Platform
         {
             view.SetValue(TapParameterProperty, value);
         }
-
         public static object GetTapParameter(BindableObject view)
         {
             return view.GetValue(TapParameterProperty);
         }
+
+
+
 
         public static readonly BindableProperty LongTapProperty =
             BindableProperty.CreateAttached(
@@ -59,34 +75,33 @@ namespace DataGridSam.Platform
                 default(ICommand),
                 propertyChanged: PropertyChanged
             );
-
         public static void SetLongTap(BindableObject view, ICommand value)
         {
             view.SetValue(LongTapProperty, value);
         }
-
         public static ICommand GetLongTap(BindableObject view)
         {
             return (ICommand)view.GetValue(LongTapProperty);
         }
+
+
 
         public static readonly BindableProperty LongTapParameterProperty =
             BindableProperty.CreateAttached(
                 "LongTapParameter",
                 typeof(object),
                 typeof(Commands),
-                default(object)
+                default
             );
-
         public static void SetLongTapParameter(BindableObject view, object value)
         {
             view.SetValue(LongTapParameterProperty, value);
         }
-
         public static object GetLongTapParameter(BindableObject view)
         {
             return view.GetValue(LongTapParameterProperty);
         }
+
 
         static void PropertyChanged(BindableObject bindable, object oldValue, object newValue)
         {
@@ -130,7 +145,7 @@ namespace DataGridSam.Platform
 
     internal class CommandsRoutingEffect : RoutingEffect
     {
-        public CommandsRoutingEffect() : base("DataGridSam." + nameof(Commands))
+        public CommandsRoutingEffect() : base($"DataGridSam.{nameof(Commands)}")
         {
         }
     }

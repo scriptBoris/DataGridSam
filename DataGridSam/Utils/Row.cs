@@ -146,8 +146,10 @@ namespace DataGridSam.Utils
             tapControll.Tapped += RowTapped;
             GestureRecognizers.Add(tapControll);
 
-            // Add long tap event
-            Commands.SetLongTap(this, DataGrid.CommandLongTapItem);
+
+            //// TODO Test
+            //// Add long tap event
+            //Commands.SetLongTap(this, DataGrid.CommandLongTapItem);
         }
 
         private void RowTapped(object sender, EventArgs e)
@@ -303,6 +305,13 @@ namespace DataGridSam.Utils
                 HeightRequest = DataGrid.BorderWidth,
             };
             return line;
+        }
+
+
+        internal void BindLongTapCommand(System.Windows.Input.ICommand command)
+        {
+            Commands.SetLongTap(this, command);
+            Commands.SetLongTapParameter(this, BindingContext);
         }
     }
 }

@@ -154,13 +154,17 @@
       <Version>6.2.9</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Forms">
-      <Version>4.4.0.991640</Version>
+      <Version>3.6.0.709228</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\DataGridSam.UWP\DataGridSam.UWP.csproj">
       <Project>{52642a1f-ad6c-43d0-b642-e5a8a5adc02c}</Project>
       <Name>DataGridSam.UWP</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\DataGridSam\DataGridSam.csproj">
+      <Project>{422d7b5e-953e-45a3-a838-14ab64523127}</Project>
+      <Name>DataGridSam</Name>
     </ProjectReference>
     <ProjectReference Include="..\Sample\Sample.csproj">
       <Project>{4448bd6a-8165-4f89-8308-4465358ce533}</Project>
@@ -171,6 +175,11 @@
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties XamarinHotReloadXFormsNugetUpgradeInfoBarSampleUWPHideInfoBar="True" />
+    </VisualStudio>
+  </ProjectExtensions>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

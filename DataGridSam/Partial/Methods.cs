@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
+using System.Windows.Input;
 using Xamarin.Forms;
 
 namespace DataGridSam
@@ -171,6 +172,15 @@ namespace DataGridSam
         {
             stackList.RedrawForPage(PaginationItemCount, selectPage: PaginationCurrentPage+1);
             mainScroll.ScrollToAsync(0, 0, false);
+        }
+
+        private void BindLongTapCommand(ICommand command)
+        {
+            foreach (var item in stackList.Children)
+            {
+                var row = item as Row;
+                row.BindLongTapCommand(command);
+            }
         }
     }
 }
