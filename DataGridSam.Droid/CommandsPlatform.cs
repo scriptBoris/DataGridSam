@@ -79,6 +79,8 @@ namespace DataGridSam.Droid
                         BringLayer();
                     break;
                 case MotionEventActions.Up:
+                case MotionEventActions.Cancel:
+
                     if (IsViewInBounds((int)args.Event.RawX, (int)args.Event.RawY))
                     {
                         var range = (DateTime.Now - _tapTime).TotalMilliseconds;
@@ -87,8 +89,7 @@ namespace DataGridSam.Droid
                         else
                             ClickHandler();
                     }
-                    break;
-                case MotionEventActions.Cancel:
+
                     if (IsDisposed) 
                         return;
 
