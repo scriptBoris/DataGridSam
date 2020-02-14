@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
-namespace DataGridSam
+namespace DataGridSam.UWP
 {
     [Xamarin.Forms.Internals.Preserve(AllMembers = true)]
-    public static class DataGridSamInit
+    public static class Initialize
     {
-        // For initialization in PCL part Xamarin.Forms
         public static void Init()
         {
-            Platform.Commands.Init();
+            DataGridSamInit.Init();
+            CommandsPlatform.Init();
         }
     }
 }

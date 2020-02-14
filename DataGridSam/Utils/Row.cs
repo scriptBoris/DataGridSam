@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataGridSam.Platform;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -144,6 +145,9 @@ namespace DataGridSam.Utils
             var tapControll = new TapGestureRecognizer();
             tapControll.Tapped += RowTapped;
             GestureRecognizers.Add(tapControll);
+
+            // Add long tap event
+            Commands.SetLongTap(this, DataGrid.CommandLongTapItem);
         }
 
         private void RowTapped(object sender, EventArgs e)

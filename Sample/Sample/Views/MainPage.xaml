@@ -34,7 +34,8 @@
                           BorderWidth="2"
                           CellPadding="5,10,5,10"
                           CommandSelectedItem="{Binding CommandSelectItem}"
-                          CommandDoubleClickItem="{Binding CommandDoubleClick}">
+                          CommandDoubleClickItem="{Binding CommandDoubleClick}"
+                          CommandLongTapItem="{Binding CommandLongTap}">
                 <sam:DataGrid.Columns>
                     <!--Columns-->
                     <sam:DataGridColumn Title="#" 

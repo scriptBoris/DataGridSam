@@ -128,8 +128,17 @@ namespace DataGridSam
             set { SetValue(CommandDoubleClickItemProperty, value); }
         }
 
-        // Command double click interval item 
+        // Command long tap item
+        public static readonly BindableProperty CommandLongTapItemProperty =
+            BindableProperty.Create(nameof(CommandLongTapItem), typeof(ICommand), typeof(DataGrid), null);
+        public ICommand CommandLongTapItem
+        {
+            get { return (ICommand)GetValue(CommandLongTapItemProperty); }
+            set { SetValue(CommandLongTapItemProperty, value); }
+        }
+
         /// <summary>
+        /// Command double click interval item 
         /// Default: 300 ms
         /// </summary>
         public static readonly BindableProperty DoubleClickIntervalProperty =
@@ -222,6 +231,9 @@ namespace DataGridSam
         // Pagination current page
         public static readonly BindableProperty PaginationCurrentPageProperty =
             BindableProperty.Create(nameof(PaginationCurrentPage), typeof(int), typeof(DataGrid), 1);
+        /// <summary>
+        /// Current page if pagination is enabled (default: 1)
+        /// </summary>
         public int PaginationCurrentPage
         {
             get { return (int)GetValue(PaginationCurrentPageProperty); }
