@@ -24,19 +24,19 @@ namespace DataGridSam.Droid
 {
     public class CommandsPlatform : PlatformEffect
     {
-        public bool EnableRipple => Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop;
-        public View View => Control ?? Container;
-        public bool IsDisposed => (Container as IVisualElementRenderer)?.Element == null;
-
-        DateTime _tapTime;
+        readonly System.Timers.Timer _timer = new System.Timers.Timer();
         readonly Rect _rect = new Rect();
         readonly int[] _location = new int[2];
 
-        Color _color;
-        byte _alpha;
-        RippleDrawable _ripple;
-        FrameLayout _viewOverlay;
-        ObjectAnimator _animator;
+        private Color _color;
+        private byte _alpha;
+        private RippleDrawable _ripple;
+        private FrameLayout _viewOverlay;
+        private ObjectAnimator _animator;
+
+        public bool EnableRipple => Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop;
+        public View View => Control ?? Container;
+        public bool IsDisposed => (Container as IVisualElementRenderer)?.Element == null;
 
         public static void Init()
         {
@@ -44,6 +44,8 @@ namespace DataGridSam.Droid
 
         protected override void OnAttached()
         {
+            _timer.Elapsed += OnTimerEvent;
+
             View.Clickable = true;
             View.LongClickable = true;
             View.SoundEffectsEnabled = true;
@@ -71,25 +73,34 @@ namespace DataGridSam.Droid
             switch (args.Event.Action)
             {
                 case MotionEventActions.Down:
-                    _tapTime = DateTime.Now;
+                    //tapX = (int)args.Event.GetX();
+                    //tapY = (int)args.Event.GetY();
+
+                    _timer.Interval = 800f;
+                    _timer.AutoReset = false;
+                    _timer.Start();
 
                     if (EnableRipple)
                         ForceStartRipple(args.Event.GetX(), args.Event.GetY());
                     else
-                        BringLayer();
+                        StartAnimation();
                     break;
                 case MotionEventActions.Up:
                 case MotionEventActions.Cancel:
-
                     if (IsViewInBounds((int)args.Event.RawX, (int)args.Event.RawY))
                     {
-                        var range = (DateTime.Now - _tapTime).TotalMilliseconds;
-                        if (range > 800)
-                            LongClickHandler();
-                        else
+                        if (_timer.Enabled)
+                        {
                             ClickHandler();
+                        }
+                        //var range = (DateTime.Now - _tapTime).TotalMilliseconds;
+                        //if (range > 800)
+                        //    LongClickHandler();
+                        //else
+                        //    ClickHandler();
                     }
 
+                    _timer.Stop();
                     if (IsDisposed) 
                         return;
 
@@ -120,7 +131,6 @@ namespace DataGridSam.Droid
         void LongClickHandler()
         {
             var cmd = Commands.GetLongTap(Element);
-
             if (cmd == null)
             {
                 ClickHandler();
@@ -150,6 +160,17 @@ namespace DataGridSam.Droid
         }
 
         #region TouchPart
+        private void OnTimerEvent(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            _timer.Stop();
+            Xamarin.Forms.Device.BeginInvokeOnMainThread(LongClickHandler);
+        }
+
+        private void DisposeTimer()
+        {
+            // TODO create dispose timer
+        }
+
         protected override void OnElementPropertyChanged(PropertyChangedEventArgs e)
         {
             base.OnElementPropertyChanged(e);
@@ -160,7 +181,7 @@ namespace DataGridSam.Droid
             }
         }
 
-        void SetEffectColor()
+        private void SetEffectColor()
         {
             var color = Commands.GetColor(Element);
             if (color == Xamarin.Forms.Color.Default)
@@ -177,7 +198,7 @@ namespace DataGridSam.Droid
             }
         }
 
-        void ViewOnLayoutChange(object sender, View.LayoutChangeEventArgs layoutChangeEventArgs)
+        private void ViewOnLayoutChange(object sender, View.LayoutChangeEventArgs layoutChangeEventArgs)
         {
             var group = (ViewGroup)sender;
             if (group == null || IsDisposed) 
@@ -189,8 +210,7 @@ namespace DataGridSam.Droid
         #endregion
 
         #region Ripple
-
-        RippleDrawable CreateRipple(Color color)
+        private RippleDrawable CreateRipple(Color color)
         {
             if (Element is Xamarin.Forms.Layout)
             {
@@ -216,23 +236,24 @@ namespace DataGridSam.Droid
             return _ripple = new RippleDrawable(GetPressedColorSelector(color), back, null);
         }
 
-        static ColorStateList GetPressedColorSelector(int pressedColor)
+        private static ColorStateList GetPressedColorSelector(int pressedColor)
         {
             return new ColorStateList(
                 new[] { new int[] { } },
                 new[] { pressedColor, });
         }
 
-        void ForceStartRipple(float x, float y)
+        private void ForceStartRipple(float x, float y)
         {
-            if (IsDisposed || !(_viewOverlay.Background is RippleDrawable bc)) return;
+            if (IsDisposed || !(_viewOverlay.Background is RippleDrawable bc))
+                return;
 
             _viewOverlay.BringToFront();
             bc.SetHotspot(x, y);
             _viewOverlay.Pressed = true;
         }
 
-        void ForceEndRipple()
+        private void ForceEndRipple()
         {
             if (IsDisposed) return;
 
@@ -242,8 +263,7 @@ namespace DataGridSam.Droid
         #endregion
 
         #region Overlay
-
-        void BringLayer()
+        private void StartAnimation()
         {
             if (IsDisposed)
                 return;
@@ -256,7 +276,7 @@ namespace DataGridSam.Droid
             _viewOverlay.SetBackgroundColor(color);
         }
 
-        void TapAnimation(long duration, byte startAlpha, byte endAlpha)
+        private void TapAnimation(long duration, byte startAlpha, byte endAlpha)
         {
             if (IsDisposed)
                 return;
@@ -281,14 +301,14 @@ namespace DataGridSam.Droid
             _animator.AnimationEnd += AnimationOnAnimationEnd;
         }
 
-        void AnimationOnAnimationEnd(object sender, EventArgs eventArgs)
+        private void AnimationOnAnimationEnd(object sender, EventArgs eventArgs)
         {
             if (IsDisposed) return;
 
             ClearAnimation();
         }
 
-        void ClearAnimation()
+        private void ClearAnimation()
         {
             if (_animator == null) return;
             _animator.AnimationEnd -= AnimationOnAnimationEnd;
@@ -296,7 +316,6 @@ namespace DataGridSam.Droid
             _animator.Dispose();
             _animator = null;
         }
-
         #endregion
     }
 }

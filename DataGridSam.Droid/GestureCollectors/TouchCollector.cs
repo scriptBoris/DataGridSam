@@ -47,7 +47,8 @@ namespace DataGridSam.Droid.GestureCollectors
         static void ActionActivator(object sender, View.TouchEventArgs e)
         {
             var view = (View)sender;
-            if (!Collection.ContainsKey(view) || (_activeView != null && _activeView != view)) return;
+            if (!Collection.ContainsKey(view) || (_activeView != null && _activeView != view))
+                return;
 
             switch (e.Event.Action)
             {

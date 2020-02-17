@@ -107,6 +107,7 @@ namespace Sample.ViewModels
         {
             if (param is Ware ware)
             {
+                SelectedItem = ware;
                 view.DisplayAlert("Long tap", $"You are selected {ware.Pos} {ware.Name}", "OK");
             }
         }

@@ -147,9 +147,9 @@ namespace DataGridSam.Utils
             GestureRecognizers.Add(tapControll);
 
 
-            //// TODO Test
-            //// Add long tap event
-            //Commands.SetLongTap(this, DataGrid.CommandLongTapItem);
+            // Add long tap event
+            if (DataGrid.CommandLongTapItem != null)
+                Commands.SetLongTap(this, DataGrid.CommandLongTapItem);
         }
 
         private void RowTapped(object sender, EventArgs e)
