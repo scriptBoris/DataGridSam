@@ -28,6 +28,7 @@ namespace DataGridSam.Droid
         readonly Rect _rect = new Rect();
         readonly int[] _location = new int[2];
 
+        private MotionEvent motion;
         private Color _color;
         private byte _alpha;
         private RippleDrawable _ripple;
@@ -68,47 +69,76 @@ namespace DataGridSam.Droid
             _viewOverlay.BringToFront();
         }
 
+        protected override void OnDetached()
+        {
+            if (IsDisposed)
+                return;
+
+            Container.RemoveView(_viewOverlay);
+            _viewOverlay.Pressed = false;
+            _viewOverlay.Foreground = null;
+            _viewOverlay.Dispose();
+            Container.LayoutChange -= ViewOnLayoutChange;
+            _timer.Stop();
+            _timer.Dispose();
+
+            if (EnableRipple)
+                _ripple?.Dispose();
+
+            TouchCollector.Delete(View, OnTouch);
+        }
+
+        protected override void OnElementPropertyChanged(PropertyChangedEventArgs e)
+        {
+            base.OnElementPropertyChanged(e);
+
+            if (e.PropertyName == DataGrid.LongTapColorProperty.PropertyName)
+            {
+                SetEffectColor();
+            }
+        }
+
         void OnTouch(View.TouchEventArgs args)
         {
-            switch (args.Event.Action)
+            //var x = args.Event.GetX();
+            //var y = args.Event.GetY();
+            //Console.Out.WriteLine($"x: {x}; y: {y} (action: {args.Event.Action.ToString()})");
+            motion = args.Event;
+
+            if (args.Event.Action == MotionEventActions.Down)
             {
-                case MotionEventActions.Down:
-                    //tapX = (int)args.Event.GetX();
-                    //tapY = (int)args.Event.GetY();
+                // DOWN
+                if (EnableRipple)
+                    ForceStartRipple(args.Event.GetX(), args.Event.GetY());
+                else
+                    StartAnimation();
 
-                    _timer.Interval = 800f;
-                    _timer.AutoReset = false;
-                    _timer.Start();
+                //_timer.Interval = 800f;
+                //_timer.AutoReset = false;
+                //_timer.Start();
+            }
+            else if (args.Event.Action == MotionEventActions.Up || args.Event.Action == MotionEventActions.Cancel)
+            {
+                // UP
+                if (IsDisposed)
+                    return;
 
-                    if (EnableRipple)
-                        ForceStartRipple(args.Event.GetX(), args.Event.GetY());
-                    else
-                        StartAnimation();
-                    break;
-                case MotionEventActions.Up:
-                case MotionEventActions.Cancel:
-                    if (IsViewInBounds((int)args.Event.RawX, (int)args.Event.RawY))
-                    {
-                        if (_timer.Enabled)
-                        {
-                            ClickHandler();
-                        }
-                        //var range = (DateTime.Now - _tapTime).TotalMilliseconds;
-                        //if (range > 800)
-                        //    LongClickHandler();
-                        //else
-                        //    ClickHandler();
-                    }
+                if (EnableRipple)
+                    ForceEndRipple();
+                else
+                    TapAnimation(250, _alpha, 0);
 
-                    _timer.Stop();
-                    if (IsDisposed) 
-                        return;
+                //if (IsViewInBounds((int)args.Event.RawX, (int)args.Event.RawY))
+                //{
+                //    if (_timer.Enabled)
+                //        ClickHandler();
+                //}
 
-                    if (EnableRipple)
-                        ForceEndRipple();
-                    else
-                        TapAnimation(250, _alpha, 0);
-                    break;
+                //_timer.Stop();
+            }
+            else
+            {
+                //Console.Out.WriteLine($"ELSE ACTION: {args.Event.Action.ToString()})");
             }
         }
 
@@ -123,61 +153,34 @@ namespace DataGridSam.Droid
         void ClickHandler()
         {
             var cmd = Commands.GetTap(Element);
-            var param = Commands.GetTapParameter(Element);
-            if (cmd?.CanExecute(param) ?? false)
-                cmd.Execute(param);
+            cmd.Execute(true);
         }
 
         void LongClickHandler()
         {
-            var cmd = Commands.GetLongTap(Element);
-            if (cmd == null)
+            var cmdTap = Commands.GetTap(Element);
+            var cmdLong = Commands.GetLongTap(Element);
+            if (cmdLong == null)
             {
-                ClickHandler();
+                cmdTap.Execute(true);
                 return;
             }
 
+            cmdTap.Execute(false);
             var param = Commands.GetLongTapParameter(Element);
-            if (cmd.CanExecute(param))
-                cmd.Execute(param);
-        }
-
-        protected override void OnDetached()
-        {
-            if (IsDisposed)
-                return;
-
-            Container.RemoveView(_viewOverlay);
-            _viewOverlay.Pressed = false;
-            _viewOverlay.Foreground = null;
-            _viewOverlay.Dispose();
-            Container.LayoutChange -= ViewOnLayoutChange;
-
-            if (EnableRipple)
-                _ripple?.Dispose();
-
-            TouchCollector.Delete(View, OnTouch);
+            if (cmdLong.CanExecute(param))
+                cmdLong.Execute(param);
         }
 
         #region TouchPart
         private void OnTimerEvent(object sender, System.Timers.ElapsedEventArgs e)
         {
-            _timer.Stop();
-            Xamarin.Forms.Device.BeginInvokeOnMainThread(LongClickHandler);
-        }
-
-        private void DisposeTimer()
-        {
-            // TODO create dispose timer
-        }
-
-        protected override void OnElementPropertyChanged(PropertyChangedEventArgs e)
-        {
-            base.OnElementPropertyChanged(e);
-
-            if (e.PropertyName == DataGrid.LongTapColorProperty.PropertyName)
+            var x = motion.GetX();
+            var y = motion.GetY();
+            if (IsViewInBounds((int)x, (int)y))
             {
-                SetEffectColor();
+                _timer.Stop();
+                Xamarin.Forms.Device.BeginInvokeOnMainThread(LongClickHandler);
             }
         }
 

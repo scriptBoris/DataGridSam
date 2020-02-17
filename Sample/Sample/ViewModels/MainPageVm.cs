@@ -21,7 +21,6 @@ namespace Sample.ViewModels
         {
             this.view = view;
             CommandSelectItem = new SimpleCommand(ActionSelectedItem);
-            CommandDoubleClick = new SimpleCommand(ActionDoubleClick);
             CommandLongTap = new SimpleCommand(ActionLongTap);
             CommandOpenWare = new SimpleCommand(ActionOpenWare);
             CommandAddItem = new SimpleCommand(ActionAddItem);
@@ -76,7 +75,6 @@ namespace Sample.ViewModels
         public int SelectedIndex { get; set; }
         public int ItemsCount => Items.Count;
         public ICommand CommandSelectItem { get; set; }
-        public ICommand CommandDoubleClick { get; set; }
         public ICommand CommandLongTap { get; set; }
         public ICommand CommandAddWeight { get; set; }
         public ICommand CommandRemoveWeight { get; set; }
@@ -92,14 +90,6 @@ namespace Sample.ViewModels
             if (param is Ware ware)
             {
                 view.DisplayAlert("Select", $"You are selected {ware.Pos} {ware.Name}", "OK");
-            }
-        }
-
-        private void ActionDoubleClick(object param)
-        {
-            if (param is Ware ware)
-            {
-                view.DisplayAlert("Double click", $"You are selected {ware.Pos} {ware.Name}", "OK");
             }
         }
 

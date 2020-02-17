@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Windows.Input;
 using Xamarin.Forms;
 
 namespace DataGridSam.Utils
@@ -16,8 +17,6 @@ namespace DataGridSam.Utils
         internal List<GridCell> cells = new List<GridCell>();
         internal RowTrigger enableTrigger;
         internal bool isStyleDefault = true;
-        private bool isCanDoubleClick;
-        private bool isDoneDoubleClick;
 
         // Data grid (host)
         public static readonly BindableProperty DataGridProperty =
@@ -67,8 +66,7 @@ namespace DataGridSam.Utils
             }
 
             // Add command parameter
-            var click = (TapGestureRecognizer)this.GestureRecognizers.FirstOrDefault();
-            click.CommandParameter = BindingContext;
+            Commands.SetTapParameter(this, BindingContext);
 
             // Render first style
             UpdateStyle();
@@ -142,19 +140,17 @@ namespace DataGridSam.Utils
 
             // Add tap event
             // Set only tap command, setting CommandParameter - after changed "RowContext" :)
-            var tapControll = new TapGestureRecognizer();
-            tapControll.Tapped += RowTapped;
-            GestureRecognizers.Add(tapControll);
-
+            var commandTap = new Command(RowTapped);
+            Commands.SetTap(this, commandTap);
 
             // Add long tap event
             if (DataGrid.CommandLongTapItem != null)
                 Commands.SetLongTap(this, DataGrid.CommandLongTapItem);
         }
 
-        private void RowTapped(object sender, EventArgs e)
+        private void RowTapped(object param)
         {
-            var rowTapped = (Row)sender;
+            var rowTapped = this;
             var lastTapped = DataGrid.SelectedRow;
 
             // GUI Unselected last row
@@ -172,48 +168,11 @@ namespace DataGridSam.Utils
 
                 rowTapped.isSelected = true;
                 rowTapped.UpdateStyle();
-
-                if (lastTapped != null)
-                {
-                    lastTapped.isDoneDoubleClick = false;
-                    lastTapped.isCanDoubleClick = false;
-                }
             }
 
-            if (DataGrid.CommandDoubleClickItem != null)
-            {
-                // Can double click
-                if (!isCanDoubleClick)
-                {
-                    isCanDoubleClick = true;
-                    Device.StartTimer(TimeSpan.FromMilliseconds(DataGrid.DoubleClickInterval), () =>
-                    {
-                        // Run ICommand selected item
-                        if (!isDoneDoubleClick && isCanDoubleClick)
-                        {
-                            DataGrid.CommandSelectedItem?.Execute(BindingContext);
-                        }
-
-                        isCanDoubleClick = false;
-                        isDoneDoubleClick = false;
-
-                        return false;
-                    });
-
-                    
-                }
-                // Double click
-                else
-                {
-                    DataGrid.CommandDoubleClickItem?.Execute(BindingContext);
-                    isDoneDoubleClick = true;
-                }
-            }
-            // Single click
-            else
-            {
+            bool isCanExecute = (bool)param;
+            if (isCanExecute)
                 DataGrid.CommandSelectedItem?.Execute(BindingContext);
-            }
         }
 
         internal void UpdateStyle()

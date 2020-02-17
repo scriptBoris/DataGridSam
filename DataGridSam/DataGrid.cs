@@ -127,17 +127,6 @@ namespace DataGridSam
 
 
 
-        // Command double click selected item 
-        public static readonly BindableProperty CommandDoubleClickItemProperty =
-            BindableProperty.Create(nameof(CommandDoubleClickItem), typeof(ICommand), typeof(DataGrid), null);
-        public ICommand CommandDoubleClickItem
-        {
-            get { return (ICommand)GetValue(CommandDoubleClickItemProperty); }
-            set { SetValue(CommandDoubleClickItemProperty, value); }
-        }
-
-
-
         // Command long tap item
         public static readonly BindableProperty CommandLongTapItemProperty =
             BindableProperty.Create(nameof(CommandLongTapItem), typeof(ICommand), typeof(DataGrid), null,
@@ -166,29 +155,6 @@ namespace DataGridSam
         {
             get { return (Color)GetValue(LongTapColorProperty); }
             set { SetValue(LongTapColorProperty, value); }
-        }
-
-
-
-        /// <summary>
-        /// Command double click interval item 
-        /// Default: 300 ms
-        /// </summary>
-        public static readonly BindableProperty DoubleClickIntervalProperty =
-            BindableProperty.Create(nameof(DoubleClickInterval), typeof(double), typeof(DataGrid), (double)300,
-                propertyChanged: (b, o, n) =>
-                {
-                    double value = (double)n;
-                    if (value <= 0)
-                        throw new Exception("Interval double click can not be less than zero or equal zero");
-                });
-        /// <summary>
-        /// Default: 300 ms
-        /// </summary>
-        public double DoubleClickInterval
-        {
-            get { return (double)GetValue(DoubleClickIntervalProperty); }
-            set { SetValue(DoubleClickIntervalProperty, value); }
         }
 
 
