@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Windows.Input;
 using Xamarin.Forms;
 
@@ -12,6 +10,7 @@ namespace DataGridSam.Utils
     [Xamarin.Forms.Internals.Preserve(AllMembers = true)]
     internal sealed class Row : Grid
     {
+        internal static ICommand CommandTap;
         internal Type bindingTypeModel;
         internal bool isSelected;
         internal List<GridCell> cells = new List<GridCell>();
@@ -66,7 +65,8 @@ namespace DataGridSam.Utils
             }
 
             // Add command parameter
-            Commands.SetTapParameter(this, BindingContext);
+            Touch.SetTapParameter(this, BindingContext);
+
 
             // Render first style
             UpdateStyle();
@@ -76,6 +76,8 @@ namespace DataGridSam.Utils
         {
             RowSpacing = 0;
             ColumnSpacing = 0;
+            IsClippedToBounds = true;
+            BackgroundColor = Color.Transparent;
 
             RowDefinitions = new RowDefinitionCollection
             {
@@ -112,14 +114,16 @@ namespace DataGridSam.Utils
                         VerticalTextAlignment = column.VerticalTextAlignment,
                         LineBreakMode = LineBreakMode.WordWrap,
                     };
-
-                    cell.Wrapper = new ContentView
+                    var wrapper = new ContentView
                     {
                         Padding = DataGrid.CellPadding,
                         HorizontalOptions = LayoutOptions.FillAndExpand,
                         VerticalOptions = LayoutOptions.FillAndExpand,
+                        IsClippedToBounds = true,
                         Content = label,
                     };
+
+                    cell.Wrapper = wrapper;
                     cell.Label = label;
                 }
 
@@ -140,12 +144,18 @@ namespace DataGridSam.Utils
 
             // Add tap event
             // Set only tap command, setting CommandParameter - after changed "RowContext" :)
-            var commandTap = new Command(RowTapped);
-            Commands.SetTap(this, commandTap);
+            if (CommandTap == null)
+                CommandTap = new Command(RowTapped);
+
+
+            Touch.SetTap(this, CommandTap);
+            Touch.SetColor(this, DataGrid.LongTapColor);
 
             // Add long tap event
             if (DataGrid.CommandLongTapItem != null)
-                Commands.SetLongTap(this, DataGrid.CommandLongTapItem);
+            {
+                Touch.SetLongTap(this, DataGrid.CommandLongTapItem);
+            }
         }
 
         private void RowTapped(object param)
@@ -170,9 +180,7 @@ namespace DataGridSam.Utils
                 rowTapped.UpdateStyle();
             }
 
-            bool isCanExecute = (bool)param;
-            if (isCanExecute)
-                DataGrid.CommandSelectedItem?.Execute(BindingContext);
+            DataGrid.CommandSelectedItem?.Execute(BindingContext);
         }
 
         internal void UpdateStyle()
@@ -269,8 +277,8 @@ namespace DataGridSam.Utils
 
         internal void BindLongTapCommand(System.Windows.Input.ICommand command)
         {
-            Commands.SetLongTap(this, command);
-            Commands.SetLongTapParameter(this, BindingContext);
+            Touch.SetLongTap(this, command);
+            Touch.SetLongTapParameter(this, BindingContext);
         }
     }
 }

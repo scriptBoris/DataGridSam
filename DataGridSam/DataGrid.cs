@@ -12,6 +12,7 @@ namespace DataGridSam
     [Xamarin.Forms.Internals.Preserve(AllMembers = true)]
     public partial class DataGrid : Grid
     {
+        public static void Init() { }
         public DataGrid()
         {
             RowSpacing = 0;
@@ -40,6 +41,7 @@ namespace DataGridSam
             stackList.DataGrid = this;
             stackList.ItemTemplate = new StackListTemplateSelector();
             bodyGrid.Children.Add(stackList);
+
 
             // Mask Grid (3)
             maskGrid = new Grid();

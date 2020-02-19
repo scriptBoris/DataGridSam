@@ -316,9 +316,8 @@ namespace DataGridSam.Utils
                 template = selector.SelectTemplate(item, container);
 
             // Здесь происходит неявный вызов метода : DataGridViewCell.CreateView()
-            var view = (View)template.CreateContent();
-
-            return view;
+            var row = (View)template.CreateContent();
+            return row;
         }
 
     }
