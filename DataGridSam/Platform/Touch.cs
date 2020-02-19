@@ -23,10 +23,11 @@ namespace DataGridSam.Platform
             return (bool)view.GetValue(IsEnabledProperty);
         }
 
+
+
         // Color
         public static readonly BindableProperty ColorProperty = BindableProperty.CreateAttached(
-                "Color", typeof(Color), typeof(Touch), Color.Default,
-                propertyChanged: PropertyChanged);
+                "Color", typeof(Color), typeof(Touch), Color.Default);
         public static void SetColor(BindableObject view, Color value)
         {
             view.SetValue(ColorProperty, value);
@@ -38,10 +39,24 @@ namespace DataGridSam.Platform
 
 
 
+        // Select
+        public static readonly BindableProperty SelectProperty = BindableProperty.CreateAttached(
+                "Select", typeof(ICommand), typeof(Touch), default(ICommand),
+                propertyChanged: PropertyChanged);
+        public static void SetSelect(BindableObject view, ICommand value)
+        {
+            view.SetValue(SelectProperty, value);
+        }
+        public static ICommand GetSelect(BindableObject view)
+        {
+            return (ICommand)view.GetValue(SelectProperty);
+        }
+
+
+
         // Tap
         public static readonly BindableProperty TapProperty = BindableProperty.CreateAttached(
-                "Tap", typeof(ICommand), typeof(Touch), default(ICommand),
-                propertyChanged: PropertyChanged);
+                "Tap", typeof(ICommand), typeof(Touch), default(ICommand));
         public static void SetTap(BindableObject view, ICommand value)
         {
             view.SetValue(TapProperty, value);
@@ -53,24 +68,9 @@ namespace DataGridSam.Platform
 
 
 
-        // Tap param
-        public static readonly BindableProperty TapParameterProperty = BindableProperty.CreateAttached(
-                "TapParameter", typeof(object), typeof(Touch), null);
-        public static void SetTapParameter(BindableObject view, object value)
-        {
-            view.SetValue(TapParameterProperty, value);
-        }
-        public static object GetTapParameter(BindableObject view)
-        {
-            return view.GetValue(TapParameterProperty);
-        }
-
-
-
         // Long tap
         public static readonly BindableProperty LongTapProperty = BindableProperty.CreateAttached(
-                "LongTap", typeof(ICommand), typeof(Touch), default(ICommand),
-                propertyChanged: PropertyChanged);
+                "LongTap", typeof(ICommand), typeof(Touch), default(ICommand));
         public static void SetLongTap(BindableObject view, ICommand value)
         {
             view.SetValue(LongTapProperty, value);
@@ -95,44 +95,36 @@ namespace DataGridSam.Platform
         }
 
 
-
-        // Long tap parametr
-        public static readonly BindableProperty LongTapParameterProperty = BindableProperty.CreateAttached(
-                "LongTapParameter", typeof(object), typeof(Touch), null);
-        public static void SetLongTapParameter(BindableObject view, object value)
-        {
-            view.SetValue(LongTapParameterProperty, value);
-        }
-        public static object GetLongTapParameter(BindableObject view)
-        {
-            return view.GetValue(LongTapParameterProperty);
-        }
-
-
         private static void PropertyChanged(BindableObject b, object o, object n)
         {
             if (!(b is View view))
                 return;
 
             var effect = view.Effects.FirstOrDefault(e => e is TouchEffect);
+            if (effect != null)
+                return;
 
-            if (GetColor(b) != Color.Default || GetTap(b) != null || GetLongTap(b) != null)
+            view.InputTransparent = false;
+            view.Effects.Add(new TouchEffect());
+
+            if (EffectsConfig.AutoChildrenInputTransparent && b is Layout &&
+                !EffectsConfig.GetChildrenInputTransparent(view))
             {
-                view.InputTransparent = false;
-
-                if (effect != null)
-                    return;
-
-                var commandEffect = new TouchEffect();
-                view.Effects.Add(commandEffect);
+                EffectsConfig.SetChildrenInputTransparent(view, true);
             }
-            else
-            {
-                if (effect == null || view.BindingContext == null)
-                    return;
+            //else
+            //{
+            //    if (effect == null || view.BindingContext == null)
+            //        return;
 
-                view.Effects.Remove(effect);
-            }
+            //    view.Effects.Remove(effect);
+
+            //    if (EffectsConfig.AutoChildrenInputTransparent && b is Layout &&
+            //        EffectsConfig.GetChildrenInputTransparent(view))
+            //    {
+            //        EffectsConfig.SetChildrenInputTransparent(view, false);
+            //    }
+            //}
         }
 
         private static void IsEnabledChanged(BindableObject b, object o, object n)
@@ -141,9 +133,9 @@ namespace DataGridSam.Platform
         }
     }
 
-    public class TouchEffect : RoutingEffect
+    internal class TouchEffect : RoutingEffect
     {
-        public TouchEffect() : base($"DataGridSam.{nameof(Touch)}")
+        internal TouchEffect() : base($"DataGridSam.{nameof(Touch)}")
         {
         }
     }

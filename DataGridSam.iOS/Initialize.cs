@@ -5,7 +5,10 @@ using System.Text;
 
 namespace DataGridSam.iOS
 {
-    public class Class1
+    public static class Initialize
     {
+        public static void Init()
+        {
+        }
     }
 }

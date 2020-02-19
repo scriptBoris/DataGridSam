@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Input;
+//using TouchSam;
+//using DataGridSam.Platform;
 using Xamarin.Forms;
 
 namespace DataGridSam.Utils
@@ -10,7 +12,6 @@ namespace DataGridSam.Utils
     [Xamarin.Forms.Internals.Preserve(AllMembers = true)]
     internal sealed class Row : Grid
     {
-        internal static ICommand CommandTap;
         internal Type bindingTypeModel;
         internal bool isSelected;
         internal List<GridCell> cells = new List<GridCell>();
@@ -65,7 +66,7 @@ namespace DataGridSam.Utils
             }
 
             // Add command parameter
-            Touch.SetTapParameter(this, BindingContext);
+            //TODO Check binding context;
 
 
             // Render first style
@@ -142,23 +143,21 @@ namespace DataGridSam.Utils
             SetColumnSpan(line, DataGrid.Columns.Count);
             Children.Add(line);
 
-            // Add tap event
+            // Add tap system event
             // Set only tap command, setting CommandParameter - after changed "RowContext" :)
-            if (CommandTap == null)
-                CommandTap = new Command(RowTapped);
+            Touch.SetSelect(this, new Command(ActionRowSelect));
+            Touch.SetColor(this, DataGrid.TapColor);
 
-
-            Touch.SetTap(this, CommandTap);
-            Touch.SetColor(this, DataGrid.LongTapColor);
+            // Add tap event
+            if (DataGrid.CommandSelectedItem != null)
+                Touch.SetTap(this, DataGrid.CommandSelectedItem);
 
             // Add long tap event
             if (DataGrid.CommandLongTapItem != null)
-            {
                 Touch.SetLongTap(this, DataGrid.CommandLongTapItem);
-            }
         }
 
-        private void RowTapped(object param)
+        private void ActionRowSelect(object param)
         {
             var rowTapped = this;
             var lastTapped = DataGrid.SelectedRow;
@@ -179,8 +178,6 @@ namespace DataGridSam.Utils
                 rowTapped.isSelected = true;
                 rowTapped.UpdateStyle();
             }
-
-            DataGrid.CommandSelectedItem?.Execute(BindingContext);
         }
 
         internal void UpdateStyle()
@@ -272,13 +269,6 @@ namespace DataGridSam.Utils
                 HeightRequest = DataGrid.BorderWidth,
             };
             return line;
-        }
-
-
-        internal void BindLongTapCommand(System.Windows.Input.ICommand command)
-        {
-            Touch.SetLongTap(this, command);
-            Touch.SetLongTapParameter(this, BindingContext);
         }
     }
 }

@@ -120,7 +120,12 @@ namespace DataGridSam
 
         // Command selected item 
         public static readonly BindableProperty CommandSelectedItemProperty =
-            BindableProperty.Create(nameof(CommandSelectedItem), typeof(ICommand), typeof(DataGrid), null);
+            BindableProperty.Create(nameof(CommandSelectedItem), typeof(ICommand), typeof(DataGrid), null,
+                propertyChanged: (b, o, n)=>
+                {
+                    var self = b as DataGrid;
+                    self.BindTapCommand(n as ICommand);
+                });
         public ICommand CommandSelectedItem
         {
             get { return (ICommand)GetValue(CommandSelectedItemProperty); }
@@ -148,15 +153,15 @@ namespace DataGridSam
         /// <summary>
         /// Color when user taped on item (Default: Accent)
         /// </summary>
-        public static readonly BindableProperty LongTapColorProperty =
-            BindableProperty.Create(nameof(LongTapColor), typeof(Color), typeof(DataGrid), Color.Accent);
+        public static readonly BindableProperty TapColorProperty =
+            BindableProperty.Create(nameof(TapColor), typeof(Color), typeof(DataGrid), Color.Accent);
         /// <summary>
         /// Color when user taped on item (Default: Accent)
         /// </summary>
-        public Color LongTapColor
+        public Color TapColor
         {
-            get { return (Color)GetValue(LongTapColorProperty); }
-            set { SetValue(LongTapColorProperty, value); }
+            get { return (Color)GetValue(TapColorProperty); }
+            set { SetValue(TapColorProperty, value); }
         }
 
 

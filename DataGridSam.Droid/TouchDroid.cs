@@ -20,7 +20,7 @@ namespace DataGridSam.Droid
         readonly int[] _location = new int[2];
 
         private System.Timers.Timer timer;
-        //private MotionEvent motion;
+        private MotionEvent motion;
         private Color color;
         private byte alpha;
         private ObjectAnimator animation;
@@ -104,32 +104,7 @@ namespace DataGridSam.Droid
             }
         }
 
-        void OnTouch(object sender, View.TouchEventArgs args)
-        {
-            switch (args.Event.Action)
-            {
-                case MotionEventActions.Down:
-                    if (EnableRipple)
-                        ForceStartRipple(args.Event.GetX(), args.Event.GetY());
-                    else
-                        StartAnimation();
-
-                    break;
-
-                case MotionEventActions.Up:
-                case MotionEventActions.Cancel:
-                    if (IsDisposed) return;
-
-                    if (EnableRipple)
-                        ForceEndRipple();
-                    else
-                        TapAnimation(250, alpha, 0);
-
-                    break;
-            }
-        }
-
-        void OnTouch1(object sender, View.TouchEventArgs args)
+        private void OnTouch(object sender, View.TouchEventArgs args)
         {
             if (!isEnabled)
                 return;
@@ -137,16 +112,16 @@ namespace DataGridSam.Droid
             //var x = args.Event.GetX();
             //var y = args.Event.GetY();
             //Console.Out.WriteLine($"x: {x}; y: {y} (action: {args.Event.Action.ToString()})");
-            //motion = args.Event;
+            motion = args.Event;
 
             if (args.Event.Action == MotionEventActions.Down)
             {
                 View.PlaySoundEffect(SoundEffects.Click);
                 // DOWN
-                //if (EnableRipple)
-                //    ForceStartRipple(args.Event.GetX(), args.Event.GetY());
-                //else
-                //    StartAnimation();
+                if (EnableRipple)
+                    ForceStartRipple(args.Event.GetX(), args.Event.GetY());
+                else
+                    StartAnimation();
 
                 if (Touch.GetLongTap(Element) != null)
                 {
@@ -170,24 +145,40 @@ namespace DataGridSam.Droid
                 if (IsDisposed)
                     return;
 
-                //if (EnableRipple)
-                //    ForceEndRipple();
-                //else
-                //    TapAnimation(250, alpha, 0);
+                if (EnableRipple)
+                    ForceEndRipple();
+                else
+                    TapAnimation(250, alpha, 0);
 
-                if (IsViewInBounds((int)args.Event.RawX, (int)args.Event.RawY))
+                if (args.Event.Action == MotionEventActions.Up &&
+                    IsViewInBounds((int)args.Event.RawX, (int)args.Event.RawY))
                 {
-                    if (Touch.GetLongTap(Element) == null)
+                    if (Touch.GetLongTap(Element) != null)
+                    {
+                        if (timer == null)
+                        {
+                            timer = new System.Timers.Timer();
+                            timer.Elapsed += OnTimerEvent;
+                        }
+
+                        if (timer.Enabled)
+                        {
+                            SelectHandler();
+                            ClickHandler();
+                        }
+                    }
+                    else
+                    {
+                        SelectHandler();
                         ClickHandler();
-                    else if (timer == null || timer.Enabled)
-                        ClickHandler();
+                    }
                 }
 
                 timer?.Stop();
             }
         }
 
-        bool IsViewInBounds(int x, int y)
+        private bool IsViewInBounds(int x, int y)
         {
             View.GetDrawingRect(_rect);
             View.GetLocationOnScreen(_location);
@@ -195,37 +186,42 @@ namespace DataGridSam.Droid
             return _rect.Contains(x, y);
         }
 
-        void ClickHandler()
+        private void SelectHandler()
+        {
+            var cmd = Touch.GetSelect(Element);
+            cmd.Execute(Element.BindingContext);
+        }
+
+        private void ClickHandler()
         {
             var cmd = Touch.GetTap(Element);
-            var param = Touch.GetTapParameter(Element);
             if (cmd == null)
                 return;
 
-            if (cmd.CanExecute(param))
-                cmd.Execute(param);
+            if (cmd.CanExecute(Element.BindingContext))
+                cmd.Execute(Element.BindingContext);
         }
 
-        void LongClickHandler()
+        private void LongClickHandler()
         {
-            var cmdLong = Touch.GetLongTap(Element);
-            var paramLong = Touch.GetLongTapParameter(Element);
+            SelectHandler();
 
+            var cmdLong = Touch.GetLongTap(Element);
             if (cmdLong == null)
             {
                 ClickHandler();
                 return;
             }
 
-            if (cmdLong.CanExecute(paramLong))
-                cmdLong.Execute(paramLong);
+            if (cmdLong.CanExecute(Element.BindingContext))
+                cmdLong.Execute(Element.BindingContext);
         }
 
         #region TouchPart
         private void OnTimerEvent(object sender, System.Timers.ElapsedEventArgs e)
         {
-            var x = 0;// motion?.GetX();
-            var y = 0;// motion?.GetY();
+            var x = motion?.GetX();
+            var y = motion?.GetY();
             if (IsViewInBounds((int)x, (int)y))
             {
                 timer.Stop();
