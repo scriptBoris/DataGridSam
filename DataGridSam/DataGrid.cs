@@ -51,10 +51,9 @@ namespace DataGridSam
             maskGrid.InputTransparent = true;
             bodyGrid.Children.Add(maskGrid);
 
+
             // Wrapper (1)
             wrapper = new BorderWrapper(this);
-            Grid.SetRow(wrapper.bottom, 1);
-            UpdateWrapper();
         }
 
 
@@ -289,7 +288,7 @@ namespace DataGridSam
             BindableProperty.Create(nameof(IsWrapped), typeof(bool), typeof(DataGrid), true,
                 propertyChanged: (b, o, n) =>
                 {
-                    (b as DataGrid).UpdateWrapper();
+                    (b as DataGrid).wrapper.Update();
                 });
         /// <summary>
         /// Is wrapped by borders (default: true)

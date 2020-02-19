@@ -44,16 +44,16 @@ namespace DataGridSam
                     if (i < Columns.Count - 1)
                     {
                         var line = CreateColumnLine();
-                        maskGrid.Children.Add(line);
                         Grid.SetColumn(line, i);
                         Grid.SetRow(line, 0);
+                        maskGrid.Children.Add(line);
                     }
 
                     i++;
                 }
             }
 
-            
+            wrapper.Update();
         }
 
         /// <summary>
@@ -112,34 +112,7 @@ namespace DataGridSam
             }
         }
 
-        private void UpdateWrapper()
-        {
-            if (IsWrapped)
-            {
-                Children.Add(wrapper.left);
-                Children.Add(wrapper.top);
-                Children.Add(wrapper.right);
-                Children.Add(wrapper.bottom);
-                maskGrid.Children.Add(wrapper.leftScroll);
-                maskGrid.Children.Add(wrapper.rightScroll);
-
-                stackList.SizeChanged += CheckWrapperBottomVisible;
-                mainScroll.SizeChanged += CheckWrapperBottomVisible;
-            }
-            else
-            {
-                Children.Remove(wrapper.left);
-                Children.Remove(wrapper.top);
-                Children.Remove(wrapper.right);
-                Children.Remove(wrapper.bottom);
-                maskGrid.Children.Remove(wrapper.leftScroll);
-                maskGrid.Children.Remove(wrapper.rightScroll);
-                stackList.SizeChanged -= CheckWrapperBottomVisible;
-                mainScroll.SizeChanged -= CheckWrapperBottomVisible;
-            }
-        }
-
-        private void CheckWrapperBottomVisible(object obj, EventArgs e)
+        internal void CheckWrapperBottomVisible(object obj, EventArgs e)
         {
             if (mainScroll.Height > stackList.Height)
             {

@@ -43,6 +43,7 @@ namespace DataGridSam.Utils
             bottom.VerticalOptions = LayoutOptions.EndAndExpand;
             bottom.SetBinding(BoxView.HeightRequestProperty, new Binding(nameof(host.BorderWidth), source: host));
             bottom.SetBinding(BoxView.BackgroundColorProperty, new Binding(nameof(host.BorderColor), source: host));
+            Grid.SetRow(bottom, 1);
 
             // Wrapp borders
             leftScroll = new BoxView();
@@ -56,11 +57,35 @@ namespace DataGridSam.Utils
             rightScroll.HorizontalOptions = LayoutOptions.EndAndExpand;
             rightScroll.SetBinding(BoxView.BackgroundColorProperty, new Binding(nameof(host.BorderColor), source: host));
             rightScroll.SetBinding(BoxView.WidthRequestProperty, new Binding(nameof(host.BorderWidth), source: host));
-            if (host.Columns?.Count == 0)
-                Grid.SetColumn(rightScroll, 0);
-            else
-                Grid.SetColumn(rightScroll, host.Columns.Count);
+        }
 
+        internal void Update()
+        {
+            if (host.IsWrapped)
+            {
+                // Header
+                host.Children.Add(left);
+                host.Children.Add(top);
+                host.Children.Add(right);
+                host.Children.Add(bottom);
+                host.maskGrid.Children.Add(leftScroll);
+                host.maskGrid.Children.Add(rightScroll);
+                host.stackList.SizeChanged += host.CheckWrapperBottomVisible;
+                host.mainScroll.SizeChanged += host.CheckWrapperBottomVisible;
+
+                Grid.SetColumn(rightScroll, host.Columns?.Count-1 ?? 0);
+            }
+            else
+            {
+                host.Children.Remove(left);
+                host.Children.Remove(top);
+                host.Children.Remove(right);
+                host.Children.Remove(bottom);
+                host.maskGrid.Children.Remove(leftScroll);
+                host.maskGrid.Children.Remove(rightScroll);
+                host.stackList.SizeChanged -= host.CheckWrapperBottomVisible;
+                host.mainScroll.SizeChanged -= host.CheckWrapperBottomVisible;
+            }
         }
     }
 }
