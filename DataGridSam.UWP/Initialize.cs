@@ -11,7 +11,7 @@ namespace DataGridSam.UWP
     {
         public static void Init()
         {
-            TouchSam.UWP.Initialize.Init();
+            TouchUWP.Init();
         }
     }
 }
