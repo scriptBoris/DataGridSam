@@ -13,6 +13,7 @@ namespace DataGridSam.Utils
     internal sealed class Row : Grid
     {
         internal Type bindingTypeModel;
+        internal BoxView line;
         internal bool isSelected;
         internal List<GridCell> cells = new List<GridCell>();
         internal RowTrigger enableTrigger;
@@ -83,7 +84,8 @@ namespace DataGridSam.Utils
             RowDefinitions = new RowDefinitionCollection
             {
                 new RowDefinition { Height = GridLength.Auto },
-                new RowDefinition { Height = new GridLength(DataGrid.BorderWidth) },
+                new RowDefinition { Height = GridLength.Auto },
+                //new RowDefinition { Height = new GridLength(DataGrid.BorderWidth) },
             };
 
             int index = 0;
@@ -92,10 +94,7 @@ namespace DataGridSam.Utils
             {
                 ColumnDefinitions.Add(new ColumnDefinition() { Width = column.Width });
 
-                var cell = new GridCell
-                {
-                    Column = column,
-                };
+                var cell = new GridCell { Column = column };
 
                 // Create custom template
                 if (column.CellTemplate != null)
@@ -137,7 +136,7 @@ namespace DataGridSam.Utils
             }
 
             // Create horizontal line table
-            var line = CreateHorizontalLine();
+            line = CreateHorizontalLine();
             SetRow(line, 1);
             SetColumn(line, 0);
             SetColumnSpan(line, DataGrid.Columns.Count);

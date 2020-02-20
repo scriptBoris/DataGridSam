@@ -22,8 +22,8 @@
             <sam:DataGrid ItemsSource="{Binding Items}"
                           SelectedItem="{Binding SelectedItem}"
                           HeaderTextColor="White"
+                          IsWrapped="True"
                           HeaderFontSize="16"
-                          HeaderBackgroundColor="#2196F3"
                           SelectedRowAttribute="Bold"
                           RowsColor="White"
                           RowsFontSize="16"
@@ -31,6 +31,7 @@
                           BorderColor="#2196F3"
                           BorderWidth="2"
                           CellPadding="5,10,5,10"
+                          TapColor="#03a9f4"
                           CommandSelectedItem="{Binding CommandSelectItem}"
                           CommandLongTapItem="{Binding CommandLongTap}">
                 <sam:DataGrid.Columns>

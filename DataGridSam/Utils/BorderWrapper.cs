@@ -13,6 +13,7 @@ namespace DataGridSam.Utils
         internal BoxView top;
         internal BoxView right;
         internal BoxView bottom;
+        internal BoxView absoluteBottom;
         internal BoxView leftScroll;
         internal BoxView rightScroll;
 
@@ -37,10 +38,18 @@ namespace DataGridSam.Utils
             right.SetBinding(BoxView.WidthRequestProperty, new Binding(nameof(host.BorderWidth), source: host));
             right.SetBinding(BoxView.BackgroundColorProperty, new Binding(nameof(host.BorderColor), source: host));
 
+            absoluteBottom = new BoxView();
+            absoluteBottom.IsVisible = false;
+            absoluteBottom.HorizontalOptions = LayoutOptions.FillAndExpand;
+            absoluteBottom.VerticalOptions = LayoutOptions.EndAndExpand;
+            absoluteBottom.SetBinding(BoxView.HeightRequestProperty, new Binding(nameof(host.BorderWidth), source: host));
+            absoluteBottom.SetBinding(BoxView.BackgroundColorProperty, new Binding(nameof(host.BorderColor), source: host));
+            Grid.SetRow(absoluteBottom, 1);
+
+            // Bottom line
             bottom = new BoxView();
-            bottom.IsVisible = false;
+            bottom.VerticalOptions = LayoutOptions.End;
             bottom.HorizontalOptions = LayoutOptions.FillAndExpand;
-            bottom.VerticalOptions = LayoutOptions.EndAndExpand;
             bottom.SetBinding(BoxView.HeightRequestProperty, new Binding(nameof(host.BorderWidth), source: host));
             bottom.SetBinding(BoxView.BackgroundColorProperty, new Binding(nameof(host.BorderColor), source: host));
             Grid.SetRow(bottom, 1);
@@ -67,9 +76,10 @@ namespace DataGridSam.Utils
                 host.Children.Add(left);
                 host.Children.Add(top);
                 host.Children.Add(right);
-                host.Children.Add(bottom);
+                host.Children.Add(absoluteBottom);
                 host.maskGrid.Children.Add(leftScroll);
                 host.maskGrid.Children.Add(rightScroll);
+                host.bodyGrid.Children.Add(bottom);
                 host.stackList.SizeChanged += host.CheckWrapperBottomVisible;
                 host.mainScroll.SizeChanged += host.CheckWrapperBottomVisible;
 
@@ -80,7 +90,8 @@ namespace DataGridSam.Utils
                 host.Children.Remove(left);
                 host.Children.Remove(top);
                 host.Children.Remove(right);
-                host.Children.Remove(bottom);
+                host.Children.Remove(absoluteBottom);
+                host.bodyGrid.Children.Remove(bottom);
                 host.maskGrid.Children.Remove(leftScroll);
                 host.maskGrid.Children.Remove(rightScroll);
                 host.stackList.SizeChanged -= host.CheckWrapperBottomVisible;

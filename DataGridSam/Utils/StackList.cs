@@ -25,6 +25,15 @@ namespace DataGridSam.Utils
             set { SetValue(ItemsSourceProperty, value); }
         }
 
+        // Has items
+        public static BindableProperty HasItemsProperty =
+            BindableProperty.Create(nameof(HasItems), typeof(bool), typeof(StackList), true);
+        public bool HasItems
+        {
+            get { return (bool)GetValue(HasItemsProperty); }
+            set { SetValue(HasItemsProperty, value); }
+        }
+
         // ItemTemplate
         public static BindableProperty ItemTemplateProperty =
             BindableProperty.Create(nameof(ItemTemplate), typeof(DataTemplate), typeof(StackList), default(DataTemplate),
@@ -92,14 +101,25 @@ namespace DataGridSam.Utils
                 int paginationCount = self.DataGrid.PaginationItemCount;
                 if (paginationCount == 0)
                 {
+                    // Without pagination
+                    int i = 0;
+                    View last = null;
                     foreach (var item in newList)
                     {
-                        var view = CreateChildViewFor(self.ItemTemplate, item, self);
-                        self.Children.Add(view);
+                        last = CreateChildViewFor(self.ItemTemplate, item, self);
+                        self.Children.Add(last);
+                        i++;
+                    }
+
+                    if (last != null)
+                    {
+                        var row = (Row)last;
+                        row.line.IsVisible = false;
                     }
                 }
                 else if (paginationCount > 0)
                 {
+                    // Pagination
                     self.RedrawForPage(paginationCount, selectPage:1);
                 }
                 else
@@ -108,6 +128,7 @@ namespace DataGridSam.Utils
                 }
             }
 
+            self.HasItems = (self.Children.Count > 0);
             self.UpdateChildrenLayout();
             self.InvalidateLayout();
         }
@@ -116,12 +137,15 @@ namespace DataGridSam.Utils
         {
             if (e.Action == NotifyCollectionChangedAction.Replace)
             {
-                this.Children.RemoveAt(e.OldStartingIndex);
+                Children.RemoveAt(e.OldStartingIndex);
 
                 var item = e.NewItems[e.NewStartingIndex];
                 var view = CreateChildViewFor(this.ItemTemplate, item, this);
+                Children.Insert(e.NewStartingIndex, view);
 
-                this.Children.Insert(e.NewStartingIndex, view);
+                // Hide line if row is last
+                if (Children.LastOrDefault() == view)
+                    (view as Row).line.IsVisible = false;
             }
             else if (e.Action == NotifyCollectionChangedAction.Add)
             {
@@ -145,14 +169,21 @@ namespace DataGridSam.Utils
                         }
                     }
 
+                    // last line set visible
+                    var last = Children.LastOrDefault();
+                    if (last != null)
+                        (last as Row).line.IsVisible = true;
+
                     for (var i = 0; i < e.NewItems.Count; ++i)
                     {
                         var item = e.NewItems[i];
-                        var view = CreateChildViewFor(this.ItemTemplate, item, this);
+                        last = CreateChildViewFor(this.ItemTemplate, item, this);
 
                         int index = i + e.NewStartingIndex;
-                        this.Children.Insert(index, view);
+                        Children.Insert(index, last);
                     }
+
+                    (last as Row).line.IsVisible = false;
                 }
             }
             else if (e.Action == NotifyCollectionChangedAction.Remove)
@@ -160,7 +191,7 @@ namespace DataGridSam.Utils
                 if (e.OldItems == null)
                     return;
 
-                // Delete item with enabled Pagination
+                // Delete item with ENABLED Pagination
                 if (DataGrid.PaginationItemCount > 0)
                 {
                     int startIndex = e.OldStartingIndex;
@@ -187,7 +218,7 @@ namespace DataGridSam.Utils
                             if (i > DataGrid.PaginationItemCount - 1 || i > source.Count)
                                 break;
 
-                            Children.RemoveAt(i);
+                            RemoveAt(i);
                         }
 
                         // go to previus page if current page clear
@@ -208,14 +239,14 @@ namespace DataGridSam.Utils
                                 break;
 
                             var view = CreateChildViewFor(this.ItemTemplate, source[i], this);
-                            Children.Add(view);
+                            Add(view);
                         }
                     }
                 }
                 // Default delete item
                 else
                 {
-                    Children.RemoveAt(e.OldStartingIndex);
+                    RemoveAt(e.OldStartingIndex);
                 }
             }
             else if (e.Action == NotifyCollectionChangedAction.Reset)
@@ -226,6 +257,7 @@ namespace DataGridSam.Utils
             {
                 return;
             }
+            HasItems = (Children.Count > 0);
         }
 
         /// <summary>
@@ -297,12 +329,50 @@ namespace DataGridSam.Utils
             DataGrid.ShowPaginationNextButton(selectPage < pages);
 
             // Create rows
+            View last = null;
             for (int i = startedIndex; i <= endIndex; i++)
             {
-                var view = CreateChildViewFor(ItemTemplate, itemList[i], this);
-                Children.Add(view);
+                last = CreateChildViewFor(ItemTemplate, itemList[i], this);
+                Children.Add(last);
+            }
+
+            if (last != null)
+            {
+                var row = (Row)last;
+                row.line.IsVisible = false;
+            }
+
+            HasItems = (Children.Count > 0);
+        }
+
+        private void RemoveAt(int oldStartingIndex)
+        {
+            bool isLast = (oldStartingIndex == Children.Count - 1);
+            Children.RemoveAt(oldStartingIndex);
+
+            if (isLast)
+            {
+                var last = Children.LastOrDefault() as Row;
+                if (last != null)
+                {
+                    last.line.IsVisible = false;
+                }
             }
         }
+
+        private void Add(View view)
+        {
+            var last = Children.LastOrDefault() as Row;
+            if (last != null)
+            {
+                last.line.IsVisible = true;
+            }
+
+            (view as Row).line.IsVisible = false;
+            Children.Add(view);
+        }
+
+
 
         /// <summary>
         /// Создает строку для таблицы
@@ -319,6 +389,7 @@ namespace DataGridSam.Utils
             var row = (View)template.CreateContent();
             return row;
         }
+
 
     }
 }

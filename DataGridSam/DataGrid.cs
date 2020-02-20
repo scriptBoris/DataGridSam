@@ -33,6 +33,12 @@ namespace DataGridSam
             // Body Grid (2)
             bodyGrid = new Grid();
             bodyGrid.VerticalOptions = LayoutOptions.Start;
+            bodyGrid.RowSpacing = 0;
+            bodyGrid.RowDefinitions = new RowDefinitionCollection
+            {
+                new RowDefinition { Height = GridLength.Auto },
+                new RowDefinition { Height = GridLength.Auto },
+            };
             mainScroll.Content = bodyGrid;
 
             // Stack list (3)
@@ -49,6 +55,8 @@ namespace DataGridSam
             maskGrid.ColumnSpacing = 0;
             maskGrid.BackgroundColor = Color.Transparent;
             maskGrid.InputTransparent = true;
+            maskGrid.SetBinding(Grid.IsVisibleProperty, new Binding(nameof(stackList.HasItems), source: stackList));
+
             bodyGrid.Children.Add(maskGrid);
 
 

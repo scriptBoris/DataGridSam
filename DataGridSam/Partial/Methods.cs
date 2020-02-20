@@ -116,11 +116,11 @@ namespace DataGridSam
         {
             if (mainScroll.Height > stackList.Height)
             {
-                wrapper.bottom.IsVisible = false;
+                wrapper.absoluteBottom.IsVisible = false;
             }
             else
             {
-                wrapper.bottom.IsVisible = true;
+                wrapper.absoluteBottom.IsVisible = true;
             }
         }
 

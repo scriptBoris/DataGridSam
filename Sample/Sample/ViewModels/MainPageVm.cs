@@ -72,7 +72,6 @@ namespace Sample.ViewModels
         #region Props
         public ObservableCollection<Ware> Items { get; set; }
         public Ware SelectedItem { get; set; }
-        public int SelectedIndex { get; set; }
         public int ItemsCount => Items.Count;
         public ICommand CommandSelectItem { get; set; }
         public ICommand CommandLongTap { get; set; }
@@ -131,7 +130,7 @@ namespace Sample.ViewModels
             {
                 try
                 {
-                    Items.RemoveAt(SelectedIndex);
+                    Items.Remove(SelectedItem);
                 }
                 catch (Exception)
                 {
