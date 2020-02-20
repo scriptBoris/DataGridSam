@@ -16,7 +16,7 @@ Install-Package DataGridSam
 
 ## Supported Platforms
  - Android
- - iOS
+ - iOS (сurrently not available)
  - UWP
 
 
@@ -35,6 +35,28 @@ Install-Package DataGridSam
             LoadApplication(new App());
         }
     }
+```
+## Install UWP project
+In file **App.xaml.cs**, enter `DataGridSam.UWP.Initialize.Init();` as below
+```c#
+    protected override void OnLaunched(LaunchActivatedEventArgs e)
+        {
+            Frame rootFrame = Window.Current.Content as Frame;
+            if (rootFrame == null)
+            {
+                rootFrame = new Frame();
+                rootFrame.NavigationFailed += OnNavigationFailed;
+                Xamarin.Forms.Forms.Init(e);
+                DataGridSam.UWP.Initialize.Init();
+
+                if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
+                {
+                }
+
+                Window.Current.Content = rootFrame;
+            }
+	    ...
+        }
 ```
 
 ## Examle
