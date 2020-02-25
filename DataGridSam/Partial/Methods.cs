@@ -15,45 +15,116 @@ namespace DataGridSam
         private void InitHeaderView()
         {
             SetColumnsBindingContext();
-            
-            // Set vertical thickness
-            maskGrid.ColumnSpacing = 0;
-            headGrid.ColumnSpacing = 0;
 
-            // Clear GUI header & mask
-            headGrid.Children.Clear();
-            headGrid.ColumnDefinitions.Clear();
+            UpdateHeaderCells();
+            UpdateBodyMaskBorders();
+            UpdateHeadMaskBorders();
+            wrapper.Update();
+        }
+
+        private void UpdateBodyMaskBorders()
+        {
+            // Clear GUI mask
             maskGrid.Children.Clear();
             maskGrid.ColumnDefinitions.Clear();
 
-            if (Columns != null)
+            if (Columns == null)
+                return;
+
+            int i = 0;
+            foreach (var col in Columns)
             {
-                int i = 0;
-                foreach (var col in Columns)
+                // Create vertical borders (Table)
+                maskGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = col.Width });
+
+                if (i < Columns.Count - 1)
                 {
-                    // Header table
-                    headGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = col.Width });
-                    var headCell = CreateColumnHeader(col);
-                    Grid.SetColumn(headCell, i);
-                    headGrid.Children.Add(headCell);
-
-
-                    // Create vertical lines (Table)
-                    maskGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = col.Width });
-
-                    if (i < Columns.Count - 1)
-                    {
-                        var line = CreateColumnLine();
-                        Grid.SetColumn(line, i);
-                        Grid.SetRow(line, 0);
-                        maskGrid.Children.Add(line);
-                    }
-
-                    i++;
+                    var line = CreateColumnLine();
+                    Grid.SetColumn(line, i);
+                    Grid.SetRow(line, 0);
+                    maskGrid.Children.Add(line);
                 }
+
+                i++;
+            }
+        }
+
+        private void UpdateHeaderCells()
+        {
+            // Clear old GUI elements
+            headGrid.Children.Clear();
+            headGrid.ColumnDefinitions.Clear();
+
+            if (Columns == null)
+                return;
+
+            int i = 0;
+            foreach (var col in Columns)
+            {
+                // Header table
+                headGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = col.Width });
+                var headCell = CreateColumnHeader(col);
+                Grid.SetColumn(headCell, i);
+                headGrid.Children.Add(headCell);
+
+                i++;
+            }
+        }
+
+        private void UpdateHeadMaskBorders()
+        {
+            if (HeaderHasBorder && maskHeadGrid == null)
+            {
+                maskHeadGrid = new Grid();
+                maskHeadGrid.ColumnSpacing = 0;
+                maskHeadGrid.RowSpacing = 0;
+                maskHeadGrid.BackgroundColor = Color.Transparent;
+                maskHeadGrid.InputTransparent = true;
+                maskHeadGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+                SetRow(maskHeadGrid, 0);
+                Children.Add(maskHeadGrid);
+            }
+            else if (!HeaderHasBorder)
+            {
+                maskHeadGrid.Children.Clear();
+                Children.Remove(maskHeadGrid);
+                maskHeadGrid = null;
+                return;
             }
 
-            wrapper.Update();
+            if (Columns == null)
+                return;
+
+            // Columns
+            int i = 0;
+            foreach (var col in Columns)
+            {
+                // Create vertical borders (Table)
+                maskHeadGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = col.Width });
+
+                if (i < Columns.Count - 1)
+                {
+                    var line = CreateColumnLine();
+                    Grid.SetColumn(line, i);
+                    Grid.SetRow(line, 0);
+                    maskHeadGrid.Children.Add(line);
+                }
+
+                i++;
+            }
+
+            // Row
+            var row = new BoxView
+            {
+                HeightRequest = BorderWidth,
+                VerticalOptions = LayoutOptions.EndAndExpand,
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                BackgroundColor = BorderColor,
+                //TranslationY = BorderWidth,
+            };
+            Grid.SetColumnSpan(row, i);
+            Grid.SetRow(row, 1);
+            maskHeadGrid.Children.Add(row);
         }
 
         /// <summary>

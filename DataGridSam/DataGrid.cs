@@ -21,7 +21,9 @@ namespace DataGridSam
 
             // Head Grid (1)
             headGrid = new Grid();
-            headGrid.BackgroundColor = HeaderBackgroundColor;
+            headGrid.ColumnSpacing = 0;
+            headGrid.RowSpacing = 0;
+            headGrid.SetBinding(Grid.BackgroundColorProperty, new Binding(nameof(HeaderBackgroundColor), source: this));
             SetRow(headGrid, 0);
             Children.Add(headGrid);
 
@@ -287,6 +289,22 @@ namespace DataGridSam
         {
             get { return (Color)GetValue(BorderColorProperty); }
             set { SetValue(BorderColorProperty, value); }
+        }
+
+
+
+
+        public static readonly BindableProperty HeaderHasBorderProperty =
+            BindableProperty.Create(nameof(HeaderHasBorder), typeof(bool), typeof(DataGrid), true,
+                propertyChanged: (b, o, n) =>
+                {
+                    var self = b as DataGrid;
+                    self.InitHeaderView();
+                });
+        public bool HeaderHasBorder
+        {
+            get { return (bool)GetValue(HeaderHasBorderProperty); }
+            set { SetValue(HeaderHeightProperty, value); }
         }
 
 

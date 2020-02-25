@@ -15,9 +15,14 @@ namespace DataGridSam
         internal ScrollView mainScroll;
 
         /// <summary>
-        /// For imitate columns lines
+        /// For imitate column borders (BODY)
         /// </summary>
         internal Grid maskGrid;
+
+        /// <summary>
+        /// For imitate column borders (HEAD)
+        /// </summary>
+        internal Grid maskHeadGrid;
 
         /// <summary>
         /// Main GUI component that display rows

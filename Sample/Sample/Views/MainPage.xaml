@@ -16,11 +16,11 @@
     <StackLayout>
         <Frame Margin="10" Padding="10" CornerRadius="10"
                VerticalOptions="FillAndExpand"
-               BackgroundColor="Beige"
-               >
+               BackgroundColor="Beige">
             <!--Table-->
             <sam:DataGrid ItemsSource="{Binding Items}"
                           SelectedItem="{Binding SelectedItem}"
+                          HeaderBackgroundColor="#1976d2"
                           HeaderTextColor="White"
                           IsWrapped="True"
                           HeaderFontSize="16"
