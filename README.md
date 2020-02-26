@@ -16,39 +16,47 @@ Install-Package DataGridSam
 
 ## Supported Platforms
  - Android
- - iOS
+ - iOS (сurrently not available)
  - UWP
 
 
-## Install
+## Install android project
 ```c#
-    public partial class App : Application
+    public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
-        public App()
+        protected override void OnCreate(Bundle savedInstanceState)
         {
-            InitializeComponent();
+            TabLayoutResource = Resource.Layout.Tabbar;
+            ToolbarResource = Resource.Layout.Toolbar;
+            base.OnCreate(savedInstanceState);
 
-            // Init DataGridSam
-            DataGridSam.DataGridSamInit.Init();
-
-            MainPage = new MainPage();
-        }
-
-        protected override void OnStart()
-        {
-            // Handle when your app starts
-        }
-
-        protected override void OnSleep()
-        {
-            // Handle when your app sleeps
-        }
-
-        protected override void OnResume()
-        {
-            // Handle when your app resumes
+            Xamarin.Forms.Forms.Init(this, savedInstanceState);
+            DataGridSam.Droid.Initialize.Init();
+            LoadApplication(new App());
         }
     }
+```
+## Install UWP project
+In file **App.xaml.cs**, enter `DataGridSam.UWP.Initialize.Init();` as below
+```c#
+    protected override void OnLaunched(LaunchActivatedEventArgs e)
+        {
+            Frame rootFrame = Window.Current.Content as Frame;
+            if (rootFrame == null)
+            {
+                rootFrame = new Frame();
+                rootFrame.NavigationFailed += OnNavigationFailed;
+                Xamarin.Forms.Forms.Init(e);
+                DataGridSam.UWP.Initialize.Init();
+
+                if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
+                {
+                }
+
+                Window.Current.Content = rootFrame;
+            }
+	    ...
+        }
 ```
 
 ## Examle
