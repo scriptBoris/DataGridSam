@@ -14,6 +14,7 @@ namespace Sample.ViewModels
     public class MainPageVm : BaseNotify
     {
         private readonly Page view;
+        private Ware lastWare;
 
         [Obsolete("Only for IntelliSense XAML helper")]
         public MainPageVm() { }
@@ -88,6 +89,11 @@ namespace Sample.ViewModels
         {
             if (param is Ware ware)
             {
+                if (lastWare != null)
+                    lastWare.IsSelected = false;
+                lastWare = ware;
+                lastWare.IsSelected = true;
+
                 view.DisplayAlert("Select", $"You are selected {ware.Pos} {ware.Name}", "OK");
             }
         }

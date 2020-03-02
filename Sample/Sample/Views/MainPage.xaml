@@ -42,7 +42,7 @@
                     <sam:DataGridColumn Title="Name" 
                                         Width="2*"
                                         CellTextColor="Purple"
-                                        PropertyName="Name"/>
+                                        PropertyName="NameView"/>
                     <sam:DataGridColumn Title="Need" 
                                         Width="1*"
                                         HorizontalTextAlignment="End"
@@ -51,7 +51,7 @@
                                         Width="1*"
                                         HorizontalTextAlignment="End"
                                         PropertyName="Price"/>
-                    <sam:DataGridColumn Title="Weight" 
+                    <sam:DataGridColumn Title="Required weight for shipment" 
                                         Width="1*"
                                         PropertyName="Weight"
                                         HorizontalTextAlignment="End">
