@@ -10,7 +10,7 @@ using Xamarin.Forms;
 namespace DataGridSam.Utils
 {
     [Xamarin.Forms.Internals.Preserve(AllMembers = true)]
-    internal sealed class Row : Grid
+    internal sealed class Row : Grid, IDefinition
     {
         internal Type bindingTypeModel;
         internal BoxView line;
@@ -83,7 +83,7 @@ namespace DataGridSam.Utils
 
             RowDefinitions = new RowDefinitionCollection
             {
-                new RowDefinition { Height = GridLength.Auto },
+                new RowDefinition { Height = GridLength.Star },
                 new RowDefinition { Height = GridLength.Auto },
                 //new RowDefinition { Height = new GridLength(DataGrid.BorderWidth) },
             };
@@ -114,6 +114,19 @@ namespace DataGridSam.Utils
                         VerticalTextAlignment = column.VerticalTextAlignment,
                         LineBreakMode = LineBreakMode.WordWrap,
                     };
+
+                    //TODO TEST
+                    if (index == 0)
+                        SizeChanged += (o, e) =>
+                        {
+                            if (Height > 80.0)
+                            {
+                                //HeightRequest = 1;
+                                BackgroundColor = Color.Red;
+                            }
+                            label.Text = Height.ToString();
+                        };
+
                     var wrapper = new ContentView
                     {
                         Padding = DataGrid.CellPadding,
@@ -256,7 +269,11 @@ namespace DataGridSam.Utils
                     item.Label.FontAttributes = DataGrid.RowsFontAttribute;
                 }
             }
+
+            // TODO: Test
+            DataGrid.stackList.Update();
         }
+
 
         private BoxView CreateHorizontalLine()
         {
