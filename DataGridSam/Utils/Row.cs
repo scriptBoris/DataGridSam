@@ -115,17 +115,17 @@ namespace DataGridSam.Utils
                         LineBreakMode = LineBreakMode.WordWrap,
                     };
 
-                    //TODO TEST
-                    if (index == 0)
-                        SizeChanged += (o, e) =>
-                        {
-                            if (Height > 80.0)
-                            {
-                                //HeightRequest = 1;
-                                BackgroundColor = Color.Red;
-                            }
-                            label.Text = Height.ToString();
-                        };
+                    // TEST
+                    //if (index == 0)
+                    //    SizeChanged += (o, e) =>
+                    //    {
+                    //        if (Height > 80.0)
+                    //        {
+                    //            //HeightRequest = 1;
+                    //            BackgroundColor = Color.Red;
+                    //        }
+                    //        label.Text = Height.ToString();
+                    //    };
 
                     var wrapper = new ContentView
                     {
@@ -269,9 +269,6 @@ namespace DataGridSam.Utils
                     item.Label.FontAttributes = DataGrid.RowsFontAttribute;
                 }
             }
-
-            // TODO: Test
-            DataGrid.stackList.Update();
         }
 
 
