@@ -80,7 +80,9 @@ namespace DataGridSam
                 maskHeadGrid.RowSpacing = 0;
                 maskHeadGrid.BackgroundColor = Color.Transparent;
                 maskHeadGrid.InputTransparent = true;
+                maskHeadGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Star });
                 maskHeadGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+
                 SetRow(maskHeadGrid, 0);
                 Children.Add(maskHeadGrid);
             }
@@ -120,7 +122,6 @@ namespace DataGridSam
                 VerticalOptions = LayoutOptions.EndAndExpand,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 BackgroundColor = BorderColor,
-                //TranslationY = BorderWidth,
             };
             Grid.SetColumnSpan(row, i);
             Grid.SetRow(row, 1);
@@ -140,8 +141,8 @@ namespace DataGridSam
 			column.HeaderLabel.Style = column.HeaderLabelStyle ?? this.HeaderLabelStyle ?? HeaderDefaultStyle;
 
             // Drop in wrap container
-            var container = new StackLayout();
-            container.Children.Add(column.HeaderLabel);
+            var container = new ContentView();
+            container.Content = column.HeaderLabel;
 
             return container;
         }

@@ -133,6 +133,12 @@ namespace DataGridSam.Utils
             self.InvalidateLayout();
         }
 
+        public void Update()
+        {
+            UpdateChildrenLayout();
+            InvalidateLayout();
+        }
+
         private void OnItemsSourceCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == NotifyCollectionChangedAction.Replace)
