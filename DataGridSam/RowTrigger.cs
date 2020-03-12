@@ -1,6 +1,7 @@
 ﻿using DataGridSam.Utils;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 using Xamarin.Forms;
 
@@ -9,10 +10,88 @@ namespace DataGridSam
     [Xamarin.Forms.Internals.Preserve(AllMembers = true)]
     public sealed class RowTrigger : BindableObject
     {
+        private DataGrid grid;
+        private Type sourceType;
+        private PropertyInfo targetProp;
+
+        private string valueString;
+        private object valueTrigger;
+
+        internal void OnAttached(DataGrid host)
+        {
+            grid = host;
+        }
+
+        internal void OnSourceTypeChanged(Type newSourceType)
+        {
+            sourceType = newSourceType;
+            targetProp = sourceType?.GetProperty(PropertyTrigger);
+            Init();
+        }
+
+        internal void Init()
+        {
+            if (targetProp == null)
+                return;
+
+            if (Value is string && Value != null)
+            {
+                valueString = Value.ToString();
+
+                if (targetProp.PropertyType.IsEnum)
+                {
+                    foreach (var item in targetProp.PropertyType.GetFields())
+                    {
+                        if (item.Name == valueString)
+                        {
+                            var parse = Enum.Parse(targetProp.PropertyType, valueString, false);
+                            if (parse != null)
+                            {
+                                valueTrigger = parse;
+                            }
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    valueTrigger = Convert.ChangeType(valueString, targetProp.PropertyType);
+                }
+            }
+        }
+
+        private bool CheckTriggerActivated(object rowContext)
+        {
+            if (targetProp == null || valueTrigger == null)
+                return false;
+
+            var valueProp = targetProp.GetValue(rowContext);
+
+            if (valueProp is IComparable valueComparable && 
+                valueTrigger is IComparable tvalueComparable)
+            {
+                try
+                {
+                    if (valueComparable.CompareTo(tvalueComparable) == 0)
+                        return true;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+            return false;
+        }
+
         #region BindProps
         // Property trigger
         public static readonly BindableProperty PropertyTriggerProperty =
-            BindableProperty.Create(nameof(PropertyTrigger), typeof(string), typeof(RowTrigger), null);
+            BindableProperty.Create(nameof(PropertyTrigger), typeof(string), typeof(RowTrigger), null,
+                propertyChanged: (b,o,n)=>
+                {
+                    var self = (RowTrigger)b;
+                    self.Init();
+                });
         public string PropertyTrigger
         {
             get { return (string)GetValue(PropertyTriggerProperty); }
@@ -25,25 +104,7 @@ namespace DataGridSam
                 propertyChanged: (b, o, n) =>
                 {
                     var self = (RowTrigger)b;
-
-                    if (n is string valueString)
-                    {
-                        if (valueString == "True")
-                        {
-                            self.SetValue(ValueProperty, true);
-                            return;
-                        }
-                        else if (valueString == "False")
-                        {
-                            self.SetValue(ValueProperty, false);
-                            return;
-                        }
-                        else if (int.TryParse(valueString, out int res))
-                        {
-                            self.SetValue(ValueProperty, res);
-                            return;
-                        }
-                    }
+                    self.Init();
                 });
         public object Value
         {
@@ -86,27 +147,19 @@ namespace DataGridSam
                 return null;
 
             // Any trigger is activated
-            RowTrigger activeTrigger = null;
+            RowTrigger anyTrigger = null;
             bool isTriggerActive = false;
 
             foreach (var trigger in row.DataGrid.RowTriggers)
             {
                 if (propName == trigger.PropertyTrigger)
                 {
-                    var matchProperty = row.bindingTypeModel.GetProperty(trigger.PropertyTrigger);
-                    if (matchProperty == null)
-                        continue;
-
-                    activeTrigger = trigger;
-                    var value = matchProperty.GetValue(row.BindingContext);
-                    if (value is IComparable valueComparable && trigger.Value is IComparable tvalueComparable)
+                    anyTrigger = trigger;
+                    if (trigger.CheckTriggerActivated(row.BindingContext))
                     {
-                        if (valueComparable.CompareTo(tvalueComparable) == 0)
-                        {
-                            isTriggerActive = true;
-                            if (!isNeedUpdate) 
-                                return activeTrigger;
-                        }
+                        isTriggerActive = true;
+                        if (!isNeedUpdate)
+                            return anyTrigger;
                     }
                     break;
                 }
@@ -115,44 +168,33 @@ namespace DataGridSam
             if (!isNeedUpdate)
                 return null;
 
-            if (activeTrigger == null)
+            if (anyTrigger == null)
                 return null;
 
-            if (activeTrigger != null && (row.enableTrigger==activeTrigger || row.enableTrigger==null) )
+            if (anyTrigger != null && (row.enableTrigger==anyTrigger || row.enableTrigger==null) )
             {
                 if (isTriggerActive)
                 {
-                    row.enableTrigger = activeTrigger;
+                    row.enableTrigger = anyTrigger;
                     row.UpdateStyle();
                 }
                 else
                 {
-                    row.enableTrigger = TrySetTriggerStyleRow(row);
+                    row.enableTrigger = GetFirstTrigger(row);
                     row.UpdateStyle();
                 }
             }
 
-            return activeTrigger;
+            return anyTrigger;
         }
 
-        private static RowTrigger TrySetTriggerStyleRow(Row row)
+        private static RowTrigger GetFirstTrigger(Row row)
         {
             foreach (var trigger in row.DataGrid.RowTriggers)
             {
-                var matchProperty = row.bindingTypeModel.GetProperty(trigger.PropertyTrigger);
-                if (matchProperty == null)
-                    continue;
-
-                var value = matchProperty.GetValue(row.BindingContext);
-                if (value is IComparable valueComparable && trigger.Value is IComparable tvalueComparable)
+                if (trigger.CheckTriggerActivated(row.BindingContext))
                 {
-                    if (valueComparable.CompareTo(tvalueComparable) == 0)
-                    {
-                        row.enableTrigger = trigger;
-                        row.UpdateStyle();
-
-                        return trigger;
-                    }
+                    return trigger;
                 }
             }
             return null;

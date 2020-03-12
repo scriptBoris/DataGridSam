@@ -201,10 +201,23 @@ namespace DataGridSam
             if (buttonLatest != null)
                 buttonLatest.IsVisible = isVisible;
         }
+        
         internal void ShowPaginationNextButton(bool isVisible)
         {
             if (buttonLatest != null)
                 buttonNext.IsVisible = isVisible;
+        }
+
+        /// <summary>
+        /// Called every time an ItemsSource changes
+        /// Вызывается каждый раз, когда меняется ItemsSource;
+        /// </summary>
+        internal void OnChangeItemsBindingContext(Type newTypeItems)
+        {
+            foreach (var trigger in RowTriggers)
+            {
+                trigger.OnSourceTypeChanged(newTypeItems);
+            }
         }
 
         private void OnButtonLatestClicked(object sender, EventArgs e)

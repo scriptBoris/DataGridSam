@@ -69,9 +69,14 @@
                                     Width="1*">
                     <sam:DataGridColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Text="HELLO"
-                                    Command="{Binding BindingContext.CommandActionTap, Source={Reference root}}"
-                                    CommandParameter="{Binding .}"/>
+                            <StackLayout Spacing="0">
+                                <Button Text="Change rank"
+                                        Command="{Binding BindingContext.CommandSetRank, Source={Reference root}}"
+                                        CommandParameter="{Binding .}"/>
+                                <Button Text="Delete"
+                                        Command="{Binding BindingContext.CommandActionTap, Source={Reference root}}"
+                                        CommandParameter="{Binding .}"/>
+                            </StackLayout>
                         </DataTemplate>
                     </sam:DataGridColumn.CellTemplate>
                 </sam:DataGridColumn>
@@ -82,7 +87,7 @@
             <sam:DataGrid.RowTriggers>
                 <sam:RowTrigger PropertyTrigger="Rank"
                                 Value="Admin"
-                                RowBackgroundColor="Red"/>
+                                RowBackgroundColor="#ff77a9"/>
             </sam:DataGrid.RowTriggers>
 
             <sam:DataGrid.Triggers>

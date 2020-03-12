@@ -102,6 +102,11 @@ namespace DataGridSam
                         self.RowTriggers.Clear();
                         return;
                     }
+
+                    foreach (var item in self.RowTriggers)
+                    {
+                        item.OnAttached(self);
+                    }
                 });
         public List<RowTrigger> RowTriggers
         {

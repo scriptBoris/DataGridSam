@@ -14,6 +14,7 @@ namespace Sample.ViewModels
         public CustomCellsVm()
         {
             CommandActionTap = new Command(ActionTap);
+            CommandSetRank = new Command(ActionSetRank);
 
             Items = new ObservableCollection<User>
             {
@@ -46,6 +47,7 @@ namespace Sample.ViewModels
 
         #region Props
         public ICommand CommandActionTap { get; set; }
+        public ICommand CommandSetRank { get; set; }
         public ObservableCollection<User> Items { get; set; }
         public override Page View { get; set; } = new Views.CustomCellsView();
         #endregion
@@ -55,6 +57,30 @@ namespace Sample.ViewModels
         {
             if (param is User user)
                 View.DisplayAlert("Action",$"{user.FirstName}","OK");
+        }
+
+        private async void ActionSetRank(object param)
+        {
+            if (param is User user)
+            {
+                const string v1 = "OfficePlankton";
+                const string v2 = "Manager";
+                const string v3 = "Admin";
+                string[] ranks = new string[] 
+                {
+                    v1,
+                    v2,
+                    v3,
+                };
+
+                var res = await View.DisplayActionSheet("Set new rank", null, null, ranks);
+                if (res == v1)
+                    user.Rank = Ranks.OfficePlankton;
+                else if (res == v2)
+                    user.Rank = Ranks.Manager;
+                else if (res == v3)
+                    user.Rank = Ranks.Admin;
+            }
         }
         #endregion
     }

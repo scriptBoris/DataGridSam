@@ -12,7 +12,6 @@ namespace DataGridSam.Utils
     [Xamarin.Forms.Internals.Preserve(AllMembers = true)]
     internal sealed class Row : Grid, IDefinition
     {
-        internal Type bindingTypeModel;
         internal BoxView line;
         internal bool isSelected;
         internal List<GridCell> cells = new List<GridCell>();
@@ -34,10 +33,6 @@ namespace DataGridSam.Utils
 
         protected override void OnBindingContextChanged()
         {
-            // Get binding model type
-            bindingTypeModel = BindingContext.GetType();
-
-
             // Triggers event
             if (BindingContext is INotifyPropertyChanged model)
                 model.PropertyChanged += (obj, e) => RowTrigger.TrySetTriggerStyleRow(this, e.PropertyName);
