@@ -6,11 +6,11 @@
              xmlns:sam="clr-namespace:DataGridSam;assembly=DataGridSam"
              xmlns:vm="clr-namespace:Sample.ViewModels"
              mc:Ignorable="d"
-             x:Class="Sample.Views.MainPage"
+             x:Class="Sample.Views.DefaultView"
              Title="DataGridSam">
     
     <d:ContentPage.BindingContext>
-        <vm:MainPageVm/>
+        <vm:DefaultVm/>
     </d:ContentPage.BindingContext>
     
     <StackLayout>

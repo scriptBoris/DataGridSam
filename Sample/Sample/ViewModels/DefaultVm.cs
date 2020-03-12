@@ -11,16 +11,12 @@ using Xamarin.Forms;
 
 namespace Sample.ViewModels
 {
-    public class MainPageVm : BaseNotify
+    public class DefaultVm : BaseViewModel
     {
-        private readonly Page view;
         private Ware lastWare;
 
-        [Obsolete("Only for IntelliSense XAML helper")]
-        public MainPageVm() { }
-        public MainPageVm(Page view)
+        public DefaultVm()
         {
-            this.view = view;
             CommandSelectItem = new SimpleCommand(ActionSelectedItem);
             CommandLongTap = new SimpleCommand(ActionLongTap);
             CommandOpenWare = new SimpleCommand(ActionOpenWare);
@@ -29,8 +25,8 @@ namespace Sample.ViewModels
             CommandRemoveItem = new SimpleCommand(ActionRemoveItem);
             CommandAddWeight = new SimpleCommand(ActionAddWeight);
             CommandRemoveWeight = new SimpleCommand(ActionRemoveWeight);
-            var temp = new ObservableCollection<Ware>();
 
+            var temp = new ObservableCollection<Ware>();
             temp.Add(new Ware
             {
                 Pos = 1,
@@ -73,7 +69,7 @@ namespace Sample.ViewModels
         #region Props
         public ObservableCollection<Ware> Items { get; set; }
         public Ware SelectedItem { get; set; }
-        public int ItemsCount => Items.Count;
+        public int ItemsCount => Items?.Count ?? 0;
         public ICommand CommandSelectItem { get; set; }
         public ICommand CommandLongTap { get; set; }
         public ICommand CommandAddWeight { get; set; }
@@ -82,6 +78,7 @@ namespace Sample.ViewModels
         public ICommand CommandAddItem { get; set; }
         public ICommand CommandAddItems { get; set; }
         public ICommand CommandRemoveItem { get; set; }
+        public override Page View { get; set; } = new Views.DefaultView();
         #endregion
 
         #region Actions
@@ -94,7 +91,7 @@ namespace Sample.ViewModels
                 lastWare = ware;
                 lastWare.IsSelected = true;
 
-                view.DisplayAlert("Select", $"You are selected {ware.Pos} {ware.Name}", "OK");
+                View.DisplayAlert("Select", $"You are selected {ware.Pos} {ware.Name}", "OK");
             }
         }
 
@@ -103,7 +100,7 @@ namespace Sample.ViewModels
             if (param is Ware ware)
             {
                 SelectedItem = ware;
-                view.DisplayAlert("Long tap", $"You are selected {ware.Pos} {ware.Name}", "OK");
+                View.DisplayAlert("Long tap", $"You are selected {ware.Pos} {ware.Name}", "OK");
             }
         }
 
@@ -111,7 +108,7 @@ namespace Sample.ViewModels
         {
             var edit = new Views.WareEdit();
             edit.BindingContext = new ViewModels.WareDetailVm(edit, SelectedItem);
-            view.Navigation.PushAsync(edit);
+            View.Navigation.PushAsync(edit);
         }
 
         private void ActionAddItem(object obj)

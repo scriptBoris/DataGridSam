@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:Sample.ViewModels"
+             xmlns:sam="clr-namespace:DataGridSam;assembly=DataGridSam"
+             mc:Ignorable="d"
+             x:Class="Sample.Views.CustomCellsView"
+             x:Name="root"
+             Title="DataGridSam: Custom cells">
+
+    <d:ContentPage.BindingContext>
+        <vm:CustomCellsVm/>
+    </d:ContentPage.BindingContext>
+    
+    
+    <StackLayout>
+        <!--Table-->
+        <sam:DataGrid ItemsSource="{Binding Items}"
+                      HeaderBackgroundColor="#1976d2"
+                      HeaderTextColor="White"
+                      HeaderFontSize="16"
+                      IsWrapped="True"
+                      RowsColor="White"
+                      RowsTextColor="Black"
+                      RowsFontSize="16"
+                      SelectedRowColor="#bbdefb"
+                      BorderColor="#2196F3"
+                      BorderWidth="2"
+                      CellPadding="5,10,5,10"
+                      TapColor="#bbdefb"
+                      CommandSelectedItem="{Binding CommandSelectItem}"
+                      CommandLongTapItem="{Binding CommandLongTap}">
+            <!--Columns-->
+            <sam:DataGrid.Columns>
+                <!--Photo-->
+                <sam:DataGridColumn Title="Photo" 
+                                    Width="90">
+                    <sam:DataGridColumn.CellTemplate>
+                        <DataTemplate>
+                            <Image>
+                                <Image.Source>
+                                    <UriImageSource Uri="{Binding PhotoUrl}"
+                                                    CachingEnabled="False"/>
+                                </Image.Source>
+                            </Image>
+                        </DataTemplate>
+                    </sam:DataGridColumn.CellTemplate>
+                </sam:DataGridColumn>
+                <!--First name-->
+                <sam:DataGridColumn Title="FirstName" 
+                                    PropertyName="FirstName"
+                                    Width="2*"/>
+                <!--Last name-->
+                <sam:DataGridColumn Title="LastName" 
+                                    PropertyName="LastName"
+                                    Width="2*"/>
+                <!--Rank-->
+                <sam:DataGridColumn Title="Rank"
+                                    PropertyName="Rank"
+                                    Width="1*"/>
+                <!--Birth-->
+                <sam:DataGridColumn Title="Birth date" 
+                                    PropertyName="BirthDate"
+                                    Width="1*"/>
+                <!--Actions-->
+                <sam:DataGridColumn Title="Action" 
+                                    Width="1*">
+                    <sam:DataGridColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Text="HELLO"
+                                    Command="{Binding BindingContext.CommandActionTap, Source={Reference root}}"
+                                    CommandParameter="{Binding .}"/>
+                        </DataTemplate>
+                    </sam:DataGridColumn.CellTemplate>
+                </sam:DataGridColumn>
+                
+            </sam:DataGrid.Columns>
+            
+            <!--Triggers-->
+            <sam:DataGrid.RowTriggers>
+                <sam:RowTrigger PropertyTrigger="Rank"
+                                Value="Admin"
+                                RowBackgroundColor="Red"/>
+            </sam:DataGrid.RowTriggers>
+
+            <sam:DataGrid.Triggers>
+                <DataTrigger TargetType="sam:DataGrid" Binding="{Binding Name}" Value="True">
+                    <Setter Property="BackgroundColor" Value="Accent"/>
+                </DataTrigger>
+            </sam:DataGrid.Triggers>
+        </sam:DataGrid>
+        
+    </StackLayout>
+</ContentPage>

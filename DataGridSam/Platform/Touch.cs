@@ -104,14 +104,14 @@ namespace DataGridSam.Platform
             if (effect != null)
                 return;
 
-            view.InputTransparent = false;
+            //view.InputTransparent = false;
             view.Effects.Add(new TouchEffect());
 
-            if (EffectsConfig.AutoChildrenInputTransparent && b is Layout &&
-                !EffectsConfig.GetChildrenInputTransparent(view))
-            {
-                EffectsConfig.SetChildrenInputTransparent(view, true);
-            }
+            //if (EffectsConfig.AutoChildrenInputTransparent && b is Layout &&
+            //    !EffectsConfig.GetChildrenInputTransparent(view))
+            //{
+            //    EffectsConfig.SetChildrenInputTransparent(view, true);
+            //}
             //else
             //{
             //    if (effect == null || view.BindingContext == null)

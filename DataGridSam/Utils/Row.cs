@@ -42,6 +42,13 @@ namespace DataGridSam.Utils
             if (BindingContext is INotifyPropertyChanged model)
                 model.PropertyChanged += (obj, e) => RowTrigger.TrySetTriggerStyleRow(this, e.PropertyName);
 
+            // Set binding context for custom cells
+            foreach (var item in cells)
+            {
+                if (item.IsCustomTemplate && item.Wrapper?.Content != null)
+                    item.Wrapper.Content.BindingContext = BindingContext;
+            }
+
             // Started find FIRST active trigger
             if (this.DataGrid.RowTriggers.Count > 0)
             {
@@ -100,6 +107,7 @@ namespace DataGridSam.Utils
                 if (column.CellTemplate != null)
                 {
                     cell.Wrapper = new ContentView() { Content = column.CellTemplate.CreateContent() as View };
+                    cell.Wrapper.InputTransparent = false;
                     cell.IsCustomTemplate = true;
                 }
                 // Create standart cell
@@ -115,18 +123,6 @@ namespace DataGridSam.Utils
                         LineBreakMode = LineBreakMode.WordWrap,
                     };
 
-                    // TEST
-                    //if (index == 0)
-                    //    SizeChanged += (o, e) =>
-                    //    {
-                    //        if (Height > 80.0)
-                    //        {
-                    //            //HeightRequest = 1;
-                    //            BackgroundColor = Color.Red;
-                    //        }
-                    //        label.Text = Height.ToString();
-                    //    };
-
                     var wrapper = new ContentView
                     {
                         Padding = DataGrid.CellPadding,
@@ -137,6 +133,7 @@ namespace DataGridSam.Utils
                     };
 
                     cell.Wrapper = wrapper;
+                    cell.Wrapper.InputTransparent = true;
                     cell.Label = label;
                 }
 
