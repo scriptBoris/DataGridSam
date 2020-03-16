@@ -76,7 +76,9 @@ namespace DataGridSam.Utils
                 if (item == null)
                     continue;
 
-                if (item.FontAttribute.HasValue && item.FontAttribute.Value != FontAttributes.None)
+                //if (item.FontAttribute.HasValue && item.FontAttribute.Value != FontAttributes.None)
+                //    return item.FontAttribute.Value;
+                if (item.FontAttribute != null)
                     return item.FontAttribute.Value;
             }
 

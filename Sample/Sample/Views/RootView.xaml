@@ -7,7 +7,7 @@
              mc:Ignorable="d"
              x:Class="Sample.Views.RootView"
              x:Name="root"
-             Title="Root">
+             Title="DataGridSam sample">
     <d:ContentPage.BindingContext>
         <vm:RootVm/>
     </d:ContentPage.BindingContext>
@@ -23,6 +23,6 @@
                 Command="{Binding CommandTriggersDemo}"/>
         
         <Button Text="Dev"
-                Command="{Binding CommandDefault}"/>
+                Command="{Binding CommandDev}"/>
     </StackLayout>
 </ContentPage>

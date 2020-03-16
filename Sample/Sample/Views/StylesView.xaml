@@ -64,9 +64,8 @@
         
         <!--Trigger text style (Admin)-->
         <Style TargetType="Label" x:Key="GridTriggerAdmin">
-            <Setter Property="TextColor" Value="Black"/>
-            <Setter Property="FontSize" Value="20"/>
-            <Setter Property="FontAttributes" Value="Bold"/>
+            <Setter Property="HorizontalTextAlignment" Value="Center"/>
+            <Setter Property="FontAttributes" Value="Italic"/>
         </Style>
     </ContentPage.Resources>
     

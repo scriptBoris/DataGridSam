@@ -16,33 +16,7 @@ namespace Sample.ViewModels
             CommandActionTap = new Command(ActionTap);
             CommandSetRank = new Command(ActionSetRank);
 
-            Items = new ObservableCollection<User>
-            {
-                new User
-                {
-                    BirthDate = new DateTime(1991, 2, 20),
-                    FirstName = "Boris",
-                    LastName = "Krit",
-                    PhotoUrl = "https://randomuser.me/api/portraits/men/72.jpg",
-                    Rank = Ranks.OfficePlankton,
-                },
-                new User
-                {
-                    BirthDate = new DateTime(1979, 1, 12),
-                    FirstName = "Anna",
-                    LastName = "Abraham",
-                    PhotoUrl = "https://randomuser.me/api/portraits/women/85.jpg",
-                    Rank = Ranks.Manager,
-                },
-                new User
-                {
-                    BirthDate = new DateTime(1996, 12, 13),
-                    FirstName = "Sam",
-                    LastName = "Super",
-                    PhotoUrl = "https://randomuser.me/api/portraits/men/55.jpg",
-                    Rank = Ranks.Admin,
-                }
-            };
+            Items = DataCollector.GetUsers();
         }
 
         #region Props
