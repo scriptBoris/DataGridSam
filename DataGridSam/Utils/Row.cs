@@ -35,7 +35,7 @@ namespace DataGridSam.Utils
         {
             // Triggers event
             if (BindingContext is INotifyPropertyChanged model)
-                model.PropertyChanged += (obj, e) => RowTrigger.TrySetTriggerStyleRow(this, e.PropertyName);
+                model.PropertyChanged += (obj, e) => RowTrigger.SetTriggerStyle(this, e.PropertyName);
 
             // Set binding context for custom cells
             foreach (var item in cells)
@@ -49,12 +49,17 @@ namespace DataGridSam.Utils
             {
                 foreach (var trigg in this.DataGrid.RowTriggers)
                 {
-                    var trigger = RowTrigger.TrySetTriggerStyleRow(this, trigg.PropertyTrigger, false);
-                    if (trigger != null)
+                    if (trigg.CheckTriggerActivated(BindingContext))
                     {
-                        this.enableTrigger = trigger;
+                        this.enableTrigger = trigg;
                         break;
                     }
+                    //var trigger = RowTrigger.SetTriggerStyle(this, trigg.PropertyTrigger, false);
+                    //if (trigger != null)
+                    //{
+                    //    this.enableTrigger = trigger;
+                    //    break;
+                    //}
                 }
             }
 
@@ -87,7 +92,6 @@ namespace DataGridSam.Utils
             {
                 new RowDefinition { Height = GridLength.Star },
                 new RowDefinition { Height = GridLength.Auto },
-                //new RowDefinition { Height = new GridLength(DataGrid.BorderWidth) },
             };
 
             int index = 0;
@@ -101,8 +105,12 @@ namespace DataGridSam.Utils
                 // Create custom template
                 if (column.CellTemplate != null)
                 {
-                    cell.Wrapper = new ContentView() { Content = column.CellTemplate.CreateContent() as View };
-                    cell.Wrapper.InputTransparent = false;
+                    cell.Wrapper = new ContentView();
+                    cell.Wrapper.IsClippedToBounds = true;
+                    cell.Wrapper.InputTransparent = true;
+                    cell.Wrapper.CascadeInputTransparent = true;
+                    cell.Wrapper.Content = column.CellTemplate.CreateContent() as View;
+                    cell.Wrapper.Content.InputTransparent = true;
                     cell.IsCustomTemplate = true;
                 }
                 // Create standart cell
@@ -110,19 +118,20 @@ namespace DataGridSam.Utils
                 {
                     var label = new Label
                     {
-                        FontSize = DataGrid.RowsFontSize,
-                        HorizontalOptions = column.HorizontalContentAlignment,
-                        VerticalOptions = column.VerticalContentAlignment,
-                        HorizontalTextAlignment = column.HorizontalTextAlignment,
-                        VerticalTextAlignment = column.VerticalTextAlignment,
-                        LineBreakMode = LineBreakMode.WordWrap,
+                        HorizontalOptions = LayoutOptions.FillAndExpand,
+                        VerticalOptions = LayoutOptions.FillAndExpand,
+                        //FontSize = DataGrid.RowsFontSize,
+                        //HorizontalTextAlignment = column.HorizontalTextAlignment,
+                        //VerticalTextAlignment = column.VerticalTextAlignment,
+                        //LineBreakMode = LineBreakMode.WordWrap,
+                        //Style = DataGrid.RowsTextStyle,
                     };
 
                     var wrapper = new ContentView
                     {
                         Padding = DataGrid.CellPadding,
-                        HorizontalOptions = LayoutOptions.FillAndExpand,
-                        VerticalOptions = LayoutOptions.FillAndExpand,
+                        //HorizontalOptions = LayoutOptions.FillAndExpand,
+                        //VerticalOptions = LayoutOptions.FillAndExpand,
                         IsClippedToBounds = true,
                         Content = label,
                     };
@@ -191,10 +200,10 @@ namespace DataGridSam.Utils
             // trigger row
             // cell
             // common
-            foreach (var item in cells)
+            foreach (var cell in cells)
             {
-                if (item.IsCustomTemplate)
-                    continue;
+                //if (item.IsCustomTemplate)
+                //    continue;
 
                 if (isSelected)
                 {
@@ -202,63 +211,169 @@ namespace DataGridSam.Utils
                     if (enableTrigger == null)
                     {
                         // row background
-                        item.Wrapper.BackgroundColor = ValueSelector.Color(DataGrid.SelectedRowColor, DataGrid.RowsColor);
+                        cell.Wrapper.BackgroundColor = ValueSelector.GetBackgroundColor(
+                            DataGrid.SelectedRowColor,
+                            cell.Column.VisualCell.BackgroundColor,
+                            DataGrid.RowsColor);
 
-                        // text color
-                        item.Label.TextColor = ValueSelector.Color(DataGrid.SelectedRowTextColor, DataGrid.RowsTextColor);
+                        if (!cell.IsCustomTemplate)
+                        {
+                            StyleContainer.MergeVisual(cell.Label,
+                                DataGrid.VisualSelectedRowFromStyle,
+                                DataGrid.VisualSelectedRow,
+                                cell.Column.VisualCellFromStyle,
+                                cell.Column.VisualCell,
+                                DataGrid.VisualRowsFromStyle,
+                                DataGrid.VisualRows);
+                            //// text color
+                            //cell.Label.TextColor = ValueSelector.Color(
+                            //    DataGrid.SelectedRowTextColorFromStyle,
+                            //    DataGrid.SelectedRowTextColor,
+                            //    DataGrid.RowsTextColorFromStyle,
+                            //    DataGrid.RowsTextColor);
 
-                        // font attribute
-                        item.Label.FontAttributes = ValueSelector.FontAttribute(DataGrid.SelectedRowAttribute, DataGrid.RowsFontAttribute);
+                            //// font attribute
+                            //cell.Label.FontAttributes = ValueSelector.FontAttribute(
+                            //    DataGrid.SelectedRowAttributeFromStyle,
+                            //    DataGrid.SelectedRowAttribute, 
+                            //    DataGrid.RowsFontAttributeFromStyle,
+                            //    DataGrid.RowsFontAttribute);
+
+                            //// font family
+                            //cell.Label.FontFamily = ValueSelector.String(
+                            //    DataGrid.SelectedRowsFontFamilyFromStyle,
+                            //    DataGrid.SelectedRowFontFamily,
+                            //    DataGrid.RowsFontFamilyFromStyle,
+                            //    DataGrid.RowsFontFamily);
+                        }
                     }
                     // SELECT with TRIGGER
                     else
                     {
                         // row background
-                        item.Wrapper.BackgroundColor = ValueSelector.Color(
+                        cell.Wrapper.BackgroundColor = ValueSelector.GetBackgroundColor(
                             DataGrid.SelectedRowColor,
-                            enableTrigger.RowBackgroundColor,  
+                            enableTrigger.RowBackgroundColor,
+                            cell.Column.VisualCell.BackgroundColor,
                             DataGrid.RowsColor);
 
-                        // text color
-                        item.Label.TextColor = ValueSelector.Color(
-                            DataGrid.SelectedRowTextColor,
-                            enableTrigger.RowTextColor,
-                            DataGrid.RowsTextColor);
+                        if (!cell.IsCustomTemplate)
+                        {
 
-                        // font attribute
-                        item.Label.FontAttributes = ValueSelector.FontAttribute(
-                            DataGrid.SelectedRowAttribute, 
-                            enableTrigger.RowTextAttribute,
-                            DataGrid.RowsFontAttribute);
+                            StyleContainer.MergeVisual(cell.Label,
+                                DataGrid.VisualSelectedRowFromStyle,
+                                DataGrid.VisualSelectedRow,
+                                enableTrigger.VisualContainerStyle,
+                                enableTrigger.VisualContainer,
+                                cell.Column.VisualCellFromStyle,
+                                cell.Column.VisualCell,
+                                DataGrid.VisualRowsFromStyle,
+                                DataGrid.VisualRows);
+
+                            //// text color
+                            //cell.Label.TextColor = ValueSelector.Color(
+                            //    DataGrid.SelectedRowTextColorFromStyle,
+                            //    DataGrid.SelectedRowTextColor,
+                            //    enableTrigger.TextColorFromStyle,
+                            //    enableTrigger.RowTextColor,
+                            //    DataGrid.RowsTextColorFromStyle,
+                            //    DataGrid.RowsTextColor);
+
+                            //// font attribute
+                            //cell.Label.FontAttributes = ValueSelector.FontAttribute(
+                            //    DataGrid.SelectedRowAttributeFromStyle,
+                            //    DataGrid.SelectedRowAttribute,
+                            //    enableTrigger.FontAttributeFromStyle,
+                            //    enableTrigger.RowTextAttribute,
+                            //    DataGrid.RowsFontAttributeFromStyle,
+                            //    DataGrid.RowsFontAttribute);
+
+                            //// font family
+                            //cell.Label.FontFamily = ValueSelector.String(
+                            //    DataGrid.SelectedRowsFontFamilyFromStyle,
+                            //    DataGrid.SelectedRowFontFamily,
+                            //    enableTrigger.FontFamilyFromStyle,
+                            //    enableTrigger.RowFontFamily,
+                            //    DataGrid.RowsFontFamilyFromStyle,
+                            //    DataGrid.RowsFontFamily);
+                        }
                     }
                 }
                 // TRIGGER
                 else if (enableTrigger != null)
                 {
                     // row background
-                    item.Wrapper.BackgroundColor = ValueSelector.Color(
+                    cell.Wrapper.BackgroundColor = ValueSelector.GetBackgroundColor(
                         enableTrigger.RowBackgroundColor,
+                        cell.Column.VisualCell.BackgroundColor,
                         DataGrid.RowsColor);
 
-                    // text color
-                    item.Label.TextColor = ValueSelector.Color(
-                        enableTrigger.RowTextColor,
-                        DataGrid.RowsTextColor);
+                    if (!cell.IsCustomTemplate)
+                    {
+                        StyleContainer.MergeVisual(cell.Label,
+                            enableTrigger.VisualContainerStyle,
+                            enableTrigger.VisualContainer,
+                            cell.Column.VisualCellFromStyle,
+                            cell.Column.VisualCell,
+                            DataGrid.VisualRowsFromStyle,
+                            DataGrid.VisualRows);
 
-                    // font attribute
-                    item.Label.FontAttributes = ValueSelector.FontAttribute(
-                        enableTrigger.RowTextAttribute,
-                        DataGrid.RowsFontAttribute);
+                        //// text color
+                        //cell.Label.TextColor = ValueSelector.Color(
+                        //    enableTrigger.TextColorFromStyle,
+                        //    enableTrigger.RowTextColor,
+                        //    DataGrid.RowsTextColorFromStyle,
+                        //    DataGrid.RowsTextColor);
+
+                        //// font attribute
+                        //cell.Label.FontAttributes = ValueSelector.FontAttribute(
+                        //    enableTrigger.FontAttributeFromStyle,
+                        //    enableTrigger.RowTextAttribute,
+                        //    DataGrid.RowsFontAttributeFromStyle,
+                        //    DataGrid.RowsFontAttribute);
+
+                        //// font family
+                        //cell.Label.FontFamily = ValueSelector.String(
+                        //    enableTrigger.FontFamilyFromStyle,
+                        //    enableTrigger.RowFontFamily,
+                        //    DataGrid.RowsFontFamilyFromStyle,
+                        //    DataGrid.RowsFontFamily);
+                    }
                 }
                 // DEFAULT
                 else
                 {
                     // row background
-                    item.Wrapper.BackgroundColor = DataGrid.RowsColor;
-                    // text color
-                    item.Label.TextColor = DataGrid.RowsTextColor;
-                    // font attribute
-                    item.Label.FontAttributes = DataGrid.RowsFontAttribute;
+                    //cell.Wrapper.BackgroundColor = DataGrid.RowsColor;
+                    cell.Wrapper.BackgroundColor = ValueSelector.GetBackgroundColor(
+                        cell.Column.VisualCell.BackgroundColor,
+                        DataGrid.RowsColor);
+
+                    if (!cell.IsCustomTemplate)
+                    {
+                        //StyleContainer.MergeDefault(cell.Label);
+
+                        StyleContainer.MergeVisual(cell.Label,
+                            cell.Column.VisualCellFromStyle,
+                            cell.Column.VisualCell,
+                            DataGrid.VisualRowsFromStyle,
+                            DataGrid.VisualRows);
+
+                        //// text color
+                        //cell.Label.TextColor = ValueSelector.Color(
+                        //    DataGrid.RowsTextColorFromStyle,
+                        //    DataGrid.RowsTextColor);
+
+                        //// font attribute
+                        //cell.Label.FontAttributes = ValueSelector.FontAttribute(
+                        //    DataGrid.RowsFontAttributeFromStyle,
+                        //    DataGrid.RowsFontAttribute);
+
+                        //// font family
+                        //cell.Label.FontFamily = ValueSelector.String(
+                        //    DataGrid.RowsFontFamilyFromStyle,
+                        //    DataGrid.RowsFontFamily);
+                    }
                 }
             }
         }

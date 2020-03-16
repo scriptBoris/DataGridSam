@@ -11,9 +11,9 @@ using Xamarin.Forms;
 
 namespace Sample.Views
 {
-    public partial class DefaultView : ContentPage
+    public partial class DevView : ContentPage
     {
-        public DefaultView()
+        public DevView()
         {
             InitializeComponent();
         }

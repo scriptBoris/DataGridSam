@@ -11,11 +11,11 @@ using Xamarin.Forms;
 
 namespace Sample.ViewModels
 {
-    public class DefaultVm : BaseViewModel
+    public class DevVm : BaseViewModel
     {
         private Ware lastWare;
 
-        public DefaultVm()
+        public DevVm()
         {
             CommandSelectItem = new SimpleCommand(ActionSelectedItem);
             CommandLongTap = new SimpleCommand(ActionLongTap);
@@ -78,7 +78,7 @@ namespace Sample.ViewModels
         public ICommand CommandAddItem { get; set; }
         public ICommand CommandAddItems { get; set; }
         public ICommand CommandRemoveItem { get; set; }
-        public override Page View { get; set; } = new Views.DefaultView();
+        public override Page View { get; set; } = new Views.DevView();
         #endregion
 
         #region Actions

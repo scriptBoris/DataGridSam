@@ -6,12 +6,12 @@
              xmlns:vm="clr-namespace:Sample.ViewModels"
              xmlns:sam="clr-namespace:DataGridSam;assembly=DataGridSam"
              mc:Ignorable="d"
-             x:Class="Sample.Views.CustomCellsView"
+             x:Class="Sample.Views.TriggersDemoView"
              x:Name="root"
-             Title="DataGridSam: Custom cells">
+             Title="DataGridSam: Triggers demo">
 
     <d:ContentPage.BindingContext>
-        <vm:CustomCellsVm/>
+        <vm:TriggersDemoVm/>
     </d:ContentPage.BindingContext>
 
     <ContentPage.Resources>

@@ -11,9 +11,9 @@ namespace Sample.ViewModels
     {
         public RootVm()
         {
-            CommandDefault = new Command(async () =>
+            CommandDev = new Command(async () =>
             {
-                var vm = new DefaultVm();
+                var vm = new DevVm();
                 await NavigationGoAsync(vm);
             });
             CommandCustomCells = new Command(async () =>
@@ -21,10 +21,22 @@ namespace Sample.ViewModels
                 var vm = new CustomCellsVm();
                 await NavigationGoAsync(vm);
             });
+            CommandStyles = new Command(async () =>
+            {
+                var vm = new StylesVm();
+                await NavigationGoAsync(vm);
+            });
+            CommandTriggersDemo = new Command(async () =>
+            {
+                var vm = new TriggersDemoVm();
+                await NavigationGoAsync(vm);
+            });
         }
 
-        public ICommand CommandDefault { get; set; }
+        public ICommand CommandDev { get; set; }
         public ICommand CommandCustomCells { get; set; }
+        public ICommand CommandStyles { get; set; }
+        public ICommand CommandTriggersDemo { get; set; }
         public override Page View { get; set; } = new Views.RootView();
     }
 }

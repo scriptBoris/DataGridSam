@@ -115,6 +115,8 @@ namespace DataGridSam
         }
 
 
+
+
         // Items source
         public static readonly BindableProperty ItemsSourceProperty =
             BindableProperty.Create(nameof(ItemsSource), typeof(IEnumerable), typeof(DataGrid), null,
@@ -129,6 +131,7 @@ namespace DataGridSam
             get { return (IEnumerable)GetValue(ItemsSourceProperty); }
             set { SetValue(ItemsSourceProperty, value); }
         }
+
 
 
 
@@ -162,21 +165,6 @@ namespace DataGridSam
             set { SetValue(CommandLongTapItemProperty, value); }
         }
 
-
-
-        /// <summary>
-        /// Color when user taped on item (Default: Accent)
-        /// </summary>
-        public static readonly BindableProperty TapColorProperty =
-            BindableProperty.Create(nameof(TapColor), typeof(Color), typeof(DataGrid), Color.Accent);
-        /// <summary>
-        /// Color when user taped on item (Default: Accent)
-        /// </summary>
-        public Color TapColor
-        {
-            get { return (Color)GetValue(TapColorProperty); }
-            set { SetValue(TapColorProperty, value); }
-        }
 
 
 
@@ -299,18 +287,36 @@ namespace DataGridSam
 
 
 
-        public static readonly BindableProperty HeaderHasBorderProperty =
-            BindableProperty.Create(nameof(HeaderHasBorder), typeof(bool), typeof(DataGrid), true,
-                propertyChanged: (b, o, n) =>
-                {
-                    var self = b as DataGrid;
-                    self.InitHeaderView();
-                });
-        public bool HeaderHasBorder
+
+        // Cell padding
+        public static readonly BindableProperty CellPaddingProperty =
+            BindableProperty.Create(nameof(CellPadding), typeof(Thickness), typeof(DataGrid), defaultValue: new Thickness(5));
+        /// <summary>
+        /// Cell padding (thickness). Default: {5,5,5,5}
+        /// </summary>
+        public Thickness CellPadding
         {
-            get { return (bool)GetValue(HeaderHasBorderProperty); }
-            set { SetValue(HeaderHeightProperty, value); }
+            get { return (Thickness)GetValue(CellPaddingProperty); }
+            set { SetValue(CellPaddingProperty, value); }
         }
+
+
+
+
+        /// <summary>
+        /// Color when user taped on item (Default: Accent)
+        /// </summary>
+        public static readonly BindableProperty TapColorProperty =
+            BindableProperty.Create(nameof(TapColor), typeof(Color), typeof(DataGrid), Color.Accent);
+        /// <summary>
+        /// Color when user taped on item (Default: Accent)
+        /// </summary>
+        public Color TapColor
+        {
+            get { return (Color)GetValue(TapColorProperty); }
+            set { SetValue(TapColorProperty, value); }
+        }
+
 
 
 
@@ -329,6 +335,26 @@ namespace DataGridSam
             get { return (bool)GetValue(IsWrappedProperty); }
             set { SetValue(IsWrappedProperty, value); }
         }
+
+
+        #region header
+        // Header has borders
+        public static readonly BindableProperty HeaderHasBorderProperty =
+            BindableProperty.Create(nameof(HeaderHasBorder), typeof(bool), typeof(DataGrid), true,
+                propertyChanged: (b, o, n) =>
+                {
+                    var self = b as DataGrid;
+                    self.InitHeaderView();
+                });
+        /// <summary>
+        /// Default: true
+        /// </summary>
+        public bool HeaderHasBorder
+        {
+            get { return (bool)GetValue(HeaderHasBorderProperty); }
+            set { SetValue(HeaderHeightProperty, value); }
+        }
+
 
 
 
@@ -384,7 +410,11 @@ namespace DataGridSam
 
         // Header font size
         public static readonly BindableProperty HeaderFontSizeProperty =
-            BindableProperty.Create(nameof(HeaderFontSize), typeof(double), typeof(DataGrid), defaultValue: 14.0);
+            BindableProperty.Create(nameof(HeaderFontSize), typeof(double), typeof(DataGrid), defaultValue: 14.0,
+                propertyChanged: (b,o,n)=>
+                {
+                    var self = (DataGrid)b;
+                });
         /// <summary>
         /// Header font size. Default: 14
         /// </summary>
@@ -412,26 +442,33 @@ namespace DataGridSam
             get { return (Style)GetValue(HeaderLabelStyleProperty); }
             set { SetValue(HeaderLabelStyleProperty, value); }
         }
+        #endregion
 
-
-
-        // Cell padding
-        public static readonly BindableProperty CellPaddingProperty =
-            BindableProperty.Create(nameof(CellPadding), typeof(Thickness), typeof(DataGrid), defaultValue: new Thickness(5));
-        /// <summary>
-        /// Cell padding (thickness). Default: {5,5,5,5}
-        /// </summary>
-        public Thickness CellPadding
+        #region selected row visual
+        // Selected row text style
+        public static readonly BindableProperty SelectedRowTextStyleProperty =
+            BindableProperty.Create(nameof(SelectedRowTextStyle), typeof(Style), typeof(DataGrid), null,
+                propertyChanged: (b, o, n) =>
+                {
+                    var self = (DataGrid)b;
+                    self.VisualSelectedRowFromStyle.OnUpdateStyle(n as Style);
+                    self.SelectedRow?.UpdateStyle();
+                });
+        public Style SelectedRowTextStyle
         {
-            get { return (Thickness)GetValue(CellPaddingProperty); }
-            set { SetValue(CellPaddingProperty, value); }
+            get { return (Style)GetValue(SelectedRowTextStyleProperty); }
+            set { SetValue(SelectedRowTextStyleProperty, value); }
         }
-
 
 
         // Selected row color
         public static readonly BindableProperty SelectedRowColorProperty =
-            BindableProperty.Create(nameof(SelectedRowColor), typeof(Color), typeof(DataGrid), null);
+            BindableProperty.Create(nameof(SelectedRowColor), typeof(Color), typeof(DataGrid), null,
+                propertyChanged: (b, o, n) =>
+                {
+                    var self = (DataGrid)b;
+                    self.VisualSelectedRow.BackgroundColor = (Color)n;
+                });
         public Color SelectedRowColor
         {
             get { return (Color)GetValue(SelectedRowColorProperty); }
@@ -442,7 +479,12 @@ namespace DataGridSam
 
         // Selected row text color
         public static readonly BindableProperty SelectedRowTextColorProperty =
-            BindableProperty.Create(nameof(SelectedRowTextColor), typeof(Color), typeof(DataGrid), null);
+            BindableProperty.Create(nameof(SelectedRowTextColor), typeof(Color), typeof(DataGrid), null,
+                propertyChanged: (b, o, n) =>
+                {
+                    var self = (DataGrid)b;
+                    self.VisualSelectedRow.TextColor = (Color)n;
+                });
         /// <summary>
         /// Selected row text color. Default: null
         /// </summary>
@@ -456,7 +498,12 @@ namespace DataGridSam
 
         // Selected row attribute
         public static readonly BindableProperty SelectedRowAttributeProperty =
-            BindableProperty.Create(nameof(SelectedRowAttribute), typeof(FontAttributes), typeof(DataGrid), null);
+            BindableProperty.Create(nameof(SelectedRowAttribute), typeof(FontAttributes), typeof(DataGrid), null,
+                propertyChanged: (b, o, n) =>
+                {
+                    var self = (DataGrid)b;
+                    self.VisualSelectedRow.FontAttribute = (FontAttributes)n;
+                });
         /// <summary>
         /// Selected row attribute. Default: null
         /// </summary>
@@ -468,9 +515,34 @@ namespace DataGridSam
 
 
 
+
+        // Selected row font family
+        public static readonly BindableProperty SelectedRowFontFamilyProperty =
+            BindableProperty.Create(nameof(SelectedRowFontFamily), typeof(string), typeof(DataGrid), null,
+                propertyChanged: (b, o, n) =>
+                {
+                    var self = (DataGrid)b;
+                    self.VisualSelectedRow.FontFamily = (string)n;
+                });
+        /// <summary>
+        /// Default: null
+        /// </summary>
+        public string SelectedRowFontFamily
+        {
+            get { return (string)GetValue(SelectedRowFontFamilyProperty); }
+            set { SetValue(SelectedRowFontFamilyProperty, value); }
+        }
+        #endregion
+
+        #region row visual
         // Rows background color
         public static readonly BindableProperty RowsColorProperty =
-            BindableProperty.Create(nameof(RowsColor), typeof(Color), typeof(DataGrid), defaultValue: Color.White);
+            BindableProperty.Create(nameof(RowsColor), typeof(Color), typeof(DataGrid), defaultValue: Color.White,
+                propertyChanged:(b,o,n)=>
+                {
+                    var self = (DataGrid)b;
+                    self.VisualRows.BackgroundColor = (Color)n;
+                });
         /// <summary>
         /// Rows background color. Default: Color.White
         /// </summary>
@@ -482,9 +554,36 @@ namespace DataGridSam
 
 
 
+
+
+        //Rows text style
+        public static readonly BindableProperty RowsTextStyleProperty =
+            BindableProperty.Create(nameof(RowsTextStyle), typeof(Style), typeof(DataGrid), null,
+                propertyChanged:(b,o,n)=>
+                {
+                    var self = (DataGrid)b;
+                    self.VisualRowsFromStyle.OnUpdateStyle(n as Style);
+                });
+        /// <summary>
+        /// Rows text style. Default: null
+        /// </summary>
+        public Style RowsTextStyle
+        {
+            get { return (Style)GetValue(RowsTextStyleProperty); }
+            set { SetValue(RowsTextStyleProperty, value); }
+        }
+
+
+
+
         //Rows text color
         public static readonly BindableProperty RowsTextColorProperty =
-            BindableProperty.Create(nameof(RowsTextColor), typeof(Color), typeof(DataGrid), defaultValue: Color.Black);
+            BindableProperty.Create(nameof(RowsTextColor), typeof(Color), typeof(DataGrid), defaultValue: Color.Black,
+                propertyChanged: (b,o,n)=>
+                {
+                    var self = (DataGrid)b;
+                    self.VisualRows.TextColor = (Color)n;
+                });
         /// <summary>
         /// Rows text color. Default: Color.Black
         /// </summary>
@@ -495,10 +594,32 @@ namespace DataGridSam
         }
 
 
+        // Rows font family
+        public static readonly BindableProperty RowsFontFamilyProperty =
+            BindableProperty.Create(nameof(RowsFontFamily), typeof(string), typeof(DataGrid), null,
+                propertyChanged: (b, o, n) =>
+                {
+                    var self = (DataGrid)b;
+                    self.VisualRows.FontFamily = (string)n;
+                });
+        /// <summary>
+        /// Default: null
+        /// </summary>
+        public string RowsFontFamily
+        {
+            get { return (string)GetValue(RowsFontFamilyProperty); }
+            set { SetValue(RowsFontFamilyProperty, value); }
+        }
+
 
         // Rows font size
         public static readonly BindableProperty RowsFontSizeProperty =
-            BindableProperty.Create(nameof(RowsFontSize), typeof(double), typeof(DataGrid), defaultValue: 14.0);
+            BindableProperty.Create(nameof(RowsFontSize), typeof(double), typeof(DataGrid), defaultValue: 14.0,
+                propertyChanged:(b,o,n)=>
+                {
+                    var self = (DataGrid)b;
+                    self.VisualRows.FontSize = (double)n;
+                });
         /// <summary>
         /// Rows font size. Default: 14
         /// </summary>
@@ -512,7 +633,12 @@ namespace DataGridSam
 
         // Rows text attribute
         public static readonly BindableProperty RowsFontAttributeProperty =
-            BindableProperty.Create(nameof(RowsFontAttribute), typeof(FontAttributes), typeof(DataGrid), null);
+            BindableProperty.Create(nameof(RowsFontAttribute), typeof(FontAttributes), typeof(DataGrid), null,
+                propertyChanged:(b,o,n)=>
+                {
+                    var self = (DataGrid)b;
+                    self.VisualRows.FontAttribute = (FontAttributes)n;
+                });
         /// <summary>
         /// Rows font attribute. Default: null
         /// </summary>
@@ -521,5 +647,6 @@ namespace DataGridSam
             get { return (FontAttributes)GetValue(RowsFontAttributeProperty); }
             set { SetValue(RowsFontAttributeProperty, value); }
         }
+        #endregion
     }
 }

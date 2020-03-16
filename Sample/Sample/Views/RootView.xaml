@@ -12,10 +12,17 @@
         <vm:RootVm/>
     </d:ContentPage.BindingContext>
     
-    <StackLayout>
-        <Button Text="Default"
-                Command="{Binding CommandDefault}"/>
-        <Button Text="Custom cells"
+    <StackLayout Padding="15">
+        <Button Text="Custom cells demo"
                 Command="{Binding CommandCustomCells}"/>
+        
+        <Button Text="Styles demo"
+                Command="{Binding CommandStyles}"/>
+        
+        <Button Text="Triggers demo"
+                Command="{Binding CommandTriggersDemo}"/>
+        
+        <Button Text="Dev"
+                Command="{Binding CommandDefault}"/>
     </StackLayout>
 </ContentPage>

@@ -9,9 +9,9 @@ using Xamarin.Forms;
 
 namespace Sample.ViewModels
 {
-    public class CustomCellsVm : BaseViewModel
+    public class TriggersDemoVm : BaseViewModel
     {
-        public CustomCellsVm()
+        public TriggersDemoVm()
         {
             CommandLongTap = new Command(ActionLongTap);
 
