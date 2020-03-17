@@ -12,8 +12,8 @@ namespace DataGridSam
         public event EventHandler SizeChanged;
 
         internal Label HeaderLabel { get; set; }
-        internal StyleContainer VisualCell = new StyleContainer();
-        internal StyleContainer VisualCellFromStyle = new StyleContainer();
+        internal VisualCollector VisualCell = new VisualCollector();
+        internal VisualCollector VisualCellFromStyle = new VisualCollector();
 
         public DataGridColumn()
         {

@@ -18,7 +18,7 @@ namespace Sample.ViewModels
             });
             CommandCustomCells = new Command(async () =>
             {
-                var vm = new CustomCellsVm();
+                var vm = new CustomCellsDemoVm();
                 await NavigationGoAsync(vm);
             });
             CommandStyles = new Command(async () =>

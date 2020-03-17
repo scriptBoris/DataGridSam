@@ -5,7 +5,7 @@ using Xamarin.Forms;
 
 namespace DataGridSam.Utils
 {
-    internal class StyleContainer
+    internal class VisualCollector
     {
         internal Color? BackgroundColor;
         internal Color? TextColor;
@@ -16,20 +16,9 @@ namespace DataGridSam.Utils
         internal TextAlignment? HorizontalTextAlignment;
         internal TextAlignment? VerticalTextAlignment;
 
-        internal static void MergeVisual(Label label, params StyleContainer[] styles)
-        {
-            label.TextColor = ValueSelector.GetTextColor(styles);
-            label.FontAttributes = ValueSelector.FontAttribute(styles);
-            label.FontFamily = ValueSelector.FontFamily(styles);
-            label.FontSize = ValueSelector.FontSize(styles);
-
-            label.LineBreakMode = ValueSelector.GetLineBreakMode(styles);
-            label.VerticalTextAlignment = ValueSelector.GetVerticalAlignment(styles);
-            label.HorizontalTextAlignment = ValueSelector.GetHorizontalAlignment(styles);
-        }
-
         internal void OnUpdateStyle(Style style)
         {
+            BackgroundColor = null;
             TextColor = null;
             FontAttribute = null;
             FontFamily = null;
@@ -43,7 +32,11 @@ namespace DataGridSam.Utils
 
             foreach (var item in style.Setters)
             {
-                if (item.Property == Label.TextColorProperty)
+                if (item.Property == Label.BackgroundColorProperty)
+                {
+                    BackgroundColor = ValueSelector.GetValueFromStyle<Color>(item);
+                }
+                else if (item.Property == Label.TextColorProperty)
                 {
                     TextColor = ValueSelector.GetValueFromStyle<Color>(item);
                 }

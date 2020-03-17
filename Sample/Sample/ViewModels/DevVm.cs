@@ -17,53 +17,17 @@ namespace Sample.ViewModels
 
         public DevVm()
         {
-            CommandSelectItem = new SimpleCommand(ActionSelectedItem);
-            CommandLongTap = new SimpleCommand(ActionLongTap);
-            CommandOpenWare = new SimpleCommand(ActionOpenWare);
-            CommandAddItem = new SimpleCommand(ActionAddItem);
-            CommandAddItems = new SimpleCommand(ActionAddItems);
-            CommandRemoveItem = new SimpleCommand(ActionRemoveItem);
-            CommandAddWeight = new SimpleCommand(ActionAddWeight);
-            CommandRemoveWeight = new SimpleCommand(ActionRemoveWeight);
+            CommandSelectItem = new Command(ActionSelectedItem);
+            CommandLongTap = new Command(ActionLongTap);
+            CommandOpenWare = new Command(ActionOpenWare);
+            CommandAddItem = new Command(ActionAddItem);
+            CommandAddItems = new Command(ActionAddItems);
+            CommandRemoveItem = new Command(ActionRemoveItem);
+            CommandAddWeight = new Command(ActionAddWeight);
+            CommandRemoveWeight = new Command(ActionRemoveWeight);
 
-            var temp = new ObservableCollection<Ware>();
-            temp.Add(new Ware
-            {
-                Pos = 1,
-                Name = "Stainless steel bottle MBI-A",
-                Price = 47.1f,
-                Weight = 0.0f,
-                Need = 100,
-            });
-            temp.Add(new Ware
-            {
-                Pos = 2,
-                Name = "Toaster oven kaj-B",
-                Price = 87.4f,
-                Weight = 0f,
-                Need = 150,
-            });
-            temp.Add(new Ware
-            {
-                Pos = 3,
-                Name = "Thermal magic cooker NFI-A",
-                Price = 159.56f,
-                Weight = 100.00f,
-                Need = 100,
-            });
-
-            Items = temp;
-            SelectedItem = Items[0];
-
-            temp.CollectionChanged += (o, n) =>
-            {
-                OnPropertyChanged(nameof(ItemsCount));
-                int i = 1;
-                foreach (var item in Items)
-                {
-                    item.Pos = i++;
-                }
-            };
+            Items = DataCollector.GetWares();
+            SelectedItem = Items.FirstOrDefault();
         }
 
         #region Props

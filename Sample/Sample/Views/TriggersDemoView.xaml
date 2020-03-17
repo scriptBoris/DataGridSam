@@ -21,46 +21,56 @@
     <StackLayout>
         <!--Table-->
         <sam:DataGrid ItemsSource="{Binding Items}"
-                      HeaderBackgroundColor="#E0DFE1"
+                      CommandLongTapItem="{Binding CommandLongTap}"
                       IsWrapped="True"
-                      RowsColor="White"
                       SelectedRowColor="#bbdefb"
-                      RowsTextColor="Black"
                       BorderColor="#C1C1C1"
                       BorderWidth="1"
                       CellPadding="10"
                       TapColor="#bbdefb"
-                      CommandLongTapItem="{Binding CommandLongTap}">
+                      HeaderBackgroundColor="#E0DFE1"
+                      RowsColor="Beige"
+                      RowsTextColor="#555">
             <!--Columns-->
             <sam:DataGrid.Columns>
                 <!--Photo-->
                 <sam:DataGridColumn Title="Photo" 
-                                    Width="80">
+                                    Width="90">
                     <sam:DataGridColumn.CellTemplate>
                         <DataTemplate>
                             <Image Source="{Binding PhotoUrl}"
-                                   Aspect="AspectFill"/>
+                                   HeightRequest="90"
+                                   WidthRequest="90"/>
                         </DataTemplate>
                     </sam:DataGridColumn.CellTemplate>
                 </sam:DataGridColumn>
                 <!--First name-->
-                <sam:DataGridColumn Title="Name" 
-                                    PropertyName="Name"
+                <sam:DataGridColumn Title="FirstName" 
+                                    PropertyName="FirstName"
                                     Width="1*"/>
-                <!--Role-->
-                <sam:DataGridColumn Title="Famous role"
-                                    PropertyName="FamousRole"
+                <!--Last name-->
+                <sam:DataGridColumn Title="LastName" 
+                                    PropertyName="LastName"
                                     Width="1*"/>
-                <!--Description-->
-                <sam:DataGridColumn Title="Description" 
-                                    PropertyName="Description"
-                                    Width="2*"/>
+                <!--Rank-->
+                <sam:DataGridColumn Title="Rank"
+                                    PropertyName="Rank"
+                                    Width="1*"/>
+                <!--Birth-->
+                <sam:DataGridColumn Title="Birth date" 
+                                    PropertyName="BirthDate"
+                                    Width="1*"
+                                    StringFormat="{}{0:dd.MM.yyyy}"/>
             </sam:DataGrid.Columns>
             
             <sam:DataGrid.RowTriggers>
                 <sam:RowTrigger PropertyTrigger="Rank"
                                 Value="Admin"
                                 RowTextColor="Red"/>
+                
+                <sam:RowTrigger PropertyTrigger="Rank"
+                                Value="Manager"
+                                RowTextColor="DarkBlue"/>
             </sam:DataGrid.RowTriggers>
         </sam:DataGrid>
         

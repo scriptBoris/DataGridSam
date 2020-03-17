@@ -9,9 +9,9 @@ using Xamarin.Forms.Xaml;
 
 namespace Sample.Views
 {
-    public partial class CustomCellsView : ContentPage
+    public partial class CustomCellsDemoView : ContentPage
     {
-        public CustomCellsView()
+        public CustomCellsDemoView()
         {
             InitializeComponent();
         }

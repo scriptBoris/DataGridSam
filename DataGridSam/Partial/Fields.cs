@@ -79,10 +79,10 @@ namespace DataGridSam
         internal Button buttonNext;
 
 
-        internal StyleContainer VisualRowsFromStyle = new StyleContainer();
-        internal StyleContainer VisualRows = new StyleContainer();
+        internal VisualCollector VisualRowsFromStyle = new VisualCollector();
+        internal VisualCollector VisualRows = new VisualCollector();
 
-        internal StyleContainer VisualSelectedRowFromStyle = new StyleContainer();
-        internal StyleContainer VisualSelectedRow = new StyleContainer();
+        internal VisualCollector VisualSelectedRowFromStyle = new VisualCollector();
+        internal VisualCollector VisualSelectedRow = new VisualCollector();
     }
 }

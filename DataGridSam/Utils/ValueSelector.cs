@@ -22,7 +22,21 @@ namespace DataGridSam.Utils
             return Xamarin.Forms.Color.White;
         }
 
-        internal static Color GetTextColor(StyleContainer[] styles)
+        internal static Color GetBackgroundColor(VisualCollector[] styles)
+        {
+            foreach (var item in styles)
+            {
+                if (item == null)
+                    continue;
+
+                if (item.BackgroundColor != null)
+                    return item.BackgroundColor.Value;
+            }
+
+            return Xamarin.Forms.Color.White;
+        }
+
+        internal static Color GetTextColor(VisualCollector[] styles)
         {
             foreach (var item in styles)
             {
@@ -36,7 +50,7 @@ namespace DataGridSam.Utils
             return Xamarin.Forms.Color.Black;
         }
 
-        internal static LineBreakMode GetLineBreakMode(StyleContainer[] styles)
+        internal static LineBreakMode GetLineBreakMode(VisualCollector[] styles)
         {
             foreach (var item in styles)
             {
@@ -47,7 +61,7 @@ namespace DataGridSam.Utils
             return LineBreakMode.WordWrap;
         }
 
-        internal static TextAlignment GetVerticalAlignment(StyleContainer[] styles)
+        internal static TextAlignment GetVerticalAlignment(VisualCollector[] styles)
         {
             foreach (var item in styles)
             {
@@ -58,7 +72,7 @@ namespace DataGridSam.Utils
             return TextAlignment.Start;
         }
 
-        internal static TextAlignment GetHorizontalAlignment(StyleContainer[] styles)
+        internal static TextAlignment GetHorizontalAlignment(VisualCollector[] styles)
         {
             foreach (var item in styles)
             {
@@ -69,7 +83,7 @@ namespace DataGridSam.Utils
             return TextAlignment.Start;
         }
 
-        internal static FontAttributes FontAttribute(StyleContainer[] styles)
+        internal static FontAttributes FontAttribute(VisualCollector[] styles)
         {
             foreach (var item in styles)
             {
@@ -85,7 +99,7 @@ namespace DataGridSam.Utils
             return FontAttributes.None;
         }
 
-        internal static double FontSize(StyleContainer[] styles)
+        internal static double FontSize(VisualCollector[] styles)
         {
             foreach (var item in styles)
             {
@@ -99,7 +113,7 @@ namespace DataGridSam.Utils
             return 0.0;
         }
 
-        internal static string FontFamily(StyleContainer[] styles)
+        internal static string FontFamily(VisualCollector[] styles)
         {
             foreach (var item in styles)
             {

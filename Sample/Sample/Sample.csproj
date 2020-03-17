@@ -15,6 +15,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Views\CustomCellsDemoView.xaml.cs">
+      <DependentUpon>CustomCellsDemoView.xaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\TriggersDemoView.xaml.cs">
       <DependentUpon>TriggersDemoView.xaml</DependentUpon>
     </Compile>
@@ -30,7 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Update="Views\CustomCellsView.xaml">
+    <EmbeddedResource Update="Views\TriggersDemoView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\RootView.xaml">

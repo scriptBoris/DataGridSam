@@ -20,8 +20,8 @@ namespace DataGridSam
         private object valueTrigger;
 
         // Fast style variables
-        internal StyleContainer VisualContainerStyle = new StyleContainer();
-        internal StyleContainer VisualContainer = new StyleContainer();
+        internal VisualCollector VisualContainerStyle = new VisualCollector();
+        internal VisualCollector VisualContainer = new VisualCollector();
 
         #region BindProps
         // Property trigger

@@ -13,21 +13,25 @@ namespace Sample.ViewModels
     {
         public StylesVm()
         {
-            CommandActionTap = new Command(ActionTap);
+            CommandLongTap = new Command(ActionLongTap);
+            CommandDeleteUser = new Command(ActionDeleteUser);
+            CommandMultiSelection = new Command(ActionMultiSelection);
             CommandSetRank = new Command(ActionSetRank);
 
             Items = DataCollector.GetUsers();
         }
 
         #region Props
-        public ICommand CommandActionTap { get; set; }
+        public ICommand CommandDeleteUser { get; set; }
+        public ICommand CommandLongTap { get; set; }
         public ICommand CommandSetRank { get; set; }
+        public ICommand CommandMultiSelection { get; set; }
         public ObservableCollection<User> Items { get; set; }
         public override Page View { get; set; } = new Views.StylesView ();
         #endregion
 
         #region Actions
-        private async void ActionTap(object param)
+        private async void ActionDeleteUser(object param)
         {
             if (param is User user)
             {
@@ -35,6 +39,34 @@ namespace Sample.ViewModels
                     "Delete", "Cancel");
                 if (res)
                     Items.Remove(user);
+            }
+        }
+
+        private async void ActionLongTap(object param)
+        {
+            const string v1 = "Set rank";
+            const string v2 = "Delete";
+            const string v3 = "Multi selection";
+            const string v4 = "Cancel";
+            string res = await View.DisplayActionSheet("Select action", null, null, new string[]
+            { 
+                    v1, 
+                    v2,
+                    v3,
+                    v4,
+            });
+
+            switch (res)
+            {
+                case v1:
+                    CommandSetRank.Execute(param);
+                    break;
+                case v2:
+                    CommandDeleteUser.Execute(param);
+                    break;
+                case v3:
+                    CommandMultiSelection.Execute(param);
+                    break;
             }
         }
 
@@ -60,6 +92,11 @@ namespace Sample.ViewModels
                 else if (res == v3)
                     user.Rank = Ranks.Admin;
             }
+        }
+
+        private async void ActionMultiSelection(object param)
+        {
+            await View.DisplayAlert("TODO", "Not implement", "Sorry");
         }
         #endregion
     }

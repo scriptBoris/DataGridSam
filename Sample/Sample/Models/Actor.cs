@@ -9,6 +9,7 @@ namespace Sample.Models
     {
         public string PhotoUrl { get; set; }
         public string Name { get; set; }
+        public string Family { get; set; }
         public string FamousRole { get; set; }
         public string Description { get; set; }
     }

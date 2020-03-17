@@ -6,12 +6,12 @@
              xmlns:vm="clr-namespace:Sample.ViewModels"
              xmlns:sam="clr-namespace:DataGridSam;assembly=DataGridSam"
              mc:Ignorable="d"
-             x:Class="Sample.Views.CustomCellsView"
+             x:Class="Sample.Views.CustomCellsDemoView"
              x:Name="root"
-             Title="DataGridSam: Custom cells">
+             Title="DataGridSam: Custom cells demo">
 
     <d:ContentPage.BindingContext>
-        <vm:CustomCellsVm/>
+        <vm:CustomCellsDemoVm/>
     </d:ContentPage.BindingContext>
 
     <ContentPage.Resources>
@@ -25,6 +25,7 @@
                       IsWrapped="True"
                       RowsColor="White"
                       SelectedRowColor="#bbdefb"
+                      RowsTextColor="Black"
                       BorderColor="#C1C1C1"
                       BorderWidth="1"
                       CellPadding="10"
@@ -34,32 +35,38 @@
             <sam:DataGrid.Columns>
                 <!--Photo-->
                 <sam:DataGridColumn Title="Photo" 
-                                    Width="90">
+                                    Width="80">
                     <sam:DataGridColumn.CellTemplate>
                         <DataTemplate>
                             <Image Source="{Binding PhotoUrl}"
-                                   HeightRequest="90"
-                                   WidthRequest="90"/>
+                                   Aspect="AspectFill"/>
                         </DataTemplate>
                     </sam:DataGridColumn.CellTemplate>
                 </sam:DataGridColumn>
-                <!--First name-->
-                <sam:DataGridColumn Title="FirstName" 
-                                    PropertyName="FirstName"
+                
+                <!--Name-->
+                <sam:DataGridColumn Title="Name" 
+                                    Width="1*">
+                    <sam:DataGridColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackLayout Padding="10" Spacing="0">
+                                <Label Text="{Binding Name}"
+                                       TextColor="Black"
+                                       FontAttributes="Bold"/>
+                                <Label Text="{Binding Family}"
+                                       TextColor="Black"/>
+                            </StackLayout>
+                        </DataTemplate>
+                    </sam:DataGridColumn.CellTemplate>
+                </sam:DataGridColumn>
+                <!--Role-->
+                <sam:DataGridColumn Title="Famous role"
+                                    PropertyName="FamousRole"
                                     Width="1*"/>
-                <!--Last name-->
-                <sam:DataGridColumn Title="LastName" 
-                                    PropertyName="LastName"
-                                    Width="1*"/>
-                <!--Rank-->
-                <sam:DataGridColumn Title="Rank"
-                                    PropertyName="Rank"
-                                    Width="1*"/>
-                <!--Birth-->
-                <sam:DataGridColumn Title="Birth date" 
-                                    PropertyName="BirthDate"
-                                    Width="1*"
-                                    StringFormat="{}{0:dd.MM.yyyy}"/>
+                <!--Description-->
+                <sam:DataGridColumn Title="Description" 
+                                    PropertyName="Description"
+                                    Width="2*"/>
             </sam:DataGrid.Columns>
             
             <sam:DataGrid.RowTriggers>
