@@ -110,7 +110,7 @@ namespace DataGridSam.Utils
                         if (i == 0)
                             self.DataGrid.OnChangeItemsBindingContext(item.GetType());
 
-                        last = CreateChildViewFor(self.ItemTemplate, item, self);
+                        last = CreateChildViewFor(self.ItemTemplate, item, self, i);
                         self.Children.Add(last);
                         i++;
                     }
@@ -150,7 +150,7 @@ namespace DataGridSam.Utils
                 Children.RemoveAt(e.OldStartingIndex);
 
                 var item = e.NewItems[e.NewStartingIndex];
-                var view = CreateChildViewFor(this.ItemTemplate, item, this);
+                var view = CreateChildViewFor(this.ItemTemplate, item, this, e.NewStartingIndex);
                 Children.Insert(e.NewStartingIndex, view);
 
                 // Hide line if row is last
@@ -186,10 +186,10 @@ namespace DataGridSam.Utils
 
                     for (var i = 0; i < e.NewItems.Count; ++i)
                     {
-                        var item = e.NewItems[i];
-                        last = CreateChildViewFor(this.ItemTemplate, item, this);
-
                         int index = i + e.NewStartingIndex;
+                        var item = e.NewItems[i];
+
+                        last = CreateChildViewFor(this.ItemTemplate, item, this, index);
                         Children.Insert(index, last);
                     }
 
@@ -248,7 +248,7 @@ namespace DataGridSam.Utils
                             if (i > source.Count - 1)
                                 break;
 
-                            var view = CreateChildViewFor(this.ItemTemplate, source[i], this);
+                            var view = CreateChildViewFor(this.ItemTemplate, source[i], this, i);
                             Add(view);
                         }
                     }
@@ -256,7 +256,27 @@ namespace DataGridSam.Utils
                 // Default delete item
                 else
                 {
-                    RemoveAt(e.OldStartingIndex);
+                    //RemoveAt(e.OldStartingIndex);
+                    bool isLast = (e.OldStartingIndex == Children.Count - 1);
+                    Children.RemoveAt(e.OldStartingIndex);
+
+                    if (isLast)
+                    {
+                        var last = Children.LastOrDefault() as Row;
+                        if (last != null)
+                        {
+                            last.line.IsVisible = false;
+                        }
+                    }
+                    else if (DataGrid.IsCalcAutoNumber)
+                    {
+                        // Auto numeric
+                        for (int i = e.OldStartingIndex; i < Children.Count; i++)
+                        {
+                            var row = (Row)Children[i];
+                            row.UpdateAutoNumeric(i + 1);
+                        }
+                    }
                 }
             }
             else if (e.Action == NotifyCollectionChangedAction.Reset)
@@ -342,7 +362,7 @@ namespace DataGridSam.Utils
             View last = null;
             for (int i = startedIndex; i <= endIndex; i++)
             {
-                last = CreateChildViewFor(ItemTemplate, itemList[i], this);
+                last = CreateChildViewFor(ItemTemplate, itemList[i], this, i);
                 Children.Add(last);
             }
 
@@ -390,14 +410,24 @@ namespace DataGridSam.Utils
         /// <param name="template">Шаблон который будет использован для создания элемента</param>
         /// <param name="item">модель данных</param>
         /// <param name="container">StackList</param>
-        private static View CreateChildViewFor(DataTemplate template, object item, BindableObject container)
+        private static View CreateChildViewFor(DataTemplate template, object item, 
+            BindableObject container, int index = -1)
         {
             if (template is DataTemplateSelector selector)
                 template = selector.SelectTemplate(item, container);
 
             // Здесь происходит неявный вызов метода : DataGridViewCell.CreateView()
-            var row = (View)template.CreateContent();
-            return row;
+            var view = (View)template.CreateContent();
+            
+            // Auto number
+            if (index > -1)
+            {
+                var row = (Row)view;
+                if (row.DataGrid.IsCalcAutoNumber)
+                    row.UpdateAutoNumeric(index + 1);
+            }
+
+            return view;
         }
 
 

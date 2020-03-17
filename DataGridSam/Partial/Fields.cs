@@ -78,6 +78,11 @@ namespace DataGridSam
         /// </summary>
         internal Button buttonNext;
 
+        /// <summary>
+        /// Need calc auto number
+        /// </summary>
+        internal bool IsCalcAutoNumber;
+
 
         internal VisualCollector VisualRowsFromStyle = new VisualCollector();
         internal VisualCollector VisualRows = new VisualCollector();

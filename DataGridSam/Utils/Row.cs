@@ -66,16 +66,12 @@ namespace DataGridSam.Utils
             // Set text value for standart cell
             foreach (var item in cells)
             {
-                if (item.IsCustomTemplate)
+                if (item.IsCustomTemplate || item.IsAutoNumber)
                     continue;
 
                 item.Label.SetBinding(Label.TextProperty, new Binding(item.Column.PropertyName, BindingMode.Default, 
                     stringFormat: item.Column.StringFormat, source: BindingContext));
             }
-
-            // Add command parameter
-            //TODO Check binding context;
-
 
             // Render first style
             UpdateStyle();
@@ -98,7 +94,7 @@ namespace DataGridSam.Utils
 
             foreach (var column in DataGrid.Columns)
             {
-                ColumnDefinitions.Add(new ColumnDefinition() { Width = column.Width });
+                ColumnDefinitions.Add(new ColumnDefinition() { Width = column.CalcWidth });
 
                 var cell = new GridCell { Column = column };
 
@@ -106,6 +102,7 @@ namespace DataGridSam.Utils
                 if (column.CellTemplate != null)
                 {
                     cell.Wrapper = new ContentView();
+                    cell.Wrapper.IsVisible = column.IsVisible;
                     cell.Wrapper.IsClippedToBounds = true;
                     cell.Wrapper.InputTransparent = true;
                     cell.Wrapper.CascadeInputTransparent = true;
@@ -120,18 +117,12 @@ namespace DataGridSam.Utils
                     {
                         HorizontalOptions = LayoutOptions.FillAndExpand,
                         VerticalOptions = LayoutOptions.FillAndExpand,
-                        //FontSize = DataGrid.RowsFontSize,
-                        //HorizontalTextAlignment = column.HorizontalTextAlignment,
-                        //VerticalTextAlignment = column.VerticalTextAlignment,
-                        //LineBreakMode = LineBreakMode.WordWrap,
-                        //Style = DataGrid.RowsTextStyle,
                     };
 
                     var wrapper = new ContentView
                     {
+                        IsVisible = column.IsVisible,
                         Padding = DataGrid.CellPadding,
-                        //HorizontalOptions = LayoutOptions.FillAndExpand,
-                        //VerticalOptions = LayoutOptions.FillAndExpand,
                         IsClippedToBounds = true,
                         Content = label,
                     };
@@ -141,13 +132,19 @@ namespace DataGridSam.Utils
                     cell.Label = label;
                 }
 
+                // Detect auto number cell
+                if (column.IsAutoNumber)
+                    cell.IsAutoNumber = true;
+
                 SetColumn(cell.Wrapper, index);
                 SetRow(cell.Wrapper, 0);
                 Children.Add(cell.Wrapper);
                 cells.Add(cell);
 
+
                 index++;
             }
+
 
             // Create horizontal line table
             line = CreateHorizontalLine();
@@ -305,6 +302,16 @@ namespace DataGridSam.Utils
                             DataGrid.VisualRows);
                     }
                 }
+            }
+        }
+
+        internal void UpdateAutoNumeric(int num)
+        {
+            // Auto numeric
+            foreach(var cell in cells)
+            {
+                if (cell.IsAutoNumber)
+                    cell.Label.Text = num.ToString(cell.Column.StringFormat);
             }
         }
 

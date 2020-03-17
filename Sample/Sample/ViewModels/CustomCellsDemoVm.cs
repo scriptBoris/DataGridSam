@@ -17,15 +17,18 @@ namespace Sample.ViewModels
             CommandGiveOskar = new Command(ActionGiveOskar);
             CommandGiveRaspberry = new Command(ActionGiveRaspberry);
             CommandDelete = new Command(ActionDelete);
+            CommandHidePhotos = new Command(ActionHidePhotos);
 
             Items = DataCollector.GetActors();
         }
 
         #region Props
+        public bool IsShowColumnPhotos { get; set; } = true;
         public ICommand CommandLongTap { get; set; }
         public ICommand CommandGiveOskar { get; set; }
         public ICommand CommandGiveRaspberry { get; set; }
         public ICommand CommandDelete { get; set; }
+        public ICommand CommandHidePhotos { get; set; }
         public ObservableCollection<Actor> Items { get; set; }
         public override Page View { get; set; } = new Views.CustomCellsDemoView();
         #endregion
@@ -94,6 +97,10 @@ namespace Sample.ViewModels
             }
         }
 
+        private void ActionHidePhotos()
+        {
+            IsShowColumnPhotos = !IsShowColumnPhotos;
+        }
         #endregion
 
         #region Methods

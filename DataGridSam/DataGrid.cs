@@ -141,7 +141,7 @@ namespace DataGridSam
                 propertyChanged: (b, o, n)=>
                 {
                     var self = b as DataGrid;
-                    self.BindTapCommand(n as ICommand);
+                    self.UpdateTapCommand(n as ICommand);
                 });
         public ICommand CommandSelectedItem
         {
@@ -157,7 +157,7 @@ namespace DataGridSam
                 propertyChanged: (b, o, n) =>
                 {
                     var self = b as DataGrid;
-                    self.BindLongTapCommand(n as ICommand);
+                    self.UpdateLongTapCommand(n as ICommand);
                 });
         public ICommand CommandLongTapItem
         {
@@ -171,58 +171,7 @@ namespace DataGridSam
         // Selected item
         public static readonly BindableProperty SelectedItemProperty =
             BindableProperty.Create(nameof(SelectedItem), typeof(object), typeof(DataGrid), null, BindingMode.TwoWay,
-                propertyChanged: (b, o, newSelectedRow) =>
-                {
-                    var self = (DataGrid)b;
-
-                    var lastRow = self.SelectedRow;
-
-                    if (newSelectedRow == null && lastRow != null)
-                    {
-                        lastRow.isSelected = false;
-                        lastRow.UpdateStyle();
-
-                        self.SelectedRow = null;
-                    }
-                    else if (self.stackList.ItemsSource is IList list)
-                    {
-                        var match = list.IndexOf(newSelectedRow);
-
-                        // Without pagination
-                        if (self.PaginationItemCount == 0)
-                        {
-                            if (match >= 0 && self.stackList.Children.Count > 0)
-                            {
-                                var row = (Row)self.stackList.Children[match];
-                                row.isSelected = true;
-                                row.UpdateStyle();
-
-                                self.SelectedRow = row;
-                            }
-                        }
-                        // With pagination
-                        else
-                        {
-                            int pageStart = self.PaginationCurrentPageStartIndex;
-                            int dif = match - self.PaginationCurrentPageStartIndex;
-
-                            if (dif >= 0 && dif <= pageStart + self.PaginationItemCount - 1)
-                            {
-                                // Safe
-                                if (dif >= self.stackList.Children.Count)
-                                {
-
-                                }
-
-                                var row = (Row)self.stackList.Children[dif];
-                                row.isSelected = true;
-                                row.UpdateStyle();
-
-                                self.SelectedRow = row;
-                            }
-                        }
-                    }
-                });
+                propertyChanged: UpdateSelectedItem);
         public object SelectedItem
         {
             get { return GetValue(SelectedItemProperty); }
@@ -337,6 +286,19 @@ namespace DataGridSam
         }
 
 
+
+        // TODO DELETE?
+        public static readonly BindableProperty IsAutoNumberProperty =
+            BindableProperty.Create(nameof(IsAutoNumber), typeof(bool), typeof(DataGrid), false,
+                propertyChanged: (b, o, n) =>
+                {
+                });
+        public bool IsAutoNumber
+        {
+            get { return (bool)GetValue(IsAutoNumberProperty); }
+            set { SetValue(IsAutoNumberProperty, value); }
+        }
+
         #region header
         // Header has borders
         public static readonly BindableProperty HeaderHasBorderProperty =
@@ -364,13 +326,7 @@ namespace DataGridSam
                 propertyChanged: (b, o, n) =>
                 {
                     var self = b as DataGrid;
-                    var row = self.RowDefinitions.First();
-                    int value = (int)n;
-
-                    if (value == 0)
-                        row.Height = GridLength.Auto;
-                    else if (value > 0)
-                        row.Height = new GridLength(value);
+                    self.UpdateHeadHeight((int)n);
                 });
         public int HeaderHeight
         {

@@ -17,18 +17,18 @@
         <!--Table-->
         <sam:DataGrid ItemsSource="{Binding Items}"
                       SelectedItem="{Binding SelectedItem}"
+                      CommandSelectedItem="{Binding CommandSelectItem}"
+                      CommandLongTapItem="{Binding CommandLongTap}"
+                      IsWrapped="True"
                       HeaderBackgroundColor="#1976d2"
                       HeaderTextColor="White"
-                      IsWrapped="True"
                       SelectedRowAttribute="Bold"
                       RowsColor="White"
                       RowsTextColor="Black"
                       BorderColor="#2196F3"
                       BorderWidth="2"
                       CellPadding="5"
-                      TapColor="#03a9f4"
-                      CommandSelectedItem="{Binding CommandSelectItem}"
-                      CommandLongTapItem="{Binding CommandLongTap}">
+                      TapColor="#03a9f4">
             <sam:DataGrid.RowsFontSize>
                 <OnIdiom x:TypeArguments="x:Double"
                          Phone="12"
@@ -46,7 +46,9 @@
             <sam:DataGrid.Columns>
                 <sam:DataGridColumn Title="#" 
                                     Width="40"
-                                    PropertyName="Pos"/>
+                                    IsAutoNumber="True"
+                                    HorizontalTextAlignment="Center"
+                                    StringFormat="{}0\."/>
                 <sam:DataGridColumn Title="Name" 
                                     Width="2*"
                                     CellBackgroundColor="#EEE"

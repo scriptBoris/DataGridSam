@@ -10,16 +10,34 @@ namespace DataGridSam
     public class DataGridColumn : BindableObject, IDefinition
     {
         public event EventHandler SizeChanged;
+        internal DataGrid DataGrid;
+        internal int Index;
 
-        internal Label HeaderLabel { get; set; }
+        internal ContentView HeaderWrapper = new ContentView();
+        internal Label HeaderLabel;
         internal VisualCollector VisualCell = new VisualCollector();
         internal VisualCollector VisualCellFromStyle = new VisualCollector();
+        internal GridLength CalcWidth => (IsVisible) ? Width : new GridLength(0.0);
 
         public DataGridColumn()
         {
             HeaderLabel = new Label();
         }
 
+        #region Bindable props
+        // Is visible
+        public static readonly BindableProperty IsVisibleProperty =
+            BindableProperty.Create(nameof(IsVisible), typeof(bool), typeof(DataGridColumn), true,
+                propertyChanged: (b, o, n) =>
+                {
+                    var self = (DataGridColumn)b;
+                    self.DataGrid?.UpdateColumnVisibile(self, (bool)n);
+                });
+        public bool IsVisible
+        {
+            get { return (bool)GetValue(IsVisibleProperty); }
+            set { SetValue(IsVisibleProperty, value); }
+        }
 
 
         // Title
@@ -64,6 +82,20 @@ namespace DataGridSam
         {
             get { return (string)GetValue(PropertyNameProperty); }
             set { SetValue(PropertyNameProperty, value); }
+        }
+
+        // Is auto number
+        public static readonly BindableProperty IsAutoNumberProperty =
+            BindableProperty.Create(nameof(IsAutoNumber), typeof(bool), typeof(DataGridColumn), false,
+                propertyChanged: (b, o, n) =>
+                {
+                    //var self = (DataGridColumn)b;
+                    //self.VisualCell.BackgroundColor = (Color)n;
+                });
+        public bool IsAutoNumber
+        {
+            get { return (bool)GetValue(IsAutoNumberProperty); }
+            set { SetValue(IsAutoNumberProperty, value); }
         }
 
         // Cell style
@@ -184,8 +216,14 @@ namespace DataGridSam
             get { return (DataTemplate)GetValue(CellTemplateProperty); }
             set { SetValue(CellTemplateProperty, value); }
         }
+        #endregion
 
         #region Methods
+        internal void OnAttached(DataGrid host, int columnIndex)
+        {
+            DataGrid = host;
+            Index = columnIndex;
+        }
         void OnSizeChanged()
         {
             SizeChanged?.Invoke(this, EventArgs.Empty);
