@@ -11,12 +11,11 @@ using Xamarin.Forms;
 
 namespace Sample.Views
 {
-    public partial class MainPage : ContentPage
+    public partial class DevView : ContentPage
     {
-        public MainPage()
+        public DevView()
         {
             InitializeComponent();
-            BindingContext = new ViewModels.MainPageVm(this);
         }
     }
 }

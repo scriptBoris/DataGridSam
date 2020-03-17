@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:Sample.ViewModels"
+             mc:Ignorable="d"
+             x:Class="Sample.Views.RootView"
+             x:Name="root"
+             Title="DataGridSam sample">
+    <d:ContentPage.BindingContext>
+        <vm:RootVm/>
+    </d:ContentPage.BindingContext>
+    
+    <StackLayout Padding="15">
+        <Button Text="Custom cells demo"
+                Command="{Binding CommandCustomCells}"/>
+        
+        <Button Text="Styles demo"
+                Command="{Binding CommandStyles}"/>
+        
+        <Button Text="Triggers demo"
+                Command="{Binding CommandTriggersDemo}"/>
+        
+        <Button Text="Dev"
+                Command="{Binding CommandDev}"/>
+    </StackLayout>
+</ContentPage>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sample.ViewModels;
+using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -9,7 +10,7 @@ namespace Sample
         public App()
         {
             InitializeComponent();
-            MainPage = new NavigationPage(new Views.MainPage());
+            MainPage = new NavigationPage(new RootVm().View);
         }
 
         protected override void OnStart()

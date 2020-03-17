@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>DataGridSam</id>
-    <version>1.1.4</version>
+    <version>1.2.1</version>
     <authors>Boris Krit</authors>
     <description>Onvenient and faster element for display DataGrid in Xamarin.Forms</description>
     <title>DataGridSam</title>
@@ -13,10 +13,16 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <copyright>Copyright 2019</copyright>
     <tags>dataGrid xamarin.forms forms xamarin grid DataGridSam</tags>
-    <repository type="git" url="https://https://github.com/scriptBoris/DataGridSam.git"/>
+    <repository type="git" url="https://github.com/scriptBoris/DataGridSam.git"/>
     <dependencies>
       <dependency id="Xamarin.Forms" version="3.6.0.709228" />
     </dependencies>
+    <releaseNotes>
+      - Support styles for Rows, SelectedRow, Columns, RowTriggers;
+      - RowTriggers can enabled for Enum values;
+      - Fix visual bug with head wrapper when show empty space under header;
+      - Fix problem with runtime changet text in row, when row gets too big;
+    </releaseNotes>
   </metadata>
 	<files>
     <!--Icon-->

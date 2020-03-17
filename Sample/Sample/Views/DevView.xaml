@@ -1,0 +1,122 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:sam="clr-namespace:DataGridSam;assembly=DataGridSam"
+             xmlns:vm="clr-namespace:Sample.ViewModels"
+             mc:Ignorable="d"
+             x:Class="Sample.Views.DevView"
+             Title="DataGridSam demo">
+    
+    <d:ContentPage.BindingContext>
+        <vm:DevVm/>
+    </d:ContentPage.BindingContext>
+    
+    <StackLayout>
+        <!--Table-->
+        <sam:DataGrid ItemsSource="{Binding Items}"
+                      SelectedItem="{Binding SelectedItem}"
+                      HeaderBackgroundColor="#1976d2"
+                      HeaderTextColor="White"
+                      IsWrapped="True"
+                      SelectedRowAttribute="Bold"
+                      RowsColor="White"
+                      RowsTextColor="Black"
+                      BorderColor="#2196F3"
+                      BorderWidth="2"
+                      CellPadding="5"
+                      TapColor="#03a9f4"
+                      CommandSelectedItem="{Binding CommandSelectItem}"
+                      CommandLongTapItem="{Binding CommandLongTap}">
+            <sam:DataGrid.RowsFontSize>
+                <OnIdiom x:TypeArguments="x:Double"
+                         Phone="12"
+                         Desktop="14"
+                         Tablet="14"/>
+            </sam:DataGrid.RowsFontSize>
+            <sam:DataGrid.HeaderFontSize>
+                <OnIdiom x:TypeArguments="x:Double"
+                         Phone="12"
+                         Desktop="14"
+                         Tablet="14"/>
+            </sam:DataGrid.HeaderFontSize>
+            
+            <!--Columns-->
+            <sam:DataGrid.Columns>
+                <sam:DataGridColumn Title="#" 
+                                    Width="40"
+                                    PropertyName="Pos"/>
+                <sam:DataGridColumn Title="Name" 
+                                    Width="2*"
+                                    CellBackgroundColor="#EEE"
+                                    PropertyName="NameView"/>
+                <sam:DataGridColumn Title="Need " 
+                                    Width="1*"
+                                    HorizontalTextAlignment="End"
+                                    PropertyName="Need"/>
+                <sam:DataGridColumn Title="Price" 
+                                    Width="1*"
+                                    CellBackgroundColor="#EEE"
+                                    HorizontalTextAlignment="End"
+                                    PropertyName="Price"/>
+                <sam:DataGridColumn Title="Weight" 
+                                    Width="1*"
+                                    CellTextColor="Red"
+                                    PropertyName="Weight"
+                                    HorizontalTextAlignment="End">
+                </sam:DataGridColumn>
+            </sam:DataGrid.Columns>
+
+            <sam:DataGrid.RowTriggers>
+                <!--If item is process-->
+                <sam:RowTrigger PropertyTrigger="IsProcess" Value="True"
+                                RowBackgroundColor="#f0f4c3"/>
+
+                <!--If item is complete-->
+                <sam:RowTrigger PropertyTrigger="IsCompleted" Value="True"
+                                RowBackgroundColor="#c8e6c9"/>
+
+                <!--If item is overload-->
+                <sam:RowTrigger PropertyTrigger="IsOverload" Value="True"
+                                RowBackgroundColor="#e57373"/>
+
+            </sam:DataGrid.RowTriggers>
+        </sam:DataGrid>
+
+        <StackLayout BackgroundColor="Gray"
+                     VerticalOptions="EndAndExpand">
+            <StackLayout Orientation="Horizontal">
+                <Label Text="{Binding SelectedItem.Pos}"
+                       FontSize="20"
+                       TextColor="Black"/>
+                <Label Text="{Binding SelectedItem.Name}"
+                       FontSize="20"
+                       TextColor="Black"/>
+                <Label Text="{Binding SelectedItem.Weight, StringFormat='(weight: {0})'}"
+                       FontSize="20"
+                       TextColor="Black"/>
+            </StackLayout>
+
+            <!--Trigger controll-->
+            <StackLayout Orientation="Horizontal">
+                <Button Text="Add +10 weight"
+                        HorizontalOptions="FillAndExpand"
+                        Command="{Binding CommandAddWeight}"/>
+                <Button Text="Add -10 weight"
+                        HorizontalOptions="FillAndExpand"
+                        Command="{Binding CommandRemoveWeight}"/>
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal">
+                <Button Text="Add"
+                        HorizontalOptions="FillAndExpand"
+                        Command="{Binding CommandAddItem}"/>
+                <Button Text="Remove item"
+                        HorizontalOptions="FillAndExpand"
+                        Command="{Binding CommandRemoveItem}"/>
+            </StackLayout>
+        </StackLayout>
+    </StackLayout>
+
+</ContentPage>

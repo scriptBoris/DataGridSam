@@ -1,0 +1,136 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:Sample.ViewModels"
+             xmlns:sam="clr-namespace:DataGridSam;assembly=DataGridSam"
+             mc:Ignorable="d"
+             x:Class="Sample.Views.StylesView"
+             x:Name="root"
+             Title="DataGridSam: Styles">
+
+    <d:ContentPage.BindingContext>
+        <vm:StylesVm/>
+    </d:ContentPage.BindingContext>
+
+    <ContentPage.Resources>
+        <!--Header style-->
+        <Style TargetType="Label" x:Key="HeaderTitle">
+            <Setter Property="TextColor" Value="Black"/>
+            <Setter Property="BackgroundColor" Value="#DDD"/>
+            <Setter Property="FontAttributes" Value="Bold"/>
+            <Setter Property="FontSize">
+                <Setter.Value>
+                    <OnIdiom x:TypeArguments="x:Double" 
+                             Phone="12" 
+                             Tablet="20"
+                             Desktop="20"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="VerticalTextAlignment" Value="Center"/>
+            <Setter Property="HorizontalTextAlignment" Value="Center"/>
+        </Style>
+
+        <!--Row text style-->
+        <Style TargetType="Label" x:Key="GridRowCell">
+            <Setter Property="BackgroundColor" Value="Beige"/>
+            <Setter Property="TextColor" Value="#555"/>
+            <Setter Property="FontSize">
+                <Setter.Value>
+                    <OnIdiom x:TypeArguments="x:Double" 
+                             Phone="12" 
+                             Tablet="20"
+                             Desktop="20"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="FontFamily" Value="{StaticResource Font1}"/>
+            <Setter Property="VerticalTextAlignment" Value="Start"/>
+            <Setter Property="HorizontalTextAlignment" Value="Start"/>
+        </Style>
+
+        <!--Selected row text style-->
+        <Style TargetType="Label" x:Key="GridSelectedRow">
+            <Setter Property="TextColor" Value="Black"/>
+            <Setter Property="FontSize">
+                <Setter.Value>
+                    <OnIdiom x:TypeArguments="x:Double"
+                             Phone="14" 
+                             Tablet="22"
+                             Desktop="22"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="FontAttributes" Value="Bold"/>
+        </Style>
+        
+        <!--Trigger text style (Admin)-->
+        <Style TargetType="Label" x:Key="GridTriggerAdmin">
+            <Setter Property="BackgroundColor" Value="#ffebee"/>
+        </Style>
+        <!--Trigger text style (Manager)-->
+        <Style TargetType="Label" x:Key="GridTriggerManager">
+            <Setter Property="BackgroundColor" Value="#b2ebf2"/>
+        </Style>
+    </ContentPage.Resources>
+    
+    <StackLayout>
+        <!--Table-->
+        <sam:DataGrid ItemsSource="{Binding Items}"
+                      CommandLongTapItem="{Binding CommandLongTap}"
+                      IsWrapped="True"
+                      BorderColor="#C1C1C1"
+                      BorderWidth="1"
+                      CellPadding="10"
+                      TapColor="#bbdefb"
+                      
+                      HeaderLabelStyle="{StaticResource HeaderTitle}"
+                      RowsTextStyle="{StaticResource GridRowCell}"
+                      SelectedRowTextStyle="{StaticResource GridSelectedRow}">
+            
+                      <!--RowsTextStyle="{StaticResource GridRowCell}"-->
+            <!--Columns-->
+            <sam:DataGrid.Columns>
+                <!--Photo-->
+                <sam:DataGridColumn Title="Photo" 
+                                    Width="90">
+                    <sam:DataGridColumn.CellTemplate>
+                        <DataTemplate>
+                            <Image Source="{Binding PhotoUrl}"
+                                   HeightRequest="90"
+                                   WidthRequest="90"/>
+                        </DataTemplate>
+                    </sam:DataGridColumn.CellTemplate>
+                </sam:DataGridColumn>
+                <!--First name-->
+                <sam:DataGridColumn Title="FirstName" 
+                                    PropertyName="FirstName"
+                                    Width="1*"/>
+                <!--Last name-->
+                <sam:DataGridColumn Title="LastName" 
+                                    PropertyName="LastName"
+                                    Width="1*"/>
+                <!--Rank-->
+                <sam:DataGridColumn Title="Rank"
+                                    PropertyName="Rank"
+                                    Width="1*"/>
+                <!--Birth-->
+                <sam:DataGridColumn Title="Birth date" 
+                                    PropertyName="BirthDate"
+                                    Width="1*"
+                                    StringFormat="{}{0:dd.MM.yyyy}"/>
+            </sam:DataGrid.Columns>
+            
+            <!--Triggers-->
+            <sam:DataGrid.RowTriggers>
+                <sam:RowTrigger PropertyTrigger="Rank"
+                                Value="Admin"
+                                RowTextStyle="{StaticResource GridTriggerAdmin}"/>
+                
+                <sam:RowTrigger PropertyTrigger="Rank"
+                                Value="Manager"
+                                RowTextStyle="{StaticResource GridTriggerManager}"/>
+                
+            </sam:DataGrid.RowTriggers>
+        </sam:DataGrid>
+    </StackLayout>
+</ContentPage>

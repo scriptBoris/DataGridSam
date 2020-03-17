@@ -77,5 +77,12 @@ namespace DataGridSam
         /// For pagination
         /// </summary>
         internal Button buttonNext;
+
+
+        internal VisualCollector VisualRowsFromStyle = new VisualCollector();
+        internal VisualCollector VisualRows = new VisualCollector();
+
+        internal VisualCollector VisualSelectedRowFromStyle = new VisualCollector();
+        internal VisualCollector VisualSelectedRow = new VisualCollector();
     }
 }

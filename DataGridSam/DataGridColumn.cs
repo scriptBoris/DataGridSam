@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataGridSam.Utils;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Xamarin.Forms;
@@ -10,10 +11,16 @@ namespace DataGridSam
     {
         public event EventHandler SizeChanged;
 
+        internal Label HeaderLabel { get; set; }
+        internal VisualCollector VisualCell = new VisualCollector();
+        internal VisualCollector VisualCellFromStyle = new VisualCollector();
+
         public DataGridColumn()
         {
             HeaderLabel = new Label();
         }
+
+
 
         // Title
         public static readonly BindableProperty TitleProperty =
@@ -59,9 +66,31 @@ namespace DataGridSam
             set { SetValue(PropertyNameProperty, value); }
         }
 
+        // Cell style
+        public static readonly BindableProperty CellStyleProperty =
+            BindableProperty.Create(nameof(CellStyle), typeof(Style), typeof(DataGridColumn), null,
+                propertyChanged: (b, o, n) =>
+                {
+                    var self = (DataGridColumn)b;
+                    self.VisualCellFromStyle.OnUpdateStyle(n as Style);
+                });
+        /// <summary>
+        /// Default: null
+        /// </summary>
+        public Style CellStyle
+        {
+            get { return (Style)GetValue(CellStyleProperty); }
+            set { SetValue(CellStyleProperty, value); }
+        }
+
         // Cell text color
         public static readonly BindableProperty CellTextColorProperty =
-            BindableProperty.Create(nameof(CellTextColor), typeof(Color), typeof(DataGridColumn), null);
+            BindableProperty.Create(nameof(CellTextColor), typeof(Color), typeof(DataGridColumn), null,
+                propertyChanged: (b, o, n)=>
+                {
+                    var self = (DataGridColumn)b;
+                    self.VisualCell.TextColor = (Color)n;
+                });
         public Color CellTextColor
         {
             get { return (Color)GetValue(CellTextColorProperty); }
@@ -70,34 +99,44 @@ namespace DataGridSam
 
         // Cell background color
         public static readonly BindableProperty CellBackgroundColorProperty =
-            BindableProperty.Create(nameof(CellBackgroundColor), typeof(Color), typeof(DataGridColumn), null);
+            BindableProperty.Create(nameof(CellBackgroundColor), typeof(Color), typeof(DataGridColumn), null,
+                propertyChanged: (b, o, n) =>
+                {
+                    var self = (DataGridColumn)b;
+                    self.VisualCell.BackgroundColor = (Color)n;
+                });
         public Color CellBackgroundColor
         {
             get { return (Color)GetValue(CellBackgroundColorProperty); }
             set { SetValue(CellBackgroundColorProperty, value); }
         }
 
-        // Horizontal content aligment
-        public static readonly BindableProperty HorizontalContentAlignmentProperty =
-            BindableProperty.Create(nameof(HorizontalContentAlignment), typeof(LayoutOptions), typeof(DataGridColumn), LayoutOptions.FillAndExpand);
-        public LayoutOptions HorizontalContentAlignment
-        {
-            get { return (LayoutOptions)GetValue(HorizontalContentAlignmentProperty); }
-            set { SetValue(HorizontalContentAlignmentProperty, value); }
-        }
+        //// Horizontal content aligment
+        //public static readonly BindableProperty HorizontalContentAlignmentProperty =
+        //    BindableProperty.Create(nameof(HorizontalContentAlignment), typeof(LayoutOptions), typeof(DataGridColumn), LayoutOptions.FillAndExpand);
+        //public LayoutOptions HorizontalContentAlignment
+        //{
+        //    get { return (LayoutOptions)GetValue(HorizontalContentAlignmentProperty); }
+        //    set { SetValue(HorizontalContentAlignmentProperty, value); }
+        //}
 
-        // Vertical content aligment
-        public static readonly BindableProperty VerticalContentAlignmentProperty =
-            BindableProperty.Create(nameof(VerticalContentAlignment), typeof(LayoutOptions), typeof(DataGridColumn), LayoutOptions.FillAndExpand);
-        public LayoutOptions VerticalContentAlignment
-        {
-            get { return (LayoutOptions)GetValue(VerticalContentAlignmentProperty); }
-            set { SetValue(VerticalContentAlignmentProperty, value); }
-        }
+        //// Vertical content aligment
+        //public static readonly BindableProperty VerticalContentAlignmentProperty =
+        //    BindableProperty.Create(nameof(VerticalContentAlignment), typeof(LayoutOptions), typeof(DataGridColumn), LayoutOptions.FillAndExpand);
+        //public LayoutOptions VerticalContentAlignment
+        //{
+        //    get { return (LayoutOptions)GetValue(VerticalContentAlignmentProperty); }
+        //    set { SetValue(VerticalContentAlignmentProperty, value); }
+        //}
 
         // Horizontal text aligment
         public static readonly BindableProperty HorizontalTextAlignmentProperty =
-            BindableProperty.Create(nameof(HorizontalTextAlignment), typeof(TextAlignment), typeof(DataGridColumn), TextAlignment.Start);
+            BindableProperty.Create(nameof(HorizontalTextAlignment), typeof(TextAlignment), typeof(DataGridColumn), TextAlignment.Start,
+                propertyChanged: (b,o,n) =>
+                {
+                    var self = (DataGridColumn)b;
+                    self.VisualCell.HorizontalTextAlignment = (TextAlignment)n;
+                });
         public TextAlignment HorizontalTextAlignment
         {
             get { return (TextAlignment)GetValue(HorizontalTextAlignmentProperty); }
@@ -106,7 +145,12 @@ namespace DataGridSam
 
         // Vertical text aligment
         public static readonly BindableProperty VerticalTextAlignmentProperty =
-            BindableProperty.Create(nameof(VerticalTextAlignment), typeof(TextAlignment), typeof(DataGridColumn), TextAlignment.Start);
+            BindableProperty.Create(nameof(VerticalTextAlignment), typeof(TextAlignment), typeof(DataGridColumn), TextAlignment.Start,
+                propertyChanged: (b, o, n) =>
+                {
+                    var self = (DataGridColumn)b;
+                    self.VisualCell.VerticalTextAlignment = (TextAlignment)n;
+                });
         public TextAlignment VerticalTextAlignment
         {
             get { return (TextAlignment)GetValue(VerticalTextAlignmentProperty); }
@@ -116,10 +160,12 @@ namespace DataGridSam
         // Header label style
         public static readonly BindableProperty HeaderLabelStyleProperty =
             BindableProperty.Create(nameof(HeaderLabelStyle), typeof(Style), typeof(DataGridColumn),
-                propertyChanged: (b, old, newValue) => {
+                propertyChanged: (b, o, n) => {
                     var self = (DataGridColumn)b;
-                    if (self.HeaderLabel != null && (old != newValue))
-                        self.HeaderLabel.Style = newValue as Style;
+
+                    //self.VisualCellFromStyle.OnUpdateStyle(n as Style);
+                    if (self.HeaderLabel != null && (o != n))
+                        self.HeaderLabel.Style = n as Style;
                 });
         public Style HeaderLabelStyle
         {
@@ -139,9 +185,7 @@ namespace DataGridSam
             set { SetValue(CellTemplateProperty, value); }
         }
 
-        #region Other
-        internal Label HeaderLabel { get; set; }
-
+        #region Methods
         void OnSizeChanged()
         {
             SizeChanged?.Invoke(this, EventArgs.Empty);

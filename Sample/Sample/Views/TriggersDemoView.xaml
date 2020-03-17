@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:Sample.ViewModels"
+             xmlns:sam="clr-namespace:DataGridSam;assembly=DataGridSam"
+             mc:Ignorable="d"
+             x:Class="Sample.Views.TriggersDemoView"
+             x:Name="root"
+             Title="DataGridSam: Triggers demo">
+
+    <d:ContentPage.BindingContext>
+        <vm:TriggersDemoVm/>
+    </d:ContentPage.BindingContext>
+
+    <ContentPage.Resources>
+        
+    </ContentPage.Resources>
+    
+    <StackLayout>
+        <!--Table-->
+        <sam:DataGrid ItemsSource="{Binding Items}"
+                      CommandLongTapItem="{Binding CommandLongTap}"
+                      IsWrapped="True"
+                      SelectedRowColor="#bbdefb"
+                      BorderColor="#C1C1C1"
+                      BorderWidth="1"
+                      CellPadding="10"
+                      TapColor="#bbdefb"
+                      HeaderBackgroundColor="#E0DFE1"
+                      RowsColor="Beige"
+                      RowsTextColor="#555">
+            <!--Columns-->
+            <sam:DataGrid.Columns>
+                <!--Photo-->
+                <sam:DataGridColumn Title="Photo" 
+                                    Width="90">
+                    <sam:DataGridColumn.CellTemplate>
+                        <DataTemplate>
+                            <Image Source="{Binding PhotoUrl}"
+                                   HeightRequest="90"
+                                   WidthRequest="90"/>
+                        </DataTemplate>
+                    </sam:DataGridColumn.CellTemplate>
+                </sam:DataGridColumn>
+                <!--First name-->
+                <sam:DataGridColumn Title="FirstName" 
+                                    PropertyName="FirstName"
+                                    Width="1*"/>
+                <!--Last name-->
+                <sam:DataGridColumn Title="LastName" 
+                                    PropertyName="LastName"
+                                    Width="1*"/>
+                <!--Rank-->
+                <sam:DataGridColumn Title="Rank"
+                                    PropertyName="Rank"
+                                    Width="1*"/>
+                <!--Birth-->
+                <sam:DataGridColumn Title="Birth date" 
+                                    PropertyName="BirthDate"
+                                    Width="1*"
+                                    StringFormat="{}{0:dd.MM.yyyy}"/>
+            </sam:DataGrid.Columns>
+            
+            <sam:DataGrid.RowTriggers>
+                <sam:RowTrigger PropertyTrigger="Rank"
+                                Value="Admin"
+                                RowTextColor="Red"/>
+                
+                <sam:RowTrigger PropertyTrigger="Rank"
+                                Value="Manager"
+                                RowTextColor="DarkBlue"/>
+            </sam:DataGrid.RowTriggers>
+        </sam:DataGrid>
+        
+    </StackLayout>
+</ContentPage>

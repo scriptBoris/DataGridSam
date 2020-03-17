@@ -106,6 +106,10 @@ namespace DataGridSam.Utils
                     View last = null;
                     foreach (var item in newList)
                     {
+                        // Say triggers what binding context changed
+                        if (i == 0)
+                            self.DataGrid.OnChangeItemsBindingContext(item.GetType());
+
                         last = CreateChildViewFor(self.ItemTemplate, item, self);
                         self.Children.Add(last);
                         i++;

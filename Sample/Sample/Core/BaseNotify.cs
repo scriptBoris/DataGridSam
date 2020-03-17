@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Sample.Core
 {
-    public class BaseNotify : INotifyPropertyChanged
+    public abstract class BaseNotify : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 

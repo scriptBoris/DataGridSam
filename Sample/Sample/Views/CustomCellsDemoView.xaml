@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:Sample.ViewModels"
+             xmlns:sam="clr-namespace:DataGridSam;assembly=DataGridSam"
+             mc:Ignorable="d"
+             x:Class="Sample.Views.CustomCellsDemoView"
+             x:Name="root"
+             Title="DataGridSam: Custom cells demo">
+
+    <d:ContentPage.BindingContext>
+        <vm:CustomCellsDemoVm/>
+    </d:ContentPage.BindingContext>
+
+    <ContentPage.Resources>
+        
+    </ContentPage.Resources>
+    
+    <StackLayout>
+        <!--Table-->
+        <sam:DataGrid ItemsSource="{Binding Items}"
+                      HeaderBackgroundColor="#E0DFE1"
+                      IsWrapped="True"
+                      RowsColor="White"
+                      SelectedRowColor="#bbdefb"
+                      RowsTextColor="Black"
+                      BorderColor="#C1C1C1"
+                      BorderWidth="1"
+                      CellPadding="10"
+                      TapColor="#bbdefb"
+                      CommandLongTapItem="{Binding CommandLongTap}">
+            <!--Columns-->
+            <sam:DataGrid.Columns>
+                <!--Photo-->
+                <sam:DataGridColumn Title="Photo" 
+                                    Width="80">
+                    <sam:DataGridColumn.CellTemplate>
+                        <DataTemplate>
+                            <Image Source="{Binding PhotoUrl}"
+                                   Aspect="AspectFill"/>
+                        </DataTemplate>
+                    </sam:DataGridColumn.CellTemplate>
+                </sam:DataGridColumn>
+                
+                <!--Name-->
+                <sam:DataGridColumn Title="Name" 
+                                    Width="1*">
+                    <sam:DataGridColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackLayout Padding="10" Spacing="0">
+                                <Label Text="{Binding Name}"
+                                       TextColor="Black"
+                                       FontAttributes="Bold"/>
+                                <Label Text="{Binding Family}"
+                                       TextColor="Black"/>
+                            </StackLayout>
+                        </DataTemplate>
+                    </sam:DataGridColumn.CellTemplate>
+                </sam:DataGridColumn>
+                <!--Role-->
+                <sam:DataGridColumn Title="Famous role"
+                                    PropertyName="FamousRole"
+                                    Width="1*"/>
+                <!--Description-->
+                <sam:DataGridColumn Title="Description" 
+                                    PropertyName="Description"
+                                    Width="2*"/>
+            </sam:DataGrid.Columns>
+            
+            <sam:DataGrid.RowTriggers>
+                <sam:RowTrigger PropertyTrigger="Rank"
+                                Value="Admin"
+                                RowTextColor="Red"/>
+            </sam:DataGrid.RowTriggers>
+        </sam:DataGrid>
+        
+    </StackLayout>
+</ContentPage>
