@@ -18,6 +18,9 @@
     <Compile Update="Views\CustomCellsDemoView.xaml.cs">
       <DependentUpon>CustomCellsDemoView.xaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\EmbeddedDemoView.xaml.cs">
+      <DependentUpon>EmbeddedDemoView.xaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\TriggersDemoView.xaml.cs">
       <DependentUpon>TriggersDemoView.xaml</DependentUpon>
     </Compile>

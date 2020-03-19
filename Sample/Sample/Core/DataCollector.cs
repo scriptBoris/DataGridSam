@@ -180,5 +180,58 @@ namespace Sample.Core
 
             return res;
         }
+
+        public static ObservableCollection<Vehicle> GetVehicle()
+        {
+            var res = new ObservableCollection<Vehicle>()
+            {
+                new Vehicle
+                {
+                    Name = "Rover",
+                    Company = "Ford",
+                    Engine = new Engine
+                    {
+                        HorsePower = 270,
+                        SerialNumber = "0A0813546",
+                        Volume = 3.5f,
+                    },
+                },
+                new Vehicle
+                {
+                    Name = "Mustang",
+                    Company = "Ford",
+                    Engine = new Engine
+                    {
+                        HorsePower = 315,
+                        SerialNumber = "0A081133",
+                        Volume = 3.8f,
+                    },
+                },
+                new Vehicle
+                {
+                    Name = "Priora",
+                    Company = "Lada",
+                    Engine = new Engine
+                    {
+                        HorsePower = 87,
+                        SerialNumber = "0R0005135",
+                        Volume = 1.6f,
+                    },
+                },
+                new Vehicle
+                {
+                    Name = "Granta",
+                    Company = "Lada",
+                    Engine = new Engine
+                    {
+                        HorsePower = 97,
+                        SerialNumber = "0R0015981",
+                        Volume = 1.8f,
+                    },
+                },
+            };
+
+            return res;
+        }
     }
 }
