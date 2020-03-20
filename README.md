@@ -95,6 +95,9 @@ In file **App.xaml.cs**, enter `DataGridSam.UWP.Initialize.Init();` as below
 </ContentPage>
 ```
 
+### Wiki
+There is a [wiki page](https://github.com/scriptBoris/DataGridSam/wiki) where you can get more information.
+
 
 ## Referenced source code
 
