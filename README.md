@@ -3,8 +3,8 @@ Simple and fast GUI element for Xamarin.Forms
 
 ![Repo_List](Screenshots/Head.png)
 
-# Screenshot of real use
-![Repo_List](Screenshots/Screenshot_20191118-171142.jpg)
+# Screenshot
+![Repo_List](Screenshots/Screenshot.png)
 
 ## Nuget Installation
 
