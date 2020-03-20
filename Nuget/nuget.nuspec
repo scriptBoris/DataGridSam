@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>DataGridSam</id>
-    <version>1.2.1</version>
+    <version>1.3.0</version>
     <authors>Boris Krit</authors>
     <description>Onvenient and faster element for display DataGrid in Xamarin.Forms</description>
     <title>DataGridSam</title>
@@ -18,10 +18,11 @@
       <dependency id="Xamarin.Forms" version="3.6.0.709228" />
     </dependencies>
     <releaseNotes>
-      - Support styles for Rows, SelectedRow, Columns, RowTriggers;
-      - RowTriggers can enabled for Enum values;
-      - Fix visual bug with head wrapper when show empty space under header;
-      - Fix problem with runtime changet text in row, when row gets too big;
+      - DataGridColumn add property IsVisible
+      - DataGridColumn add property IsAutoNumber
+      - DataGridColumn is now default content;
+      - Fix problem when new item inserting in ItemsSource
+      - Fix problem NullReferenceException when program starts with a column that dows not PropertyName;
     </releaseNotes>
   </metadata>
 	<files>
