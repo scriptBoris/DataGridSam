@@ -18,11 +18,11 @@
       <dependency id="Xamarin.Forms" version="3.6.0.709228" />
     </dependencies>
     <releaseNotes>
-      - DataGridColumn add property IsVisible
-      - DataGridColumn add property IsAutoNumber
-      - DataGridColumn is now default content;
-      - Fix problem when new item inserting in ItemsSource
-      - Fix problem NullReferenceException when program starts with a column that dows not PropertyName;
+- DataGridColumn add property IsVisible
+- DataGridColumn add property IsAutoNumber
+- DataGridColumn is now default content;
+- Fix problem when new item inserting in ItemsSource
+- Fix problem NullReferenceException when program starts with a column that dows not PropertyName;
     </releaseNotes>
   </metadata>
 	<files>
