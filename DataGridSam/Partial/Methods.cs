@@ -51,8 +51,11 @@ namespace DataGridSam
 
         private void UpdateHeaderCells()
         {
+            bool isUp = false;
+            bool isDown = false;
+
             // Clear old GUI elements and values
-            IsCalcAutoNumber = false;
+            AutoNumberStrategy = Enums.AutoNumberStrategyType.None;
             headGrid.Children.Clear();
             headGrid.ColumnDefinitions.Clear();
             UpdateHeadHeight(HeaderHeight);
@@ -75,11 +78,20 @@ namespace DataGridSam
                 headGrid.Children.Add(headCell);
 
                 // Detect auto number
-                if (col.IsAutoNumber)
-                    IsCalcAutoNumber = true;
+                if (col.AutoNumber == Enums.AutoNumberType.Up)
+                    isUp = true;
+                else if (col.AutoNumber == Enums.AutoNumberType.Down)
+                    isDown = true;
 
                 i++;
             }
+
+            if (isUp)
+                AutoNumberStrategy = Enums.AutoNumberStrategyType.Up;
+            else if (isDown)
+                AutoNumberStrategy = Enums.AutoNumberStrategyType.Down;
+            else if (isUp && isDown)
+                AutoNumberStrategy = Enums.AutoNumberStrategyType.Both;
         }
 
         internal void UpdateHeadHeight(int height)

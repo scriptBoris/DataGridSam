@@ -66,7 +66,7 @@ namespace DataGridSam.Utils
             // Set text value for standart cell
             foreach (var item in cells)
             {
-                if (item.IsCustomTemplate || item.IsAutoNumber)
+                if (item.IsCustomTemplate || item.AutoNumber != Enums.AutoNumberType.None)
                     continue;
 
                 if (item.Column.PropertyName != null)
@@ -134,8 +134,7 @@ namespace DataGridSam.Utils
                 }
 
                 // Detect auto number cell
-                if (column.IsAutoNumber)
-                    cell.IsAutoNumber = true;
+                cell.AutoNumber = column.AutoNumber;
 
                 SetColumn(cell.Wrapper, index);
                 SetRow(cell.Wrapper, 0);
@@ -306,13 +305,22 @@ namespace DataGridSam.Utils
             }
         }
 
-        internal void UpdateAutoNumeric(int num)
+        internal void UpdateAutoNumeric(int num, int itemsCount)
         {
             // Auto numeric
             foreach(var cell in cells)
             {
-                if (cell.IsAutoNumber)
-                    cell.Label.Text = num.ToString(cell.Column.StringFormat);
+                switch (cell.AutoNumber)
+                {
+                    case Enums.AutoNumberType.Up:
+                        cell.Label.Text = (itemsCount + 1 - num).ToString(cell.Column.StringFormat);
+                        break;
+                    case Enums.AutoNumberType.Down:
+                        cell.Label.Text = num.ToString(cell.Column.StringFormat);
+                        break;
+                    //default:
+                    //    break;
+                }
             }
         }
 

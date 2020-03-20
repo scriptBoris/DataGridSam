@@ -19,7 +19,10 @@ namespace Sample.ViewModels
         {
             CommandSelectItem = new Command(ActionSelectedItem);
             CommandLongTap = new Command(ActionLongTap);
+
+            CommandAddItem = new Command(ActionAddItem);
             CommandRemoveItem = new Command(ActionRemoveItem);
+
             CommandAddValue = new Command(ActionAddValue);
             CommandRemoveValue = new Command(ActionRemoveValue);
 
@@ -64,6 +67,21 @@ namespace Sample.ViewModels
             {
                 SelectedItem.Engine.HorsePower -= 10;
             }
+        }
+
+        private void ActionAddItem(object obj)
+        {
+            Items.Add(new Vehicle
+            {
+                Company = "Nisan",
+                Name = "GTR",
+                Engine = new Engine
+                {
+                    HorsePower = 270,
+                    SerialNumber = "17EJ998",
+                    Volume = 2.32f,
+                },
+            });
         }
 
         private void ActionRemoveItem(object obj)

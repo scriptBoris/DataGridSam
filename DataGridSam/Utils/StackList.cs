@@ -15,6 +15,8 @@ namespace DataGridSam.Utils
     [Xamarin.Forms.Internals.Preserve(AllMembers = true)]
     internal class StackList : StackLayout
     {
+        internal int ItemsCount;
+
         // ItemsSource
         public static BindableProperty ItemsSourceProperty =
             BindableProperty.Create(nameof(ItemsSource), typeof(IEnumerable), typeof(StackList), null, defaultBindingMode: BindingMode.OneWay,
@@ -70,6 +72,7 @@ namespace DataGridSam.Utils
             if (self.ItemTemplate == null)
             {
                 self.doneItemSourceChanged = false;
+                self.ItemsCount = 0;
                 return;
             }
 
@@ -82,6 +85,7 @@ namespace DataGridSam.Utils
             }
             catch (Exception e)
             {
+                self.ItemsCount = 0;
                 throw e;
             }
 
@@ -96,6 +100,20 @@ namespace DataGridSam.Utils
             }
 
             self.Children.Clear();
+
+            // Detect items count 
+            self.ItemsCount = 0;
+            if (newValue is ICollection collection)
+            {
+                self.ItemsCount = collection.Count;
+            }
+            else
+            {
+                var enumerator = newList.GetEnumerator();
+                while (enumerator.MoveNext())
+                    self.ItemsCount++;
+            }
+
             if (newList != null)
             {
                 int paginationCount = self.DataGrid.PaginationItemCount;
@@ -110,7 +128,7 @@ namespace DataGridSam.Utils
                         if (i == 0)
                             self.DataGrid.OnChangeItemsBindingContext(item.GetType());
 
-                        last = CreateChildViewFor(self.ItemTemplate, item, self, i);
+                        last = CreateChildViewFor(self.ItemTemplate, item, self, i, self.ItemsCount);
                         self.Children.Add(last);
                         i++;
                     }
@@ -132,7 +150,7 @@ namespace DataGridSam.Utils
                 }
             }
 
-            self.HasItems = (self.Children.Count > 0);
+            self.HasItems = (self.ItemsCount > 0);
             self.UpdateChildrenLayout();
             self.InvalidateLayout();
         }
@@ -150,7 +168,7 @@ namespace DataGridSam.Utils
                 Children.RemoveAt(e.OldStartingIndex);
 
                 var item = e.NewItems[e.NewStartingIndex];
-                var view = CreateChildViewFor(this.ItemTemplate, item, this, e.NewStartingIndex);
+                var view = CreateChildViewFor(this.ItemTemplate, item, this, e.NewStartingIndex, ItemsCount);
                 Children.Insert(e.NewStartingIndex, view);
 
                 // Hide line if row is last
@@ -161,8 +179,9 @@ namespace DataGridSam.Utils
             {
                 if (e.NewItems != null)
                 {
+                    // Common calc
+                    ItemsCount += e.NewItems.Count;
                     bool isInsert;
-
                     if (Children.Count == 0)
                         isInsert = false;
                     else if (e.NewStartingIndex < Children.Count)
@@ -205,7 +224,7 @@ namespace DataGridSam.Utils
                         pause = index;
                         var item = e.NewItems[i];
 
-                        child = CreateChildViewFor(this.ItemTemplate, item, this, index);
+                        child = CreateChildViewFor(this.ItemTemplate, item, this, index, ItemsCount);
                         Children.Insert(index, child);
 
                         // line visibile
@@ -216,10 +235,23 @@ namespace DataGridSam.Utils
                     }
 
                     // recalc autonumber
-                    if (DataGrid.IsCalcAutoNumber)
+                    if (DataGrid.IsAutoNumberCalc)
                     {
-                        for (int i = pause; i < Children.Count; i++)
-                            ((Row)Children[i]).UpdateAutoNumeric(i + 1);
+                        if (DataGrid.AutoNumberStrategy == Enums.AutoNumberStrategyType.Both)
+                        {
+                            for (int i = 0; i < Children.Count; i++)
+                                ((Row)Children[i]).UpdateAutoNumeric(i + 1, ItemsCount);
+                        }
+                        else if (DataGrid.AutoNumberStrategy == Enums.AutoNumberStrategyType.Down)
+                        {
+                            for (int i = pause; i < Children.Count; i++)
+                                ((Row)Children[i]).UpdateAutoNumeric(i + 1, ItemsCount);
+                        }
+                        else if (DataGrid.AutoNumberStrategy == Enums.AutoNumberStrategyType.Up)
+                        {
+                            for (int i = pause; i >= 0; i--)
+                                ((Row)Children[i]).UpdateAutoNumeric(i + 1, ItemsCount);
+                        }
                     }
                 }
             }
@@ -227,6 +259,9 @@ namespace DataGridSam.Utils
             {
                 if (e.OldItems == null)
                     return;
+
+                // Common calc
+                ItemsCount -= e.OldItems.Count;
 
                 // Delete item with ENABLED Pagination
                 if (DataGrid.PaginationItemCount > 0)
@@ -275,7 +310,7 @@ namespace DataGridSam.Utils
                             if (i > source.Count - 1)
                                 break;
 
-                            var view = CreateChildViewFor(this.ItemTemplate, source[i], this, i);
+                            var view = CreateChildViewFor(this.ItemTemplate, source[i], this, i, ItemsCount);
                             Add(view);
                         }
                     }
@@ -283,9 +318,9 @@ namespace DataGridSam.Utils
                 // Default delete item
                 else
                 {
-                    //RemoveAt(e.OldStartingIndex);
-                    bool isLast = (e.OldStartingIndex == Children.Count - 1);
-                    Children.RemoveAt(e.OldStartingIndex);
+                    int del = e.OldStartingIndex;
+                    bool isLast = (del == ItemsCount);
+                    Children.RemoveAt(del);
 
                     if (isLast)
                     {
@@ -295,26 +330,45 @@ namespace DataGridSam.Utils
                             last.line.IsVisible = false;
                         }
                     }
-                    else if (DataGrid.IsCalcAutoNumber)
+                    
+                    if (DataGrid.IsAutoNumberCalc)
                     {
-                        // Auto numeric
-                        for (int i = e.OldStartingIndex; i < Children.Count; i++)
+                        // recalc autonumber
+                        if (DataGrid.AutoNumberStrategy == Enums.AutoNumberStrategyType.Both)
                         {
-                            var row = (Row)Children[i];
-                            row.UpdateAutoNumeric(i + 1);
+                            for (int i = 0; i < Children.Count; i++)
+                                (Children[i] as Row).UpdateAutoNumeric(i + 1, ItemsCount);
                         }
+                        else if (DataGrid.AutoNumberStrategy == Enums.AutoNumberStrategyType.Down)
+                        {
+                            for (int i = del; i < Children.Count; i++)
+                                (Children[i] as Row).UpdateAutoNumeric(i + 1, ItemsCount);
+                        }
+                        else if (DataGrid.AutoNumberStrategy == Enums.AutoNumberStrategyType.Up)
+                        {
+                            for (int i = del - 1; i > 0; i--)
+                                (Children[i] as Row).UpdateAutoNumeric(i + 1, ItemsCount);
+                        }
+
+                        //// Auto numeric
+                        //for (int i = e.OldStartingIndex; i < ItemsCount; i++)
+                        //{
+                        //    var row = (Row)Children[i];
+                        //    row.UpdateAutoNumeric(i + 1, ItemsCount);
+                        //}
                     }
                 }
             }
             else if (e.Action == NotifyCollectionChangedAction.Reset)
             {
                 Children.Clear();
+                ItemsCount = 0;
             }
             else
             {
                 return;
             }
-            HasItems = (Children.Count > 0);
+            HasItems = (ItemsCount > 0);
         }
 
         /// <summary>
@@ -389,7 +443,7 @@ namespace DataGridSam.Utils
             View last = null;
             for (int i = startedIndex; i <= endIndex; i++)
             {
-                last = CreateChildViewFor(ItemTemplate, itemList[i], this, i);
+                last = CreateChildViewFor(ItemTemplate, itemList[i], this, i, ItemsCount);
                 Children.Add(last);
             }
 
@@ -439,7 +493,7 @@ namespace DataGridSam.Utils
         /// <param name="container">StackList</param>
         /// <param name="index">Индекс для автонумерации</param>
         private static View CreateChildViewFor(DataTemplate template, object item, 
-            BindableObject container, int index = -1)
+            BindableObject container, int index = -1, int itemsCount = -1)
         {
             if (template is DataTemplateSelector selector)
                 template = selector.SelectTemplate(item, container);
@@ -451,8 +505,8 @@ namespace DataGridSam.Utils
             if (index > -1)
             {
                 var row = (Row)view;
-                if (row.DataGrid.IsCalcAutoNumber)
-                    row.UpdateAutoNumeric(index + 1);
+                if (row.DataGrid.IsAutoNumberCalc)
+                    row.UpdateAutoNumeric(index + 1, itemsCount);
             }
 
             return view;

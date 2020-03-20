@@ -1,4 +1,5 @@
-﻿using DataGridSam.Utils;
+﻿using DataGridSam.Enums;
+using DataGridSam.Utils;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -84,18 +85,21 @@ namespace DataGridSam
             set { SetValue(PropertyNameProperty, value); }
         }
 
-        // Is auto number
-        public static readonly BindableProperty IsAutoNumberProperty =
-            BindableProperty.Create(nameof(IsAutoNumber), typeof(bool), typeof(DataGridColumn), false,
+        // Auto number
+        public static readonly BindableProperty AutoNumberProperty =
+            BindableProperty.Create(nameof(AutoNumber), typeof(AutoNumberType), typeof(DataGridColumn), AutoNumberType.None,
                 propertyChanged: (b, o, n) =>
                 {
                     //var self = (DataGridColumn)b;
                     //self.VisualCell.BackgroundColor = (Color)n;
                 });
-        public bool IsAutoNumber
+        /// <summary>
+        /// Default: none
+        /// </summary>
+        public AutoNumberType AutoNumber
         {
-            get { return (bool)GetValue(IsAutoNumberProperty); }
-            set { SetValue(IsAutoNumberProperty, value); }
+            get { return (AutoNumberType)GetValue(AutoNumberProperty); }
+            set { SetValue(AutoNumberProperty, value); }
         }
 
         // Cell style

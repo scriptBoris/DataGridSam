@@ -45,7 +45,7 @@
             <sam:DataGrid.Columns>
                 <sam:DataGridColumn Title="#" 
                                     Width="40"
-                                    IsAutoNumber="True"
+                                    AutoNumber="Down"
                                     HorizontalTextAlignment="Center"
                                     StringFormat="{}0\."/>
                 <sam:DataGridColumn Title="Name" 
