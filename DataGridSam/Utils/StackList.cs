@@ -161,6 +161,15 @@ namespace DataGridSam.Utils
             {
                 if (e.NewItems != null)
                 {
+                    bool isInsert;
+
+                    if (Children.Count == 0)
+                        isInsert = false;
+                    else if (e.NewStartingIndex < Children.Count)
+                        isInsert = true;
+                    else
+                        isInsert = false;
+
                     // Logic for pagination if that enabled
                     if (DataGrid.PaginationItemCount > 0)
                     {
@@ -179,21 +188,39 @@ namespace DataGridSam.Utils
                         }
                     }
 
-                    // last line set visible
-                    var last = Children.LastOrDefault();
-                    if (last != null)
-                        (last as Row).line.IsVisible = true;
+                    View child;
 
+                    // For add - last line set visible
+                    if (!isInsert)
+                    {
+                        child = Children.LastOrDefault();
+                        if (child != null)
+                            (child as Row).line.IsVisible = true;
+                    }
+
+                    int pause = 0;
                     for (var i = 0; i < e.NewItems.Count; ++i)
                     {
                         int index = i + e.NewStartingIndex;
+                        pause = index;
                         var item = e.NewItems[i];
 
-                        last = CreateChildViewFor(this.ItemTemplate, item, this, index);
-                        Children.Insert(index, last);
+                        child = CreateChildViewFor(this.ItemTemplate, item, this, index);
+                        Children.Insert(index, child);
+
+                        // line visibile
+                        if (!isInsert && index == Children.Count - 1)
+                        {
+                            (child as Row).line.IsVisible = false;
+                        }
                     }
 
-                    (last as Row).line.IsVisible = false;
+                    // recalc autonumber
+                    if (DataGrid.IsCalcAutoNumber)
+                    {
+                        for (int i = pause; i < Children.Count; i++)
+                            ((Row)Children[i]).UpdateAutoNumeric(i + 1);
+                    }
                 }
             }
             else if (e.Action == NotifyCollectionChangedAction.Remove)
@@ -408,8 +435,9 @@ namespace DataGridSam.Utils
         /// Создает строку для таблицы
         /// </summary>
         /// <param name="template">Шаблон который будет использован для создания элемента</param>
-        /// <param name="item">модель данных</param>
+        /// <param name="item">Модель данных</param>
         /// <param name="container">StackList</param>
+        /// <param name="index">Индекс для автонумерации</param>
         private static View CreateChildViewFor(DataTemplate template, object item, 
             BindableObject container, int index = -1)
         {
@@ -429,7 +457,5 @@ namespace DataGridSam.Utils
 
             return view;
         }
-
-
     }
 }

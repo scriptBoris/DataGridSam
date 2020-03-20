@@ -21,6 +21,7 @@ namespace Sample.ViewModels
             CommandLongTap = new Command(ActionLongTap);
             CommandOpenWare = new Command(ActionOpenWare);
             CommandAddItem = new Command(ActionAddItem);
+            CommandInsertItem = new Command(ActionInsertItem);
             CommandAddItems = new Command(ActionAddItems);
             CommandRemoveItem = new Command(ActionRemoveItem);
             CommandAddWeight = new Command(ActionAddWeight);
@@ -33,6 +34,7 @@ namespace Sample.ViewModels
         #region Props
         public ObservableCollection<Ware> Items { get; set; }
         public Ware SelectedItem { get; set; }
+        public int Index { get; set; }
         public int ItemsCount => Items?.Count ?? 0;
         public ICommand CommandSelectItem { get; set; }
         public ICommand CommandLongTap { get; set; }
@@ -40,6 +42,7 @@ namespace Sample.ViewModels
         public ICommand CommandRemoveWeight { get; set; }
         public ICommand CommandOpenWare { get; set; }
         public ICommand CommandAddItem { get; set; }
+        public ICommand CommandInsertItem { get; set; }
         public ICommand CommandAddItems { get; set; }
         public ICommand CommandRemoveItem { get; set; }
         public override Page View { get; set; } = new Views.DevView();
@@ -55,7 +58,8 @@ namespace Sample.ViewModels
                 lastWare = ware;
                 lastWare.IsSelected = true;
 
-                View.DisplayAlert("Select", $"You are selected {ware.Pos} {ware.Name}", "OK");
+                int pos = Items.IndexOf(ware);
+                View.DisplayAlert("Select", $"You are selected {pos} {ware.Name}", "OK");
             }
         }
 
@@ -64,7 +68,8 @@ namespace Sample.ViewModels
             if (param is Ware ware)
             {
                 SelectedItem = ware;
-                View.DisplayAlert("Long tap", $"You are selected {ware.Pos} {ware.Name}", "OK");
+                int pos = Items.IndexOf(ware);
+                View.DisplayAlert("Long tap", $"You are selected {pos} {ware.Name}", "OK");
             }
         }
 
@@ -79,7 +84,17 @@ namespace Sample.ViewModels
         {
             Items.Add(new Ware
             {
-                Pos = Items.Count + 1,
+                Name = "Food jar lcc-a",
+                Price = 159.56f,
+                Weight = 0.0f,
+                Need = 100,
+            });
+        }
+
+        private void ActionInsertItem(object obj)
+        {
+            Items.Insert(Index, new Ware
+            {
                 Name = "Food jar lcc-a",
                 Price = 159.56f,
                 Weight = 0.0f,

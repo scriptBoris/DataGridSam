@@ -115,6 +115,14 @@
                         HorizontalOptions="FillAndExpand"
                         Command="{Binding CommandRemoveItem}"/>
             </StackLayout>
+            
+            <StackLayout Orientation="Horizontal">
+                <Entry Text="{Binding Index}"
+                       HorizontalOptions="FillAndExpand"
+                       Keyboard="Numeric"/>
+                <Button Text="Insert"
+                        Command="{Binding CommandInsertItem}"/>
+            </StackLayout>
         </StackLayout>
     </StackLayout>
 
