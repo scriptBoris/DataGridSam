@@ -43,32 +43,29 @@
             </sam:DataGrid.HeaderFontSize>
             
             <!--Columns-->
-            <sam:DataGrid.Columns>
-                <sam:DataGridColumn Title="#" 
-                                    Width="40"
-                                    IsAutoNumber="True"
-                                    HorizontalTextAlignment="Center"
-                                    StringFormat="{}0\."/>
-                <sam:DataGridColumn Title="Name" 
-                                    Width="2*"
-                                    CellBackgroundColor="#EEE"
-                                    PropertyName="NameView"/>
-                <sam:DataGridColumn Title="Need " 
-                                    Width="1*"
-                                    HorizontalTextAlignment="End"
-                                    PropertyName="Need"/>
-                <sam:DataGridColumn Title="Price" 
-                                    Width="1*"
-                                    CellBackgroundColor="#EEE"
-                                    HorizontalTextAlignment="End"
-                                    PropertyName="Price"/>
-                <sam:DataGridColumn Title="Weight" 
-                                    Width="1*"
-                                    CellTextColor="Red"
-                                    PropertyName="Weight"
-                                    HorizontalTextAlignment="End">
-                </sam:DataGridColumn>
-            </sam:DataGrid.Columns>
+            <sam:DataGridColumn Title="#" 
+                                Width="40"
+                                IsAutoNumber="True"
+                                HorizontalTextAlignment="Center"
+                                StringFormat="{}0\."/>
+            <sam:DataGridColumn Title="Name" 
+                                Width="2*"
+                                CellBackgroundColor="#EEE"
+                                PropertyName="NameView"/>
+            <sam:DataGridColumn Title="Need " 
+                                Width="1*"
+                                HorizontalTextAlignment="End"
+                                PropertyName="Need"/>
+            <sam:DataGridColumn Title="Price" 
+                                Width="1*"
+                                CellBackgroundColor="#EEE"
+                                HorizontalTextAlignment="End"
+                                PropertyName="Price"/>
+            <sam:DataGridColumn Title="Weight" 
+                                Width="1*"
+                                CellTextColor="Red"
+                                PropertyName="Weight"
+                                HorizontalTextAlignment="End"/>
 
             <sam:DataGrid.RowTriggers>
                 <!--If item is process-->

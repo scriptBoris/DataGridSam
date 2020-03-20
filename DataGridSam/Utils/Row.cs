@@ -69,8 +69,9 @@ namespace DataGridSam.Utils
                 if (item.IsCustomTemplate || item.IsAutoNumber)
                     continue;
 
-                item.Label.SetBinding(Label.TextProperty, new Binding(item.Column.PropertyName, BindingMode.Default, 
-                    stringFormat: item.Column.StringFormat, source: BindingContext));
+                if (item.Column.PropertyName != null)
+                    item.Label.SetBinding(Label.TextProperty, new Binding(item.Column.PropertyName, BindingMode.Default, 
+                        stringFormat: item.Column.StringFormat, source: BindingContext));
             }
 
             // Render first style

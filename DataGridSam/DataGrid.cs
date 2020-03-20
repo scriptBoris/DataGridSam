@@ -10,6 +10,7 @@ using Xamarin.Forms;
 namespace DataGridSam
 {
     [Xamarin.Forms.Internals.Preserve(AllMembers = true)]
+    [ContentProperty("Columns")]
     public partial class DataGrid : Grid
     {
         public static void Init() { }
