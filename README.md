@@ -1,10 +1,7 @@
-# DataGridSam for Xamarin.Forms
-Simple and fast GUI element for Xamarin.Forms
-
-![Repo_List](Screenshots/Head.png)
-
-# Screenshot
+# Screenshots
 ![Repo_List](Screenshots/Screenshot.png)
+![Repo_List](Screenshots/Screenshot2.png)
+
 
 ## Nuget Installation
 
