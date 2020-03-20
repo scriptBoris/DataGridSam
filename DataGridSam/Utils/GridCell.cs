@@ -7,6 +7,7 @@ namespace DataGridSam.Utils
 {
     internal class GridCell
     {
+        internal Enums.AutoNumberType AutoNumber;
         internal bool IsCustomTemplate;
         internal ContentView Wrapper;
         internal Label Label;

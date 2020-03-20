@@ -146,7 +146,6 @@ namespace DataGridSam.Utils
                 else
                     return default;
             }
-            // TODO Add support for OnIdiom values
             else if (setter.Value is OnIdiom<T> onIdiom)
             {
                 switch (Device.Idiom)

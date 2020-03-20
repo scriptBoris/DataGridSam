@@ -35,7 +35,7 @@ namespace DataGridSam
             foreach (var col in Columns)
             {
                 // Create vertical borders (Table)
-                maskGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = col.Width });
+                maskGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = col.CalcWidth });
 
                 if (i < Columns.Count - 1)
                 {
@@ -51,9 +51,14 @@ namespace DataGridSam
 
         private void UpdateHeaderCells()
         {
-            // Clear old GUI elements
+            bool isUp = false;
+            bool isDown = false;
+
+            // Clear old GUI elements and values
+            AutoNumberStrategy = Enums.AutoNumberStrategyType.None;
             headGrid.Children.Clear();
             headGrid.ColumnDefinitions.Clear();
+            UpdateHeadHeight(HeaderHeight);
 
             if (Columns == null)
                 return;
@@ -61,13 +66,69 @@ namespace DataGridSam
             int i = 0;
             foreach (var col in Columns)
             {
+                col.OnAttached(this, i);
+
                 // Header table
-                headGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = col.Width });
+                headGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = col.CalcWidth });
+
                 var headCell = CreateColumnHeader(col);
+                headCell.IsVisible = col.IsVisible;
+
                 Grid.SetColumn(headCell, i);
                 headGrid.Children.Add(headCell);
 
+                // Detect auto number
+                if (col.AutoNumber == Enums.AutoNumberType.Up)
+                    isUp = true;
+                else if (col.AutoNumber == Enums.AutoNumberType.Down)
+                    isDown = true;
+
                 i++;
+            }
+
+            if (isUp)
+                AutoNumberStrategy = Enums.AutoNumberStrategyType.Up;
+            else if (isDown)
+                AutoNumberStrategy = Enums.AutoNumberStrategyType.Down;
+            else if (isUp && isDown)
+                AutoNumberStrategy = Enums.AutoNumberStrategyType.Both;
+        }
+
+        internal void UpdateHeadHeight(int height)
+        {
+            var row = RowDefinitions.First();
+
+            if (height == 0)
+                row.Height = GridLength.Auto;
+            else if (height > 0)
+                row.Height = new GridLength(height);
+        }
+
+        internal void UpdateColumnVisibile(DataGridColumn col, bool isVisible)
+        {
+            void SolveWidth(ColumnDefinition target, bool flag)
+            {
+                if (target == null)
+                    return;
+
+                if (flag)
+                    target.Width = col.Width;
+                else
+                    target.Width = new GridLength(0.0);
+            }
+
+            int i = col.Index;
+            col.HeaderWrapper.IsVisible = isVisible;
+
+            SolveWidth(headGrid?.ColumnDefinitions[i], isVisible);
+            SolveWidth(maskGrid?.ColumnDefinitions[i], isVisible);
+            SolveWidth(maskHeadGrid?.ColumnDefinitions[i], isVisible);
+                
+            foreach (var item in stackList.Children)
+            {
+                var row = item as Row;
+                row.cells[i].Wrapper.IsVisible = isVisible;
+                SolveWidth(row.ColumnDefinitions[i], isVisible);
             }
         }
 
@@ -102,7 +163,7 @@ namespace DataGridSam
             foreach (var col in Columns)
             {
                 // Create vertical borders (Table)
-                maskHeadGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = col.Width });
+                maskHeadGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = col.CalcWidth });
 
                 if (i < Columns.Count - 1)
                 {
@@ -141,10 +202,9 @@ namespace DataGridSam
 			column.HeaderLabel.Style = column.HeaderLabelStyle ?? this.HeaderLabelStyle ?? HeaderDefaultStyle;
 
             // Drop in wrap container
-            var container = new ContentView();
-            container.Content = column.HeaderLabel;
+            column.HeaderWrapper.Content = column.HeaderLabel;
 
-            return container;
+            return column.HeaderWrapper;
         }
 
         /// <summary>
@@ -232,7 +292,7 @@ namespace DataGridSam
             mainScroll.ScrollToAsync(0, 0, false);
         }
 
-        private void BindTapCommand(ICommand command)
+        private void UpdateTapCommand(ICommand command)
         {
             foreach (var item in stackList.Children)
             {
@@ -241,12 +301,65 @@ namespace DataGridSam
             }
         }
 
-        private void BindLongTapCommand(ICommand command)
+        private void UpdateLongTapCommand(ICommand command)
         {
             foreach (var item in stackList.Children)
             {
                 var row = item as Row;
                 DataGridSam.Platform.Touch.SetLongTap(row, command);
+            }
+        }
+
+        private static void UpdateSelectedItem(BindableObject b, object o, object n)
+        {
+            var self = (DataGrid)b;
+
+            var lastRow = self.SelectedRow;
+
+            if (n == null && lastRow != null)
+            {
+                lastRow.isSelected = false;
+                lastRow.UpdateStyle();
+
+                self.SelectedRow = null;
+            }
+            else if (self.stackList.ItemsSource is IList list)
+            {
+                var match = list.IndexOf(n);
+
+                // Without pagination
+                if (self.PaginationItemCount == 0)
+                {
+                    if (match >= 0 && self.stackList.Children.Count > 0)
+                    {
+                        var row = (Row)self.stackList.Children[match];
+                        row.isSelected = true;
+                        row.UpdateStyle();
+
+                        self.SelectedRow = row;
+                    }
+                }
+                // With pagination
+                else
+                {
+                    int pageStart = self.PaginationCurrentPageStartIndex;
+                    int dif = match - self.PaginationCurrentPageStartIndex;
+
+                    if (dif >= 0 && dif <= pageStart + self.PaginationItemCount - 1)
+                    {
+                        // Safe
+                        if (dif >= self.stackList.Children.Count)
+                        {
+
+                        }
+
+                        var row = (Row)self.stackList.Children[dif];
+                        row.isSelected = true;
+                        row.UpdateStyle();
+
+                        self.SelectedRow = row;
+                    }
+                }
             }
         }
     }

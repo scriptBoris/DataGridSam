@@ -17,18 +17,18 @@
         <!--Table-->
         <sam:DataGrid ItemsSource="{Binding Items}"
                       SelectedItem="{Binding SelectedItem}"
+                      CommandSelectedItem="{Binding CommandSelectItem}"
+                      CommandLongTapItem="{Binding CommandLongTap}"
+                      IsWrapped="True"
                       HeaderBackgroundColor="#1976d2"
                       HeaderTextColor="White"
-                      IsWrapped="True"
                       SelectedRowAttribute="Bold"
                       RowsColor="White"
                       RowsTextColor="Black"
                       BorderColor="#2196F3"
                       BorderWidth="2"
                       CellPadding="5"
-                      TapColor="#03a9f4"
-                      CommandSelectedItem="{Binding CommandSelectItem}"
-                      CommandLongTapItem="{Binding CommandLongTap}">
+                      TapColor="#03a9f4">
             <sam:DataGrid.RowsFontSize>
                 <OnIdiom x:TypeArguments="x:Double"
                          Phone="12"
@@ -43,30 +43,29 @@
             </sam:DataGrid.HeaderFontSize>
             
             <!--Columns-->
-            <sam:DataGrid.Columns>
-                <sam:DataGridColumn Title="#" 
-                                    Width="40"
-                                    PropertyName="Pos"/>
-                <sam:DataGridColumn Title="Name" 
-                                    Width="2*"
-                                    CellBackgroundColor="#EEE"
-                                    PropertyName="NameView"/>
-                <sam:DataGridColumn Title="Need " 
-                                    Width="1*"
-                                    HorizontalTextAlignment="End"
-                                    PropertyName="Need"/>
-                <sam:DataGridColumn Title="Price" 
-                                    Width="1*"
-                                    CellBackgroundColor="#EEE"
-                                    HorizontalTextAlignment="End"
-                                    PropertyName="Price"/>
-                <sam:DataGridColumn Title="Weight" 
-                                    Width="1*"
-                                    CellTextColor="Red"
-                                    PropertyName="Weight"
-                                    HorizontalTextAlignment="End">
-                </sam:DataGridColumn>
-            </sam:DataGrid.Columns>
+            <sam:DataGridColumn Title="#" 
+                                Width="40"
+                                AutoNumber="Up"
+                                HorizontalTextAlignment="Center"
+                                StringFormat="{}0\."/>
+            <sam:DataGridColumn Title="Name" 
+                                Width="2*"
+                                CellBackgroundColor="#EEE"
+                                PropertyName="NameView"/>
+            <sam:DataGridColumn Title="Need " 
+                                Width="1*"
+                                HorizontalTextAlignment="End"
+                                PropertyName="Need"/>
+            <sam:DataGridColumn Title="Price" 
+                                Width="1*"
+                                CellBackgroundColor="#EEE"
+                                HorizontalTextAlignment="End"
+                                PropertyName="Price"/>
+            <sam:DataGridColumn Title="Weight" 
+                                Width="1*"
+                                CellTextColor="Red"
+                                PropertyName="Weight"
+                                HorizontalTextAlignment="End"/>
 
             <sam:DataGrid.RowTriggers>
                 <!--If item is process-->
@@ -115,6 +114,14 @@
                 <Button Text="Remove item"
                         HorizontalOptions="FillAndExpand"
                         Command="{Binding CommandRemoveItem}"/>
+            </StackLayout>
+            
+            <StackLayout Orientation="Horizontal">
+                <Entry Text="{Binding Index}"
+                       HorizontalOptions="FillAndExpand"
+                       Keyboard="Numeric"/>
+                <Button Text="Insert"
+                        Command="{Binding CommandInsertItem}"/>
             </StackLayout>
         </StackLayout>
     </StackLayout>

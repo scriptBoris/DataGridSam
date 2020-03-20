@@ -31,43 +31,42 @@
                       CellPadding="10"
                       TapColor="#bbdefb"
                       CommandLongTapItem="{Binding CommandLongTap}">
-            <!--Columns-->
-            <sam:DataGrid.Columns>
-                <!--Photo-->
-                <sam:DataGridColumn Title="Photo" 
-                                    Width="80">
-                    <sam:DataGridColumn.CellTemplate>
-                        <DataTemplate>
-                            <Image Source="{Binding PhotoUrl}"
-                                   Aspect="AspectFill"/>
-                        </DataTemplate>
-                    </sam:DataGridColumn.CellTemplate>
-                </sam:DataGridColumn>
+            <!--Photo-->
+            <sam:DataGridColumn Title="Photo" 
+                                IsVisible="{Binding IsShowColumnPhotos}"
+                                Width="80">
+                <sam:DataGridColumn.CellTemplate>
+                    <DataTemplate>
+                        <Image Source="{Binding PhotoUrl}"
+                                Aspect="AspectFill"/>
+                    </DataTemplate>
+                </sam:DataGridColumn.CellTemplate>
+            </sam:DataGridColumn>
                 
-                <!--Name-->
-                <sam:DataGridColumn Title="Name" 
-                                    Width="1*">
-                    <sam:DataGridColumn.CellTemplate>
-                        <DataTemplate>
-                            <StackLayout Padding="10" Spacing="0">
-                                <Label Text="{Binding Name}"
-                                       TextColor="Black"
-                                       FontAttributes="Bold"/>
-                                <Label Text="{Binding Family}"
-                                       TextColor="Black"/>
-                            </StackLayout>
-                        </DataTemplate>
-                    </sam:DataGridColumn.CellTemplate>
-                </sam:DataGridColumn>
-                <!--Role-->
-                <sam:DataGridColumn Title="Famous role"
-                                    PropertyName="FamousRole"
-                                    Width="1*"/>
-                <!--Description-->
-                <sam:DataGridColumn Title="Description" 
-                                    PropertyName="Description"
-                                    Width="2*"/>
-            </sam:DataGrid.Columns>
+            <!--Name-->
+            <sam:DataGridColumn Title="Name" 
+                                Width="1*">
+                <sam:DataGridColumn.CellTemplate>
+                    <DataTemplate>
+                        <StackLayout Padding="10" Spacing="0">
+                            <Label Text="{Binding Name}"
+                                    TextColor="Black"
+                                    FontAttributes="Bold"/>
+                            <Label Text="{Binding Family}"
+                                    TextColor="Black"/>
+                        </StackLayout>
+                    </DataTemplate>
+                </sam:DataGridColumn.CellTemplate>
+            </sam:DataGridColumn>
+            <!--Role-->
+            <sam:DataGridColumn Title="Famous role"
+                                PropertyName="FamousRole"
+                                IsVisible="True"
+                                Width="1*"/>
+            <!--Description-->
+            <sam:DataGridColumn Title="Description" 
+                                PropertyName="Description"
+                                Width="2*"/>
             
             <sam:DataGrid.RowTriggers>
                 <sam:RowTrigger PropertyTrigger="Rank"
@@ -75,6 +74,7 @@
                                 RowTextColor="Red"/>
             </sam:DataGrid.RowTriggers>
         </sam:DataGrid>
-        
+        <Button Text="Hide photos"
+                Command="{Binding CommandHidePhotos}"/>
     </StackLayout>
 </ContentPage>

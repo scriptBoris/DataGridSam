@@ -21,7 +21,10 @@
         
         <Button Text="Triggers demo"
                 Command="{Binding CommandTriggersDemo}"/>
-        
+
+        <Button Text="Embedded source demo"
+                Command="{Binding CommandEmbeddedDemo}"/>
+
         <Button Text="Dev"
                 Command="{Binding CommandDev}"/>
     </StackLayout>

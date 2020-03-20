@@ -31,12 +31,18 @@ namespace Sample.ViewModels
                 var vm = new TriggersDemoVm();
                 await NavigationGoAsync(vm);
             });
+            CommandEmbeddedDemo = new Command(async () =>
+            {
+                var vm = new EmbeddedDemoVm();
+                await NavigationGoAsync(vm);
+            });
         }
 
         public ICommand CommandDev { get; set; }
         public ICommand CommandCustomCells { get; set; }
         public ICommand CommandStyles { get; set; }
         public ICommand CommandTriggersDemo { get; set; }
+        public ICommand CommandEmbeddedDemo { get; set; }
         public override Page View { get; set; } = new Views.RootView();
     }
 }

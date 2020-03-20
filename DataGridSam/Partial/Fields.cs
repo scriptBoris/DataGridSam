@@ -1,4 +1,5 @@
-﻿using DataGridSam.Utils;
+﻿using DataGridSam.Enums;
+using DataGridSam.Utils;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -77,6 +78,16 @@ namespace DataGridSam
         /// For pagination
         /// </summary>
         internal Button buttonNext;
+
+        /// <summary>
+        /// Need calc auto number?
+        /// </summary>
+        internal bool IsAutoNumberCalc => AutoNumberStrategy != AutoNumberStrategyType.None;
+
+        /// <summary>
+        /// Which way do you need to run the loop for automatic updates
+        /// </summary>
+        internal AutoNumberStrategyType AutoNumberStrategy = AutoNumberStrategyType.None;
 
 
         internal VisualCollector VisualRowsFromStyle = new VisualCollector();

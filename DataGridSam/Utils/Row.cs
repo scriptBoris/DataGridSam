@@ -66,16 +66,13 @@ namespace DataGridSam.Utils
             // Set text value for standart cell
             foreach (var item in cells)
             {
-                if (item.IsCustomTemplate)
+                if (item.IsCustomTemplate || item.AutoNumber != Enums.AutoNumberType.None)
                     continue;
 
-                item.Label.SetBinding(Label.TextProperty, new Binding(item.Column.PropertyName, BindingMode.Default, 
-                    stringFormat: item.Column.StringFormat, source: BindingContext));
+                if (item.Column.PropertyName != null)
+                    item.Label.SetBinding(Label.TextProperty, new Binding(item.Column.PropertyName, BindingMode.Default, 
+                        stringFormat: item.Column.StringFormat, source: BindingContext));
             }
-
-            // Add command parameter
-            //TODO Check binding context;
-
 
             // Render first style
             UpdateStyle();
@@ -98,7 +95,7 @@ namespace DataGridSam.Utils
 
             foreach (var column in DataGrid.Columns)
             {
-                ColumnDefinitions.Add(new ColumnDefinition() { Width = column.Width });
+                ColumnDefinitions.Add(new ColumnDefinition() { Width = column.CalcWidth });
 
                 var cell = new GridCell { Column = column };
 
@@ -106,6 +103,7 @@ namespace DataGridSam.Utils
                 if (column.CellTemplate != null)
                 {
                     cell.Wrapper = new ContentView();
+                    cell.Wrapper.IsVisible = column.IsVisible;
                     cell.Wrapper.IsClippedToBounds = true;
                     cell.Wrapper.InputTransparent = true;
                     cell.Wrapper.CascadeInputTransparent = true;
@@ -120,18 +118,12 @@ namespace DataGridSam.Utils
                     {
                         HorizontalOptions = LayoutOptions.FillAndExpand,
                         VerticalOptions = LayoutOptions.FillAndExpand,
-                        //FontSize = DataGrid.RowsFontSize,
-                        //HorizontalTextAlignment = column.HorizontalTextAlignment,
-                        //VerticalTextAlignment = column.VerticalTextAlignment,
-                        //LineBreakMode = LineBreakMode.WordWrap,
-                        //Style = DataGrid.RowsTextStyle,
                     };
 
                     var wrapper = new ContentView
                     {
+                        IsVisible = column.IsVisible,
                         Padding = DataGrid.CellPadding,
-                        //HorizontalOptions = LayoutOptions.FillAndExpand,
-                        //VerticalOptions = LayoutOptions.FillAndExpand,
                         IsClippedToBounds = true,
                         Content = label,
                     };
@@ -141,13 +133,18 @@ namespace DataGridSam.Utils
                     cell.Label = label;
                 }
 
+                // Detect auto number cell
+                cell.AutoNumber = column.AutoNumber;
+
                 SetColumn(cell.Wrapper, index);
                 SetRow(cell.Wrapper, 0);
                 Children.Add(cell.Wrapper);
                 cells.Add(cell);
 
+
                 index++;
             }
+
 
             // Create horizontal line table
             line = CreateHorizontalLine();
@@ -304,6 +301,25 @@ namespace DataGridSam.Utils
                             DataGrid.VisualRowsFromStyle,
                             DataGrid.VisualRows);
                     }
+                }
+            }
+        }
+
+        internal void UpdateAutoNumeric(int num, int itemsCount)
+        {
+            // Auto numeric
+            foreach(var cell in cells)
+            {
+                switch (cell.AutoNumber)
+                {
+                    case Enums.AutoNumberType.Up:
+                        cell.Label.Text = (itemsCount + 1 - num).ToString(cell.Column.StringFormat);
+                        break;
+                    case Enums.AutoNumberType.Down:
+                        cell.Label.Text = num.ToString(cell.Column.StringFormat);
+                        break;
+                    //default:
+                    //    break;
                 }
             }
         }
