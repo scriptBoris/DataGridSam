@@ -59,26 +59,37 @@ In file **App.xaml.cs**, enter `DataGridSam.UWP.Initialize.Init();` as below
 ## Example
 ```xml
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-		     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-		     xmlns:sam="clr-namespace:DataGridSam;assembly=DataGridSam"
-		     x:Class="Sample.Views.TestView">
+	     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	     xmlns:sam="clr-namespace:DataGridSam;assembly=DataGridSam"
+	     x:Class="Sample.Views.TestView">
     <StackLayout>
         <sam:DataGrid ItemsSource="{Binding Items}">
-            <sam:DataGrid.Columns>
-                <sam:DataGridColumn Title="#" 
-                                    PropertyName="PositionNumber"
-                                    Width="40"/>
-                <sam:DataGridColumn Title="Name" 
-                                    PropertyName="Name"
-                                    Width="2*"/>
-                <sam:DataGridColumn Title="Price" 
-                                    PropertyName="Price"
-                                    Width="1*"
-                                    HorizontalTextAlignment="End"/>
-                <sam:DataGridColumn Title="Weight" 
-                                    PropertyName="Weight"
-                                    Width="1*"/>
-            </sam:DataGrid.Columns>
+            
+            <sam:DataGridColumn Title="#" 
+                                AutoNumber="Down"
+                                Width="40"/>
+		    
+	    <sam:DataGridColumn Title="Photo" 
+                                Width="90">
+                <sam:DataGridColumn.CellTemplate>
+                    <DataTemplate>
+                        <Image Source="{Binding PhotoUrl}"/>
+                    </DataTemplate>
+                </sam:DataGridColumn.CellTemplate>
+            </sam:DataGridColumn>
+		    
+            <sam:DataGridColumn Title="Name" 
+                                PropertyName="Name"
+                                Width="2*"/>
+		    
+            <sam:DataGridColumn Title="Price" 
+                                PropertyName="Price"
+                                Width="1*"
+                                HorizontalTextAlignment="End"/>
+		    
+            <sam:DataGridColumn Title="Weight" 
+                                PropertyName="Weight"
+                                Width="1*"/>
         </sam:DataGrid>
     </StackLayout>
 </ContentPage>
