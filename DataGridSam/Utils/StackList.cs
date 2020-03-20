@@ -110,8 +110,9 @@ namespace DataGridSam.Utils
             else
             {
                 var enumerator = newList.GetEnumerator();
-                while (enumerator.MoveNext())
-                    self.ItemsCount++;
+                if (enumerator != null)
+                    while (enumerator.MoveNext())
+                        self.ItemsCount++;
             }
 
             if (newList != null)
