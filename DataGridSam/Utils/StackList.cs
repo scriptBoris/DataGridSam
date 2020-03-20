@@ -107,7 +107,7 @@ namespace DataGridSam.Utils
             {
                 self.ItemsCount = collection.Count;
             }
-            else
+            else if (newList != null)
             {
                 var enumerator = newList.GetEnumerator();
                 if (enumerator != null)
