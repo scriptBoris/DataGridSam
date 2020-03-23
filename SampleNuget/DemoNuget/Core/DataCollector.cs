@@ -56,6 +56,50 @@ namespace DemoNuget.Core
             return res;
         }
 
+        public static ObservableCollection<Ware> GetWares()
+        {
+            var res = new ObservableCollection<Ware>
+            {
+                new Ware
+                {
+                    Name = "Stainless steel bottle MBI-A",
+                    Price = 47.1f,
+                    Weight = 0.0f,
+                    Need = 100,
+                },
+                new Ware
+                {
+                    Name = "Toaster oven kaj-B",
+                    Price = 87.4f,
+                    Weight = 0.0f,
+                    Need = 150,
+                },
+                new Ware
+                {
+                    Name = "Thermal magic cooker NFI-A",
+                    Price = 159.56f,
+                    Weight = 100.00f,
+                    Need = 100,
+                },
+                new Ware
+                {
+                    Name = "Close-up of jeans pockets",
+                    Price = 199.0f,
+                    Weight = 88.0f,
+                    Need = 300.0f,
+                },
+                new Ware
+                {
+                    Name = "Game Handles for Playing Games",
+                    Price = 1200.0f,
+                    Need = 1000.0f,
+                    Weight = 0.0f,
+                },
+            };
+
+            return res;
+        }
+
         public static ObservableCollection<User> GetUsers()
         {
             var res = new ObservableCollection<User>
@@ -135,6 +179,24 @@ namespace DemoNuget.Core
             };
 
             return res;
+        }
+
+        public static Ware GenerateWare()
+        {
+            var rprice = new Random().Next(1, 100);
+            var rneed = new Random().Next(0, 10);
+            var rweight = new Random().Next(0, 10);
+
+
+            var ware = new Ware()
+            {
+                Name = "random",
+                Price = rprice * 10,
+                Need = rneed * 10,
+                Weight = rweight * 10,
+            };
+
+            return ware;
         }
     }
 }

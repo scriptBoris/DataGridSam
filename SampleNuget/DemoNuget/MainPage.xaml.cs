@@ -28,5 +28,10 @@ namespace DemoNuget
         {
             Navigation.PushAsync(new TriggersDemo());
         }
+
+        private void ButtonAutonumber(object sender, EventArgs e)
+        {
+            Navigation.PushAsync(new AutoNumberDemo());
+        }
     }
 }

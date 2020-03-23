@@ -11,6 +11,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Views\AutoNumberDemo.xaml.cs">
+      <DependentUpon>AutoNumberDemo.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
     <EmbeddedResource Update="App.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>

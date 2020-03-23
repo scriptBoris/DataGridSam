@@ -18,5 +18,8 @@
         
         <Button Text="Triggers demo"
                 Clicked="ButtonTriggers"/>
+
+        <Button Text="Autonumber demo"
+                Clicked="ButtonAutonumber"/>
     </StackLayout>
 </ContentPage>
