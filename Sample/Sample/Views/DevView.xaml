@@ -52,8 +52,8 @@
                                 Width="2*"
                                 CellBackgroundColor="#EEE"
                                 PropertyName="NameView"/>
-            <sam:DataGridColumn Title="Need " 
-                                Width="1*"
+            <sam:DataGridColumn Title="Need 123" 
+                                Width="2*"
                                 HorizontalTextAlignment="End"
                                 PropertyName="Need"/>
             <sam:DataGridColumn Title="Price" 
@@ -61,11 +61,11 @@
                                 CellBackgroundColor="#EEE"
                                 HorizontalTextAlignment="End"
                                 PropertyName="Price"/>
-            <sam:DataGridColumn Title="Weight" 
+            <!--<sam:DataGridColumn Title="Weight" 
                                 Width="1*"
                                 CellTextColor="Red"
                                 PropertyName="Weight"
-                                HorizontalTextAlignment="End"/>
+                                HorizontalTextAlignment="End"/>-->
 
             <sam:DataGrid.RowTriggers>
                 <!--If item is process-->

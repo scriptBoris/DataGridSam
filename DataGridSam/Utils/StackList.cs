@@ -347,8 +347,15 @@ namespace DataGridSam.Utils
                         }
                         else if (DataGrid.AutoNumberStrategy == Enums.AutoNumberStrategyType.Up)
                         {
-                            for (int i = del - 1; i > 0; i--)
-                                (Children[i] as Row).UpdateAutoNumeric(i + 1, ItemsCount);
+                            if (ItemsCount > 0)
+                            {
+                                del = del - 1;
+                                if (del < 0)
+                                    del = 0;
+
+                                for (int i = del; i >= 0; i--)
+                                    (Children[i] as Row).UpdateAutoNumeric(i + 1, ItemsCount);
+                            }
                         }
 
                         //// Auto numeric
