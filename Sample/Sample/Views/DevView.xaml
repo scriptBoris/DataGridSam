@@ -15,7 +15,8 @@
     
     <StackLayout>
         <!--Table-->
-        <sam:DataGrid ItemsSource="{Binding Items}"
+        <sam:DataGrid x:Name="dataGrid"
+                      ItemsSource="{Binding Items}"
                       SelectedItem="{Binding SelectedItem}"
                       CommandSelectedItem="{Binding CommandSelectItem}"
                       CommandLongTapItem="{Binding CommandLongTap}"

@@ -93,6 +93,11 @@ namespace Sample.ViewModels
 
         private void ActionInsertItem(object obj)
         {
+            if (Index > Items.Count - 1)
+                Index = Items.Count - 1;
+            else if (Index < 0)
+                Index = 0;
+
             Items.Insert(Index, new Ware
             {
                 Name = "Food jar lcc-a",
@@ -100,6 +105,7 @@ namespace Sample.ViewModels
                 Weight = 0.0f,
                 Need = 100,
             });
+            (View as Views.DevView).ScrollToIndex(Index + 1);
         }
 
         private void ActionAddItems(object obj)
