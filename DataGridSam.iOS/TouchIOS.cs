@@ -4,17 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Windows.Input;
+using DataGridSam.iOS.Utils;
 using DataGridSam.Platform;
 using Foundation;
 using UIKit;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.iOS;
 
-//[assembly: ResolutionGroupName("DataGridSam")]
+[assembly: ResolutionGroupName("DataGridSam")]
 [assembly: ExportEffect(typeof(DataGridSam.iOS.TouchIOS), nameof(DataGridSam.Platform.Touch))]
 namespace DataGridSam.iOS
 {
-    public class TouchIOS2 : PlatformEffect
+    public class TouchIOS : PlatformEffect
     {
         public bool IsDisposed => (Container as IVisualElementRenderer)?.Element == null;
         public UIView View => Control ?? Container;
@@ -43,8 +44,10 @@ namespace DataGridSam.iOS
             };
 
             isEnabled = Touch.GetIsEnabled(Element);
+
             gestureTap = new UILongPressGestureRecognizer(OnTap);
             gestureTap.MinimumPressDuration = 0;
+            gestureTap.Delegate = new TouchGestureDelegate(View);
 
             TimerInit();
             UpdateEffectColor();
