@@ -24,6 +24,7 @@
                       HeaderBackgroundColor="#1976d2"
                       HeaderTextColor="White"
                       SelectedRowAttribute="Bold"
+                      SelectedRowColor="#64b5f6"
                       RowsColor="White"
                       RowsTextColor="Black"
                       BorderColor="#2196F3"

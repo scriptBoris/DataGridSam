@@ -127,7 +127,7 @@ namespace DataGridSam
             foreach (var item in stackList.Children)
             {
                 var row = item as Row;
-                row.cells[i].Wrapper.IsVisible = isVisible;
+                row.cells[i].View.IsVisible = isVisible;
                 SolveWidth(row.ColumnDefinitions[i], isVisible);
             }
         }

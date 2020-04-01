@@ -35,6 +35,7 @@ namespace DataGridSam.Utils
                 if (item.Property == Label.BackgroundColorProperty)
                 {
                     BackgroundColor = ValueSelector.GetValueFromStyle<Color>(item);
+                    BackgroundColor.Value.MultiplyAlpha(0.5);
                 }
                 else if (item.Property == Label.TextColorProperty)
                 {

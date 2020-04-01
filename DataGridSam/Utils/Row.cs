@@ -14,6 +14,7 @@ namespace DataGridSam.Utils
     {
         internal readonly DataGrid DataGrid;
         internal int index;
+        internal BoxView selectionContainer;
         internal BoxView line;
         internal bool isSelected;
         internal List<GridCell> cells = new List<GridCell>();
@@ -41,8 +42,13 @@ namespace DataGridSam.Utils
             if (context is INotifyPropertyChanged model)
                 model.PropertyChanged += (obj, e) => RowTrigger.SetTriggerStyle(this, e.PropertyName);
 
+            // Create selected container
+            selectionContainer = CreateSelectionContainer();
+            SetColumnSpan(selectionContainer, DataGrid.Columns.Count);
+            Children.Add(selectionContainer);
+
             // Init cells
-            int i = 0;
+            int cellsCount = 0;
             foreach (var column in DataGrid.Columns)
             {
                 ColumnDefinitions.Add(new ColumnDefinition() { Width = column.CalcWidth });
@@ -52,21 +58,27 @@ namespace DataGridSam.Utils
                 // Create custom template
                 if (column.CellTemplate != null)
                 {
-                    cell.Wrapper = new ContentView();
-                    cell.Wrapper.IsVisible = column.IsVisible;
-                    cell.Wrapper.IsClippedToBounds = true;
-                    cell.Wrapper.InputTransparent = true;
-                    cell.Wrapper.CascadeInputTransparent = true;
-                    cell.Wrapper.Content = column.CellTemplate.CreateContent() as View;
-                    cell.Wrapper.Content.InputTransparent = true;
-                    cell.Wrapper.BindingContext = context;
+                    cell.View = column.CellTemplate.CreateContent() as View;
+                    cell.View.IsVisible = column.IsVisible;
+                    cell.View.InputTransparent = true;
+                    cell.View.BindingContext = context;
                     cell.IsCustomTemplate = true;
+
+                    if (cell.View is Layout layout)
+                    {
+                        layout.IsClippedToBounds = true;
+                        layout.InputTransparent = true;
+                        layout.CascadeInputTransparent = true;
+                    }
                 }
                 // Create standart cell
                 else
                 {
                     var label = new Label
                     {
+                        IsVisible = column.IsVisible,
+                        Margin = DataGrid.CellPadding,
+                        InputTransparent = true,
                         HorizontalOptions = LayoutOptions.FillAndExpand,
                         VerticalOptions = LayoutOptions.FillAndExpand,
                     };
@@ -78,36 +90,26 @@ namespace DataGridSam.Utils
                             stringFormat: column.StringFormat, 
                             source: context));
 
-                    var wrapper = new ContentView
-                    {
-                        IsVisible = column.IsVisible,
-                        Padding = DataGrid.CellPadding,
-                        IsClippedToBounds = true,
-                        Content = label,
-                    };
-
-                    cell.Wrapper = wrapper;
-                    cell.Wrapper.InputTransparent = true;
-                    cell.Label = label;
+                    cell.View = label;
 
                 }
 
                 // Detect auto number cell
                 cell.AutoNumber = column.AutoNumber;
 
-                SetColumn(cell.Wrapper, i);
-                SetRow(cell.Wrapper, 0);
-                Children.Add(cell.Wrapper);
+                SetColumn(cell.View, cellsCount);
+                SetRow(cell.View, 0);
+                Children.Add(cell.View);
                 cells.Add(cell);
 
-                i++;
+                cellsCount++;
             }
 
             // Create horizontal line table
             line = CreateHorizontalLine();
             SetRow(line, 1);
             SetColumn(line, 0);
-            SetColumnSpan(line, DataGrid.Columns.Count);
+            SetColumnSpan(line, cellsCount);
             Children.Add(line);
 
             // Add tap system event
@@ -164,6 +166,38 @@ namespace DataGridSam.Utils
 
         internal void UpdateStyle()
         {
+            // Selected
+            if (isSelected)
+            {
+                var color = ValueSelector.GetSelectedColor(
+                    DataGrid.VisualSelectedRowFromStyle.BackgroundColor,
+                    DataGrid.VisualSelectedRow.BackgroundColor);
+
+                selectionContainer.BackgroundColor = color;
+            }
+            else
+            {
+                selectionContainer.BackgroundColor = Color.Transparent;
+            }
+
+            // row background
+            if (enableTrigger != null)
+            {
+                // row background
+                BackgroundColor = ValueSelector.GetBackgroundColor(
+                    enableTrigger.VisualContainerStyle.BackgroundColor,
+                    enableTrigger.VisualContainer.BackgroundColor,
+
+                    DataGrid.VisualRowsFromStyle.BackgroundColor,
+                    DataGrid.VisualRows.BackgroundColor);
+            }
+            else
+            {
+                BackgroundColor = ValueSelector.GetBackgroundColor(
+                    DataGrid.VisualRowsFromStyle.BackgroundColor,
+                    DataGrid.VisualRows.BackgroundColor);
+            }
+
             // Priority:
             // 1) selected
             // 2) trigger
@@ -171,81 +205,28 @@ namespace DataGridSam.Utils
             // 4) default
             foreach (var cell in cells)
             {
+                if (cell.IsCustomTemplate)
+                    continue;
+
                 if (isSelected)
                 {
                     // SELECT
                     if (enableTrigger == null)
                     {
-                        // row background
-                        cell.Wrapper.BackgroundColor = ValueSelector.GetBackgroundColor(
-                            DataGrid.VisualSelectedRowFromStyle.BackgroundColor,
-                            DataGrid.VisualSelectedRow.BackgroundColor,
-
-                            cell.Column.VisualCellFromStyle.BackgroundColor,
-                            cell.Column.VisualCell.BackgroundColor,
-
-                            DataGrid.VisualRowsFromStyle.BackgroundColor,
-                            DataGrid.VisualRows.BackgroundColor);
-
-                        if (!cell.IsCustomTemplate)
-                        {
-                            MergeVisual(cell.Label,
-                                DataGrid.VisualSelectedRowFromStyle,
-                                DataGrid.VisualSelectedRow,
-                                cell.Column.VisualCellFromStyle,
-                                cell.Column.VisualCell,
-                                DataGrid.VisualRowsFromStyle,
-                                DataGrid.VisualRows);
-                        }
+                        MergeVisual(cell.Label,
+                            DataGrid.VisualSelectedRowFromStyle,
+                            DataGrid.VisualSelectedRow,
+                            cell.Column.VisualCellFromStyle,
+                            cell.Column.VisualCell,
+                            DataGrid.VisualRowsFromStyle,
+                            DataGrid.VisualRows);
                     }
                     // SELECT with TRIGGER
                     else
                     {
-                        // row background
-                        cell.Wrapper.BackgroundColor = ValueSelector.GetBackgroundColor(
-                            DataGrid.VisualSelectedRowFromStyle.BackgroundColor,
-                            DataGrid.VisualSelectedRow.BackgroundColor,
-
-                            enableTrigger.VisualContainerStyle.BackgroundColor,
-                            enableTrigger.VisualContainer.BackgroundColor,
-
-                            cell.Column.VisualCellFromStyle.BackgroundColor,
-                            cell.Column.VisualCell.BackgroundColor,
-
-                            DataGrid.VisualRowsFromStyle.BackgroundColor,
-                            DataGrid.VisualRows.BackgroundColor);
-
-                        if (!cell.IsCustomTemplate)
-                        {
-                            MergeVisual(cell.Label,
-                                DataGrid.VisualSelectedRowFromStyle,
-                                DataGrid.VisualSelectedRow,
-                                enableTrigger.VisualContainerStyle,
-                                enableTrigger.VisualContainer,
-                                cell.Column.VisualCellFromStyle,
-                                cell.Column.VisualCell,
-                                DataGrid.VisualRowsFromStyle,
-                                DataGrid.VisualRows);
-                        }
-                    }
-                }
-                // TRIGGER
-                else if (enableTrigger != null)
-                {
-                    // row background
-                    cell.Wrapper.BackgroundColor = ValueSelector.GetBackgroundColor(
-                        enableTrigger.VisualContainerStyle.BackgroundColor,
-                        enableTrigger.VisualContainer.BackgroundColor,
-                        
-                        cell.Column.VisualCellFromStyle.BackgroundColor,
-                        cell.Column.VisualCell.BackgroundColor,
-
-                        DataGrid.VisualRowsFromStyle.BackgroundColor,
-                        DataGrid.VisualRows.BackgroundColor);
-
-                    if (!cell.IsCustomTemplate)
-                    {
                         MergeVisual(cell.Label,
+                            DataGrid.VisualSelectedRowFromStyle,
+                            DataGrid.VisualSelectedRow,
                             enableTrigger.VisualContainerStyle,
                             enableTrigger.VisualContainer,
                             cell.Column.VisualCellFromStyle,
@@ -254,25 +235,25 @@ namespace DataGridSam.Utils
                             DataGrid.VisualRows);
                     }
                 }
+                // TRIGGER
+                else if (enableTrigger != null)
+                {
+                    MergeVisual(cell.Label,
+                        enableTrigger.VisualContainerStyle,
+                        enableTrigger.VisualContainer,
+                        cell.Column.VisualCellFromStyle,
+                        cell.Column.VisualCell,
+                        DataGrid.VisualRowsFromStyle,
+                        DataGrid.VisualRows);
+                }
                 // DEFAULT
                 else
                 {
-                    // row background
-                    cell.Wrapper.BackgroundColor = ValueSelector.GetBackgroundColor(
-                        cell.Column.VisualCellFromStyle.BackgroundColor,
-                        cell.Column.VisualCell.BackgroundColor,
-
-                        DataGrid.VisualRowsFromStyle.BackgroundColor,
-                        DataGrid.VisualRows.BackgroundColor);
-
-                    if (!cell.IsCustomTemplate)
-                    {
-                        MergeVisual(cell.Label,
-                            cell.Column.VisualCellFromStyle,
-                            cell.Column.VisualCell,
-                            DataGrid.VisualRowsFromStyle,
-                            DataGrid.VisualRows);
-                    }
+                    MergeVisual(cell.Label,
+                        cell.Column.VisualCellFromStyle,
+                        cell.Column.VisualCell,
+                        DataGrid.VisualRowsFromStyle,
+                        DataGrid.VisualRows);
                 }
             }
         }
@@ -299,12 +280,24 @@ namespace DataGridSam.Utils
 
         private BoxView CreateHorizontalLine()
         {
-            var line = new BoxView
+            var line = new BoxView()
             {
                 BackgroundColor = DataGrid.BorderColor,
                 VerticalOptions = LayoutOptions.FillAndExpand,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 HeightRequest = DataGrid.BorderWidth,
+            };
+            return line;
+        }
+
+        private BoxView CreateSelectionContainer()
+        {
+            var line = new BoxView()
+            {
+                BackgroundColor = Color.Transparent,
+                VerticalOptions = LayoutOptions.FillAndExpand,
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                InputTransparent = true,
             };
             return line;
         }

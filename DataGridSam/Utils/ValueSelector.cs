@@ -8,6 +8,20 @@ namespace DataGridSam.Utils
 {
     internal static class ValueSelector
     {
+        internal static Color GetSelectedColor(params Color?[] colors)
+        {
+            foreach (var item in colors)
+            {
+                if (item == null)
+                    continue;
+
+                if (item.HasValue && !item.Value.IsDefault)
+                    return item.Value;
+            }
+
+            return Xamarin.Forms.Color.Transparent;
+        }
+
         internal static Color GetBackgroundColor(params Color?[] colors)
         {
             foreach (var item in colors)

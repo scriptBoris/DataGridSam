@@ -9,8 +9,8 @@ namespace DataGridSam.Utils
     {
         internal Enums.AutoNumberType AutoNumber;
         internal bool IsCustomTemplate;
-        internal ContentView Wrapper;
-        internal Label Label;
+        internal View View;
         internal DataGridColumn Column;
+        internal Label Label => View as Label;
     }
 }

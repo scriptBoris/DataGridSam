@@ -412,6 +412,7 @@ namespace DataGridSam
                     var self = (DataGrid)b;
                     var color = (Color)n;
                     color = color.MultiplyAlpha(0.5);
+                    
                     self.VisualSelectedRow.BackgroundColor = color;
                 });
         public Color SelectedRowColor
