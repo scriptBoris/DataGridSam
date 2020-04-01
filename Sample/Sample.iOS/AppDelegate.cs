@@ -19,6 +19,7 @@ namespace Sample.iOS
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
             global::Xamarin.Forms.Forms.Init();
+            DataGridSam.iOS.Initialize.Init();
             LoadApplication(new Sample.App());
 
             return base.FinishedLaunching(app, options);

@@ -32,7 +32,7 @@ namespace DataGridSam.Droid
         public View View => Control ?? Container;
         public bool IsDisposed => (Container as IVisualElementRenderer)?.Element == null;
 
-        public static void Init()
+        public static void Preserve()
         {
         }
 

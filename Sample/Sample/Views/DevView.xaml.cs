@@ -18,11 +18,6 @@ namespace Sample.Views
             InitializeComponent();
         }
 
-        public void ScrollTo()
-        {
-            dataGrid.ScrollTo(false, true);
-        }
-
         public void ScrollToIndex(int id)
         {
             dataGrid.ScrollToElement(id, true);

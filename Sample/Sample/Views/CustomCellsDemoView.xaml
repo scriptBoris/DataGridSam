@@ -58,7 +58,8 @@
                     </DataTemplate>
                 </sam:DataGridColumn.CellTemplate>
             </sam:DataGridColumn>
-            <!--Role-->
+            
+            <!--Famous Role-->
             <sam:DataGridColumn Title="Famous role"
                                 PropertyName="FamousRole"
                                 IsVisible="True"
@@ -67,12 +68,6 @@
             <sam:DataGridColumn Title="Description" 
                                 PropertyName="Description"
                                 Width="2*"/>
-            
-            <sam:DataGrid.RowTriggers>
-                <sam:RowTrigger PropertyTrigger="Rank"
-                                Value="Admin"
-                                RowTextColor="Red"/>
-            </sam:DataGrid.RowTriggers>
         </sam:DataGrid>
         <Button Text="Hide photos"
                 Command="{Binding CommandHidePhotos}"/>

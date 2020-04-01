@@ -36,24 +36,6 @@ namespace DataGridSam.Utils
             set { SetValue(HasItemsProperty, value); }
         }
 
-        // ItemTemplate
-        public static BindableProperty ItemTemplateProperty =
-            BindableProperty.Create(nameof(ItemTemplate), typeof(DataTemplate), typeof(StackList), default(DataTemplate),
-                propertyChanged: (bindable, oldValue, newValue) =>
-                {
-                    var control = (StackList)bindable;
-                    //when to occur propertychanged earlier ItemsSource than ItemTemplate, raise ItemsChanged manually
-                    if (newValue != null && control.ItemsSource != null && !control.doneItemSourceChanged)
-                    {
-                        ItemsChanged(bindable, null, control.ItemsSource);
-                    }
-                });
-        public DataTemplate ItemTemplate
-        {
-            get { return (DataTemplate)GetValue(ItemTemplateProperty); }
-            set { SetValue(ItemTemplateProperty, value); }
-        }
-
         // DataGrid
         public static readonly BindableProperty DataGridProperty =
             BindableProperty.Create(nameof(DataGrid), typeof(DataGrid), typeof(StackList), null);
@@ -63,20 +45,9 @@ namespace DataGridSam.Utils
             set { SetValue(DataGridProperty, value); }
         }
 
-        private bool doneItemSourceChanged = false;
-
         private static void ItemsChanged(BindableObject bindable, object oldValue, object newValue)
         {
             var self = (StackList)bindable;
-            // when to occur propertychanged earlier ItemsSource than ItemTemplate, do nothing.
-            if (self.ItemTemplate == null)
-            {
-                self.doneItemSourceChanged = false;
-                self.ItemsCount = 0;
-                return;
-            }
-
-            self.doneItemSourceChanged = true;
 
             IEnumerable newList;
             try
@@ -118,9 +89,9 @@ namespace DataGridSam.Utils
             if (newList != null)
             {
                 int paginationCount = self.DataGrid.PaginationItemCount;
+                // Without pagination
                 if (paginationCount == 0)
                 {
-                    // Without pagination
                     int i = 0;
                     View last = null;
                     foreach (var item in newList)
@@ -129,7 +100,7 @@ namespace DataGridSam.Utils
                         if (i == 0)
                             self.DataGrid.OnChangeItemsBindingContext(item.GetType());
 
-                        last = CreateChildViewFor(self.ItemTemplate, item, self, i, self.ItemsCount);
+                        last = CreateChildViewFor(item, self.DataGrid, i, self.ItemsCount);
                         self.Children.Add(last);
                         i++;
                     }
@@ -169,7 +140,7 @@ namespace DataGridSam.Utils
                 Children.RemoveAt(e.OldStartingIndex);
 
                 var item = e.NewItems[e.NewStartingIndex];
-                var view = CreateChildViewFor(this.ItemTemplate, item, this, e.NewStartingIndex, ItemsCount);
+                var view = CreateChildViewFor(item, DataGrid, e.NewStartingIndex, ItemsCount);
                 Children.Insert(e.NewStartingIndex, view);
 
                 // Hide line if row is last
@@ -225,7 +196,7 @@ namespace DataGridSam.Utils
                         pause = index;
                         var item = e.NewItems[i];
 
-                        child = CreateChildViewFor(this.ItemTemplate, item, this, index, ItemsCount);
+                        child = CreateChildViewFor(item, DataGrid, index, ItemsCount);
                         Children.Insert(index, child);
 
                         // line visibile
@@ -311,7 +282,7 @@ namespace DataGridSam.Utils
                             if (i > source.Count - 1)
                                 break;
 
-                            var view = CreateChildViewFor(this.ItemTemplate, source[i], this, i, ItemsCount);
+                            var view = CreateChildViewFor(source[i], DataGrid, i, ItemsCount);
                             Add(view);
                         }
                     }
@@ -357,13 +328,6 @@ namespace DataGridSam.Utils
                                     (Children[i] as Row).UpdateAutoNumeric(i + 1, ItemsCount);
                             }
                         }
-
-                        //// Auto numeric
-                        //for (int i = e.OldStartingIndex; i < ItemsCount; i++)
-                        //{
-                        //    var row = (Row)Children[i];
-                        //    row.UpdateAutoNumeric(i + 1, ItemsCount);
-                        //}
                     }
                 }
             }
@@ -451,7 +415,7 @@ namespace DataGridSam.Utils
             View last = null;
             for (int i = startedIndex; i <= endIndex; i++)
             {
-                last = CreateChildViewFor(ItemTemplate, itemList[i], this, i, ItemsCount);
+                last = CreateChildViewFor(itemList[i], DataGrid, i, ItemsCount);
                 Children.Add(last);
             }
 
@@ -491,33 +455,17 @@ namespace DataGridSam.Utils
             Children.Add(view);
         }
 
-
-
         /// <summary>
         /// Создает строку для таблицы
         /// </summary>
-        /// <param name="template">Шаблон который будет использован для создания элемента</param>
-        /// <param name="item">Модель данных</param>
-        /// <param name="container">StackList</param>
-        /// <param name="index">Индекс для автонумерации</param>
-        private static View CreateChildViewFor(DataTemplate template, object item, 
-            BindableObject container, int index = -1, int itemsCount = -1)
+        /// <param name="bindItem">Модель данных</param>
+        /// <param name="host">Корневой элемент</param>        
+        /// <param name="index">Индекс элемента таблицы</param>
+        /// <param name="itemsCount">Количество элементов таблицы</param>
+        private static View CreateChildViewFor(object bindItem, DataGrid host, int index, int itemsCount)
         {
-            if (template is DataTemplateSelector selector)
-                template = selector.SelectTemplate(item, container);
-
-            // Здесь происходит неявный вызов метода : DataGridViewCell.CreateView()
-            var view = (View)template.CreateContent();
-            
-            // Auto number
-            if (index > -1)
-            {
-                var row = (Row)view;
-                if (row.DataGrid.IsAutoNumberCalc)
-                    row.UpdateAutoNumeric(index + 1, itemsCount);
-            }
-
-            return view;
+            var row = new Row(bindItem, host, index, itemsCount);
+            return row;
         }
     }
 }

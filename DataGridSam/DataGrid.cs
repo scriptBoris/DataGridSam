@@ -13,7 +13,7 @@ namespace DataGridSam
     [ContentProperty("Columns")]
     public partial class DataGrid : Grid
     {
-        public static void Init() { }
+        public static void Preserve() { }
         public DataGrid()
         {
             RowSpacing = 0;
@@ -29,7 +29,7 @@ namespace DataGridSam
             Children.Add(headGrid);
 
             // Scroll (1)
-            mainScroll = new ScrollView();
+            mainScroll = new ScrollGrid();
             SetRow(mainScroll, 1);
             Children.Add(mainScroll);
 
@@ -48,7 +48,6 @@ namespace DataGridSam
             stackList = new StackList();
             stackList.Spacing = 0;
             stackList.DataGrid = this;
-            stackList.ItemTemplate = new StackListTemplateSelector();
             bodyGrid.Children.Add(stackList);
 
 
@@ -254,12 +253,12 @@ namespace DataGridSam
 
 
         /// <summary>
-        /// Color when user taped on item (Default: Accent)
+        /// Color when user taped on item (Default: none (default))
         /// </summary>
         public static readonly BindableProperty TapColorProperty =
-            BindableProperty.Create(nameof(TapColor), typeof(Color), typeof(DataGrid), Color.Accent);
+            BindableProperty.Create(nameof(TapColor), typeof(Color), typeof(DataGrid), Color.Default);
         /// <summary>
-        /// Color when user taped on item (Default: Accent)
+        /// Color when user taped on item (Default: none (default))
         /// </summary>
         public Color TapColor
         {
@@ -286,19 +285,6 @@ namespace DataGridSam
             set { SetValue(IsWrappedProperty, value); }
         }
 
-
-
-        // TODO DELETE?
-        public static readonly BindableProperty IsAutoNumberProperty =
-            BindableProperty.Create(nameof(IsAutoNumber), typeof(bool), typeof(DataGrid), false,
-                propertyChanged: (b, o, n) =>
-                {
-                });
-        public bool IsAutoNumber
-        {
-            get { return (bool)GetValue(IsAutoNumberProperty); }
-            set { SetValue(IsAutoNumberProperty, value); }
-        }
 
         #region header
         // Header has borders
@@ -399,7 +385,7 @@ namespace DataGridSam
             get { return (Style)GetValue(HeaderLabelStyleProperty); }
             set { SetValue(HeaderLabelStyleProperty, value); }
         }
-        #endregion
+        #endregion header
 
         #region selected row visual
         // Selected row text style
@@ -424,7 +410,9 @@ namespace DataGridSam
                 propertyChanged: (b, o, n) =>
                 {
                     var self = (DataGrid)b;
-                    self.VisualSelectedRow.BackgroundColor = (Color)n;
+                    var color = (Color)n;
+                    color = color.MultiplyAlpha(0.5);
+                    self.VisualSelectedRow.BackgroundColor = color;
                 });
         public Color SelectedRowColor
         {
@@ -489,7 +477,7 @@ namespace DataGridSam
             get { return (string)GetValue(SelectedRowFontFamilyProperty); }
             set { SetValue(SelectedRowFontFamilyProperty, value); }
         }
-        #endregion
+        #endregion selected row visual
 
         #region row visual
         // Rows background color
@@ -604,6 +592,6 @@ namespace DataGridSam
             get { return (FontAttributes)GetValue(RowsFontAttributeProperty); }
             set { SetValue(RowsFontAttributeProperty, value); }
         }
-        #endregion
+        #endregion row visual
     }
 }

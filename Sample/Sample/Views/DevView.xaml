@@ -53,7 +53,7 @@
                                 Width="2*"
                                 CellBackgroundColor="#EEE"
                                 PropertyName="NameView"/>
-            <sam:DataGridColumn Title="Need 123" 
+            <sam:DataGridColumn Title="Need" 
                                 Width="2*"
                                 HorizontalTextAlignment="End"
                                 PropertyName="Need"/>
@@ -101,18 +101,22 @@
             <!--Trigger controll-->
             <StackLayout Orientation="Horizontal">
                 <Button Text="Add +10 weight"
+                        TextColor="Black"
                         HorizontalOptions="FillAndExpand"
                         Command="{Binding CommandAddWeight}"/>
                 <Button Text="Add -10 weight"
+                        TextColor="Black"
                         HorizontalOptions="FillAndExpand"
                         Command="{Binding CommandRemoveWeight}"/>
             </StackLayout>
 
             <StackLayout Orientation="Horizontal">
                 <Button Text="Add"
+                        TextColor="Black"
                         HorizontalOptions="FillAndExpand"
                         Command="{Binding CommandAddItem}"/>
                 <Button Text="Remove item"
+                        TextColor="Black"
                         HorizontalOptions="FillAndExpand"
                         Command="{Binding CommandRemoveItem}"/>
             </StackLayout>
@@ -122,6 +126,7 @@
                        HorizontalOptions="FillAndExpand"
                        Keyboard="Numeric"/>
                 <Button Text="Insert"
+                        TextColor="Black"
                         Command="{Binding CommandInsertItem}"/>
             </StackLayout>
         </StackLayout>

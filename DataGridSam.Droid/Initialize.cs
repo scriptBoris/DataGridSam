@@ -7,8 +7,8 @@ namespace DataGridSam.Droid
     {
         public static void Init()
         {
-            DataGrid.Init();
-            TouchDroid.Init();
+            DataGrid.Preserve();
+            TouchDroid.Preserve();
         }
     }
 }

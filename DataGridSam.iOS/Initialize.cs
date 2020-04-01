@@ -9,6 +9,8 @@ namespace DataGridSam.iOS
     {
         public static void Init()
         {
+            DataGrid.Preserve();
+            DataGridSam.iOS.TouchIOS.Preserve();
         }
     }
 }

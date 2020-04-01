@@ -10,79 +10,25 @@ using Xamarin.Forms;
 namespace DataGridSam.Utils
 {
     [Xamarin.Forms.Internals.Preserve(AllMembers = true)]
-    internal sealed class Row : Grid, IDefinition
+    internal sealed class Row : Grid
     {
+        internal readonly DataGrid DataGrid;
+        internal int index;
         internal BoxView line;
         internal bool isSelected;
         internal List<GridCell> cells = new List<GridCell>();
         internal RowTrigger enableTrigger;
         internal bool isStyleDefault = true;
 
-        // Data grid (host)
-        public static readonly BindableProperty DataGridProperty =
-            BindableProperty.Create(nameof(DataGrid), typeof(DataGrid), typeof(Row), null,
-                propertyChanged: (b, o, n) =>
-                {
-                    (b as Row).CreateRow();
-                });
-        public DataGrid DataGrid
+        public Row(object context, DataGrid host, int id, int itemsCount)
         {
-            get { return (DataGrid)GetValue(DataGridProperty); }
-            set { SetValue(DataGridProperty, value); }
-        }
+            BindingContext = context;
+            DataGrid = host;
+            index = id;
 
-        protected override void OnBindingContextChanged()
-        {
-            // Triggers event
-            if (BindingContext is INotifyPropertyChanged model)
-                model.PropertyChanged += (obj, e) => RowTrigger.SetTriggerStyle(this, e.PropertyName);
-
-            // Set binding context for custom cells
-            foreach (var item in cells)
-            {
-                if (item.IsCustomTemplate && item.Wrapper?.Content != null)
-                    item.Wrapper.Content.BindingContext = BindingContext;
-            }
-
-            // Started find FIRST active trigger
-            if (this.DataGrid.RowTriggers.Count > 0)
-            {
-                foreach (var trigg in this.DataGrid.RowTriggers)
-                {
-                    if (trigg.CheckTriggerActivated(BindingContext))
-                    {
-                        this.enableTrigger = trigg;
-                        break;
-                    }
-                    //var trigger = RowTrigger.SetTriggerStyle(this, trigg.PropertyTrigger, false);
-                    //if (trigger != null)
-                    //{
-                    //    this.enableTrigger = trigger;
-                    //    break;
-                    //}
-                }
-            }
-
-            // Set text value for standart cell
-            foreach (var item in cells)
-            {
-                if (item.IsCustomTemplate || item.AutoNumber != Enums.AutoNumberType.None)
-                    continue;
-
-                if (item.Column.PropertyName != null)
-                    item.Label.SetBinding(Label.TextProperty, new Binding(item.Column.PropertyName, BindingMode.Default, 
-                        stringFormat: item.Column.StringFormat, source: BindingContext));
-            }
-
-            // Render first style
-            UpdateStyle();
-        }
-
-        private void CreateRow()
-        {
             RowSpacing = 0;
             ColumnSpacing = 0;
-            IsClippedToBounds = true;
+            //IsClippedToBounds = true;
             BackgroundColor = Color.Transparent;
 
             RowDefinitions = new RowDefinitionCollection
@@ -91,8 +37,12 @@ namespace DataGridSam.Utils
                 new RowDefinition { Height = GridLength.Auto },
             };
 
-            int index = 0;
+            // Triggers event
+            if (context is INotifyPropertyChanged model)
+                model.PropertyChanged += (obj, e) => RowTrigger.SetTriggerStyle(this, e.PropertyName);
 
+            // Init cells
+            int i = 0;
             foreach (var column in DataGrid.Columns)
             {
                 ColumnDefinitions.Add(new ColumnDefinition() { Width = column.CalcWidth });
@@ -109,6 +59,7 @@ namespace DataGridSam.Utils
                     cell.Wrapper.CascadeInputTransparent = true;
                     cell.Wrapper.Content = column.CellTemplate.CreateContent() as View;
                     cell.Wrapper.Content.InputTransparent = true;
+                    cell.Wrapper.BindingContext = context;
                     cell.IsCustomTemplate = true;
                 }
                 // Create standart cell
@@ -119,6 +70,13 @@ namespace DataGridSam.Utils
                         HorizontalOptions = LayoutOptions.FillAndExpand,
                         VerticalOptions = LayoutOptions.FillAndExpand,
                     };
+
+                    if (column.PropertyName != null)
+                        label.SetBinding(Label.TextProperty, new Binding(
+                            column.PropertyName, 
+                            BindingMode.Default,
+                            stringFormat: column.StringFormat, 
+                            source: context));
 
                     var wrapper = new ContentView
                     {
@@ -131,20 +89,19 @@ namespace DataGridSam.Utils
                     cell.Wrapper = wrapper;
                     cell.Wrapper.InputTransparent = true;
                     cell.Label = label;
+
                 }
 
                 // Detect auto number cell
                 cell.AutoNumber = column.AutoNumber;
 
-                SetColumn(cell.Wrapper, index);
+                SetColumn(cell.Wrapper, i);
                 SetRow(cell.Wrapper, 0);
                 Children.Add(cell.Wrapper);
                 cells.Add(cell);
 
-
-                index++;
+                i++;
             }
-
 
             // Create horizontal line table
             line = CreateHorizontalLine();
@@ -154,17 +111,32 @@ namespace DataGridSam.Utils
             Children.Add(line);
 
             // Add tap system event
-            // Set only tap command, setting CommandParameter - after changed "RowContext" :)
             Touch.SetSelect(this, new Command(ActionRowSelect));
-            Touch.SetColor(this, DataGrid.TapColor);
 
-            // Add tap event
+            if (DataGrid.TapColor != Color.Default)
+                Touch.SetColor(this, DataGrid.TapColor);
+
             if (DataGrid.CommandSelectedItem != null)
                 Touch.SetTap(this, DataGrid.CommandSelectedItem);
 
-            // Add long tap event
             if (DataGrid.CommandLongTapItem != null)
                 Touch.SetLongTap(this, DataGrid.CommandLongTapItem);
+
+            // Auto number
+            if (DataGrid.IsAutoNumberCalc)
+                UpdateAutoNumeric(index + 1, itemsCount);
+
+            // Started find FIRST active trigger
+            if (this.DataGrid.RowTriggers.Count > 0)
+                foreach (var trigg in this.DataGrid.RowTriggers)
+                    if (trigg.CheckTriggerActivated(BindingContext))
+                    {
+                        this.enableTrigger = trigg;
+                        break;
+                    }
+
+            // Render style
+            UpdateStyle();
         }
 
         private void ActionRowSelect(object param)

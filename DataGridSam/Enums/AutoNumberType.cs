@@ -4,6 +4,9 @@ using System.Text;
 
 namespace DataGridSam.Enums
 {
+    #if RELEASE
+    [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+    #endif
     public enum AutoNumberType
     {
         None,
@@ -11,6 +14,9 @@ namespace DataGridSam.Enums
         Down,
     }
 
+    #if RELEASE
+    [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+    #endif
     internal enum AutoNumberStrategyType
     {
         None,
