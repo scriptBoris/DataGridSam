@@ -297,6 +297,7 @@ namespace DataGridSam.Utils
                 BackgroundColor = Color.Transparent,
                 VerticalOptions = LayoutOptions.FillAndExpand,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
+                HeightRequest = 30.0,
                 InputTransparent = true,
             };
             return line;

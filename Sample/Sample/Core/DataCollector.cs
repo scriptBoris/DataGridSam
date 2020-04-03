@@ -176,6 +176,20 @@ namespace Sample.Core
                     Need = 1000.0f,
                     Weight = 0.0f,
                 },
+                new Ware
+                {
+                    Name = "Children's sweets. Dark chocolate with lemon and mint flavor, twenty cubes per pack.",
+                    Price = 18.3f,
+                    Need = 100.0f,
+                    Weight = 0.0f,
+                },
+                new Ware
+                {
+                    Name = "Cola",
+                    Price = 2.0f,
+                    Need = 710.0f,
+                    Weight = 0.0f,
+                },
             };
 
             return res;
