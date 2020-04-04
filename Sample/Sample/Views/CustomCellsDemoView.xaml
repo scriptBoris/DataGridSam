@@ -38,22 +38,22 @@
                 <sam:DataGridColumn.CellTemplate>
                     <DataTemplate>
                         <Image Source="{Binding PhotoUrl}"
-                                Aspect="AspectFill"/>
+                               Aspect="AspectFill"/>
                     </DataTemplate>
                 </sam:DataGridColumn.CellTemplate>
             </sam:DataGridColumn>
                 
             <!--Name-->
-            <sam:DataGridColumn Title="Name" 
+            <sam:DataGridColumn Title="Name"  
                                 Width="1*">
                 <sam:DataGridColumn.CellTemplate>
                     <DataTemplate>
                         <StackLayout Padding="10" Spacing="0">
                             <Label Text="{Binding Name}"
-                                    TextColor="Black"
-                                    FontAttributes="Bold"/>
+                                   TextColor="Black"
+                                   FontAttributes="Bold"/>
                             <Label Text="{Binding Family}"
-                                    TextColor="Black"/>
+                                   TextColor="Black"/>
                         </StackLayout>
                     </DataTemplate>
                 </sam:DataGridColumn.CellTemplate>

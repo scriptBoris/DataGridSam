@@ -1,4 +1,5 @@
-﻿using DataGridSam.Utils;
+﻿using DataGridSam.Elements;
+using DataGridSam.Utils;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -126,8 +127,8 @@ namespace DataGridSam
                 
             foreach (var item in stackList.Children)
             {
-                var row = item as Row;
-                row.cells[i].View.IsVisible = isVisible;
+                var row = item as GridRow;
+                row.cells[i].Content.IsVisible = isVisible;
                 SolveWidth(row.ColumnDefinitions[i], isVisible);
             }
         }
@@ -280,23 +281,11 @@ namespace DataGridSam
             }
         }
 
-        private void OnButtonLatestClicked(object sender, EventArgs e)
-        {
-            stackList.RedrawForPage(PaginationItemCount, selectPage: PaginationCurrentPage-1);
-            mainScroll.ScrollToAsync(0, stackList.Height, false);
-        }
-
-        private void OnButtonNextClicked(object sender, EventArgs e)
-        {
-            stackList.RedrawForPage(PaginationItemCount, selectPage: PaginationCurrentPage+1);
-            mainScroll.ScrollToAsync(0, 0, false);
-        }
-
         private void UpdateTapCommand(ICommand command)
         {
             foreach (var item in stackList.Children)
             {
-                var row = item as Row;
+                var row = item as GridRow;
                 DataGridSam.Platform.Touch.SetTap(row, command);
             }
         }
@@ -305,7 +294,7 @@ namespace DataGridSam
         {
             foreach (var item in stackList.Children)
             {
-                var row = item as Row;
+                var row = item as GridRow;
                 DataGridSam.Platform.Touch.SetLongTap(row, command);
             }
         }
@@ -332,7 +321,7 @@ namespace DataGridSam
                 {
                     if (match >= 0 && self.stackList.Children.Count > 0)
                     {
-                        var row = (Row)self.stackList.Children[match];
+                        var row = (GridRow)self.stackList.Children[match];
                         row.isSelected = true;
                         row.UpdateStyle();
 
@@ -353,7 +342,7 @@ namespace DataGridSam
 
                         }
 
-                        var row = (Row)self.stackList.Children[dif];
+                        var row = (GridRow)self.stackList.Children[dif];
                         row.isSelected = true;
                         row.UpdateStyle();
 

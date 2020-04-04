@@ -1,4 +1,5 @@
-﻿using DataGridSam.Utils;
+﻿using DataGridSam.Elements;
+using DataGridSam.Utils;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -189,7 +190,7 @@ namespace DataGridSam
             return false;
         }
 
-        internal static RowTrigger SetTriggerStyle(Row row, string propName, bool isNeedUpdate = true)
+        internal static RowTrigger SetTriggerStyle(GridRow row, string propName, bool isNeedUpdate = true)
         {
             if (row.DataGrid.RowTriggers.Count == 0)
                 return null;
@@ -236,7 +237,7 @@ namespace DataGridSam
             return anyTrigger;
         }
 
-        private static RowTrigger GetFirstTrigger(Row row)
+        private static RowTrigger GetFirstTrigger(GridRow row)
         {
             foreach (var trigger in row.DataGrid.RowTriggers)
             {

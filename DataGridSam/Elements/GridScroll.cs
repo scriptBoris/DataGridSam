@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Text;
 using Xamarin.Forms;
 
-namespace DataGridSam.Utils
+namespace DataGridSam.Elements
 {
-    public class ScrollGrid : ScrollView
+    public class GridScroll : ScrollView
     {
-        public ScrollGrid()
+        public GridScroll()
         {
 
         }

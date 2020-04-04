@@ -1,4 +1,5 @@
-﻿using DataGridSam.Utils;
+﻿using DataGridSam.Elements;
+using DataGridSam.Utils;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -29,7 +30,7 @@ namespace DataGridSam
             Children.Add(headGrid);
 
             // Scroll (1)
-            mainScroll = new ScrollGrid();
+            mainScroll = new GridScroll();
             SetRow(mainScroll, 1);
             Children.Add(mainScroll);
 

@@ -1,4 +1,5 @@
-﻿using DataGridSam.Enums;
+﻿using DataGridSam.Elements;
+using DataGridSam.Enums;
 using DataGridSam.Utils;
 using System;
 using System.Collections.Generic;
@@ -50,7 +51,7 @@ namespace DataGridSam
         /// <summary>
         /// Current time: selected row by user
         /// </summary>
-        internal Row SelectedRow;
+        internal GridRow SelectedRow;
 
 
 

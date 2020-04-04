@@ -1,4 +1,5 @@
 ﻿using DataGridSam.Platform;
+using DataGridSam.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -7,21 +8,22 @@ using System.Windows.Input;
 //using DataGridSam.Platform;
 using Xamarin.Forms;
 
-namespace DataGridSam.Utils
+namespace DataGridSam.Elements
 {
     [Xamarin.Forms.Internals.Preserve(AllMembers = true)]
-    internal sealed class Row : Grid
+    internal sealed class GridRow : Grid
     {
         internal readonly DataGrid DataGrid;
         internal int index;
-        internal BoxView selectionContainer;
+        internal TouchBox touchBox;
+        internal BoxView selectionBox;
         internal BoxView line;
         internal bool isSelected;
         internal List<GridCell> cells = new List<GridCell>();
         internal RowTrigger enableTrigger;
         internal bool isStyleDefault = true;
 
-        public Row(object context, DataGrid host, int id, int itemsCount)
+        public GridRow(object context, DataGrid host, int id, int itemsCount)
         {
             BindingContext = context;
             DataGrid = host;
@@ -29,12 +31,13 @@ namespace DataGridSam.Utils
 
             RowSpacing = 0;
             ColumnSpacing = 0;
-            //IsClippedToBounds = true;
+            IsClippedToBounds = true;
             BackgroundColor = Color.Transparent;
 
             RowDefinitions = new RowDefinitionCollection
             {
                 new RowDefinition { Height = GridLength.Star },
+                //new RowDefinition { Height = DataGrid.BorderWidth },
                 new RowDefinition { Height = GridLength.Auto },
             };
 
@@ -42,87 +45,55 @@ namespace DataGridSam.Utils
             if (context is INotifyPropertyChanged model)
                 model.PropertyChanged += (obj, e) => RowTrigger.SetTriggerStyle(this, e.PropertyName);
 
-            // Create selected container
-            selectionContainer = CreateSelectionContainer();
-            SetColumnSpan(selectionContainer, DataGrid.Columns.Count);
-            Children.Add(selectionContainer);
+            // Selection box
+            selectionBox = new BoxView();
+            selectionBox.HeightRequest = 1.0;
+            selectionBox.BackgroundColor = Color.Transparent;
+            selectionBox.VerticalOptions = LayoutOptions.FillAndExpand;
+            selectionBox.HorizontalOptions = LayoutOptions.FillAndExpand;
+            SetColumnSpan(selectionBox, DataGrid.Columns.Count);
+            Children.Add(selectionBox);
+
+            //// Add tap system event
+            //Touch.SetSelect(touchBox, new Command(ActionRowSelect));
+
+            //if (DataGrid.TapColor != Color.Default)
+            //    Touch.SetColor(touchBox, DataGrid.TapColor);
+
+            //if (DataGrid.CommandSelectedItem != null)
+            //    Touch.SetTap(touchBox, DataGrid.CommandSelectedItem);
+
+            //if (DataGrid.CommandLongTapItem != null)
+            //    Touch.SetLongTap(touchBox, DataGrid.CommandLongTapItem);
 
             // Init cells
-            int cellsCount = 0;
+            int i = 0;
             foreach (var column in DataGrid.Columns)
             {
                 ColumnDefinitions.Add(new ColumnDefinition() { Width = column.CalcWidth });
 
-                var cell = new GridCell { Column = column };
-
-                // Create custom template
-                if (column.CellTemplate != null)
-                {
-                    cell.View = column.CellTemplate.CreateContent() as View;
-                    cell.View.IsVisible = column.IsVisible;
-                    cell.View.InputTransparent = true;
-                    cell.View.BindingContext = context;
-                    cell.IsCustomTemplate = true;
-
-                    if (cell.View is Layout layout)
-                    {
-                        layout.IsClippedToBounds = true;
-                        layout.InputTransparent = true;
-                        layout.CascadeInputTransparent = true;
-                    }
-                }
-                // Create standart cell
-                else
-                {
-                    var label = new Label
-                    {
-                        IsVisible = column.IsVisible,
-                        Margin = DataGrid.CellPadding,
-                        InputTransparent = true,
-                        HorizontalOptions = LayoutOptions.FillAndExpand,
-                        VerticalOptions = LayoutOptions.FillAndExpand,
-                    };
-
-                    if (column.PropertyName != null)
-                        label.SetBinding(Label.TextProperty, new Binding(
-                            column.PropertyName, 
-                            BindingMode.Default,
-                            stringFormat: column.StringFormat, 
-                            source: context));
-
-                    cell.View = label;
-
-                }
-
-                // Detect auto number cell
-                cell.AutoNumber = column.AutoNumber;
-
-                SetColumn(cell.View, cellsCount);
-                SetRow(cell.View, 0);
-                Children.Add(cell.View);
+                var cell = new GridCell(column, this, DataGrid);
                 cells.Add(cell);
 
-                cellsCount++;
+                // add wrapper
+                Children.Add(cell.Wrapper, i, 0);
+
+                // add content
+                Children.Add(cell.Content, i, 0);
+
+                i++;
             }
+
+            // Create touch box
+            touchBox = new TouchBox(BindingContext, DataGrid, ActionRowSelect);
+            SetColumnSpan(touchBox, DataGrid.Columns.Count);
+            Children.Add(touchBox);
 
             // Create horizontal line table
             line = CreateHorizontalLine();
             SetRow(line, 1);
-            SetColumn(line, 0);
-            SetColumnSpan(line, cellsCount);
+            SetColumnSpan(line, DataGrid.Columns.Count);
             Children.Add(line);
-
-            // Add tap system event
-            Touch.SetSelect(this, new Command(ActionRowSelect));
-
-            if (DataGrid.TapColor != Color.Default)
-                Touch.SetColor(this, DataGrid.TapColor);
-
-            if (DataGrid.CommandSelectedItem != null)
-                Touch.SetTap(this, DataGrid.CommandSelectedItem);
-
-            if (DataGrid.CommandLongTapItem != null)
-                Touch.SetLongTap(this, DataGrid.CommandLongTapItem);
 
             // Auto number
             if (DataGrid.IsAutoNumberCalc)
@@ -173,11 +144,11 @@ namespace DataGridSam.Utils
                     DataGrid.VisualSelectedRowFromStyle.BackgroundColor,
                     DataGrid.VisualSelectedRow.BackgroundColor);
 
-                selectionContainer.BackgroundColor = color;
+                selectionBox.BackgroundColor = color;
             }
             else
             {
-                selectionContainer.BackgroundColor = Color.Transparent;
+                selectionBox.BackgroundColor = Color.Transparent;
             }
 
             // row background
@@ -234,10 +205,14 @@ namespace DataGridSam.Utils
                             DataGrid.VisualRowsFromStyle,
                             DataGrid.VisualRows);
                     }
+
+                    cell.Wrapper.BackgroundColor = Color.Transparent;
                 }
                 // TRIGGER
                 else if (enableTrigger != null)
                 {
+                    cell.Wrapper.BackgroundColor = Color.Transparent;
+
                     MergeVisual(cell.Label,
                         enableTrigger.VisualContainerStyle,
                         enableTrigger.VisualContainer,
@@ -249,6 +224,11 @@ namespace DataGridSam.Utils
                 // DEFAULT
                 else
                 {
+                    // row background
+                    cell.Wrapper.BackgroundColor = ValueSelector.GetSelectedColor(
+                        cell.Column.VisualCellFromStyle.BackgroundColor,
+                        cell.Column.VisualCell.BackgroundColor);
+
                     MergeVisual(cell.Label,
                         cell.Column.VisualCellFromStyle,
                         cell.Column.VisualCell,
@@ -286,18 +266,6 @@ namespace DataGridSam.Utils
                 VerticalOptions = LayoutOptions.FillAndExpand,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 HeightRequest = DataGrid.BorderWidth,
-            };
-            return line;
-        }
-
-        private BoxView CreateSelectionContainer()
-        {
-            var line = new BoxView()
-            {
-                BackgroundColor = Color.Transparent,
-                VerticalOptions = LayoutOptions.FillAndExpand,
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                HeightRequest = 30.0,
                 InputTransparent = true,
             };
             return line;

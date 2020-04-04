@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Xamarin.Forms;
 
-namespace DataGridSam.Utils
+namespace DataGridSam.Elements
 {
     internal class BorderWrapper
     {

@@ -124,7 +124,7 @@ namespace DataGridSam.Utils
                     return item.FontSize;
             }
 
-            return 0.0;
+            return 14.0;
         }
 
         internal static string FontFamily(VisualCollector[] styles)
