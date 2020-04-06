@@ -11,23 +11,24 @@ using Xamarin.Forms;
 namespace DataGridSam.Elements
 {
     [Xamarin.Forms.Internals.Preserve(AllMembers = true)]
-    internal sealed class GridRow2 : Grid
+    internal sealed class GridRow : Grid, IGridRow
     {
-        internal readonly DataGrid DataGrid;
-        internal int index;
-        internal TouchBox touchBox;
-        internal BoxView selectionBox;
-        internal BoxView line;
-        internal bool isSelected;
-        internal List<GridCell> cells = new List<GridCell>();
-        internal RowTrigger enableTrigger;
-        internal bool isStyleDefault = true;
+        public DataGrid DataGrid { get; set; }
+        public int Index { get; set; }
+        public bool IsSelected { get; set; }
+        public object Context { get; set; }
+        public View SelectionBox { get; set; }
+        public View TouchBox { get; set; }
+        public View Line { get; set; }
+        public List<GridCell> Cells { get; set; }
+        public RowTrigger EnabledTrigger { get; set; }
 
-        public GridRow2(object context, DataGrid host, int id, int itemsCount)
+        public GridRow(object context, DataGrid host, int id, int itemsCount)
         {
+            Context = context;
             BindingContext = context;
             DataGrid = host;
-            index = id;
+            Index = id;
 
             RowSpacing = 0;
             ColumnSpacing = 0;
@@ -35,34 +36,26 @@ namespace DataGridSam.Elements
             BackgroundColor = Color.Transparent;
             VerticalOptions = LayoutOptions.Start;
             HorizontalOptions = LayoutOptions.FillAndExpand;
+            Cells = new List<GridCell>();
 
-            //RowDefinitions = new RowDefinitionCollection
-            //{
-            //    new RowDefinition { Height = GridLength.Star },
-            //    new RowDefinition { Height = new GridLength(DataGrid.BorderWidth) },
-            //};
-
-            // Stupid iOS wont work with GridLength.Auto
             RowDefinitions = new RowDefinitionCollection
             {
                 new RowDefinition { Height = GridLength.Star },
                 new RowDefinition { Height = new GridLength(DataGrid.BorderWidth) },
-                //new RowDefinition { Height = new GridLength(DataGrid.BorderWidth) },
             };
-
 
             // Triggers event
             if (context is INotifyPropertyChanged model)
                 model.PropertyChanged += (obj, e) => RowTrigger.SetTriggerStyle(this, e.PropertyName);
 
             // Selection box
-            selectionBox = new BoxView();
-            selectionBox.HeightRequest = 1.0;
-            selectionBox.BackgroundColor = Color.Transparent;
-            selectionBox.VerticalOptions = LayoutOptions.FillAndExpand;
-            selectionBox.HorizontalOptions = LayoutOptions.FillAndExpand;
-            SetColumnSpan(selectionBox, DataGrid.Columns.Count);
-            Children.Add(selectionBox);
+            SelectionBox = new BoxView();
+            SelectionBox.HeightRequest = 1.0;
+            SelectionBox.BackgroundColor = Color.Transparent;
+            SelectionBox.VerticalOptions = LayoutOptions.FillAndExpand;
+            SelectionBox.HorizontalOptions = LayoutOptions.FillAndExpand;
+            SetColumnSpan(SelectionBox, DataGrid.Columns.Count);
+            Children.Add(SelectionBox);
 
             // Init cells
             int i = 0;
@@ -71,38 +64,35 @@ namespace DataGridSam.Elements
                 ColumnDefinitions.Add(new ColumnDefinition() { Width = column.CalcWidth });
 
                 var cell = new GridCell(column, this, DataGrid);
-                cells.Add(cell);
+                Cells.Add(cell);
 
                 // add wrapper
                 Children.Add(cell.Wrapper, i, 0);
-
-                //// add content
-                //Children.Add(cell.Content, i, 0);
 
                 i++;
             }
 
             // Create touch box
-            touchBox = new TouchBox(BindingContext, DataGrid, ActionRowSelect);
-            SetColumnSpan(touchBox, DataGrid.Columns.Count);
-            Children.Add(touchBox);
+            TouchBox = new TouchBox(BindingContext, DataGrid, ActionRowSelect);
+            SetColumnSpan(TouchBox, DataGrid.Columns.Count);
+            Children.Add(TouchBox);
 
             // Create horizontal line table
-            line = CreateHorizontalLine();
-            SetRow(line, 1);
-            SetColumnSpan(line, DataGrid.Columns.Count);
-            Children.Add(line);
+            Line = CreateHorizontalLine();
+            SetRow(Line, 1);
+            SetColumnSpan(Line, DataGrid.Columns.Count);
+            Children.Add(Line);
 
             // Auto number
             if (DataGrid.IsAutoNumberCalc)
-                UpdateAutoNumeric(index + 1, itemsCount);
+                UpdateAutoNumeric(Index + 1, itemsCount);
 
             // find FIRST active trigger
             if (this.DataGrid.RowTriggers.Count > 0)
                 foreach (var trigg in this.DataGrid.RowTriggers)
                     if (trigg.CheckTriggerActivated(BindingContext))
                     {
-                        this.enableTrigger = trigg;
+                        this.EnabledTrigger = trigg;
                         break;
                     }
 
@@ -118,7 +108,7 @@ namespace DataGridSam.Elements
             // GUI Unselected last row
             if (lastTapped != null && lastTapped != rowTapped)
             {
-                lastTapped.isSelected = false;
+                lastTapped.IsSelected = false;
                 lastTapped.UpdateStyle();
             }
 
@@ -128,34 +118,34 @@ namespace DataGridSam.Elements
                 DataGrid.SelectedRow = rowTapped;
                 DataGrid.SelectedItem = BindingContext;
 
-                rowTapped.isSelected = true;
+                rowTapped.IsSelected = true;
                 rowTapped.UpdateStyle();
             }
         }
 
-        internal void UpdateStyle()
+        public void UpdateStyle()
         {
             // Selected
-            if (isSelected)
+            if (IsSelected)
             {
                 var color = ValueSelector.GetSelectedColor(
                     DataGrid.VisualSelectedRowFromStyle.BackgroundColor,
                     DataGrid.VisualSelectedRow.BackgroundColor);
 
-                selectionBox.BackgroundColor = color;
+                SelectionBox.BackgroundColor = color;
             }
             else
             {
-                selectionBox.BackgroundColor = Color.Transparent;
+                SelectionBox.BackgroundColor = Color.Transparent;
             }
 
             // row background
-            if (enableTrigger != null)
+            if (EnabledTrigger != null)
             {
                 // row background
                 BackgroundColor = ValueSelector.GetBackgroundColor(
-                    enableTrigger.VisualContainerStyle.BackgroundColor,
-                    enableTrigger.VisualContainer.BackgroundColor,
+                    EnabledTrigger.VisualContainerStyle.BackgroundColor,
+                    EnabledTrigger.VisualContainer.BackgroundColor,
 
                     DataGrid.VisualRowsFromStyle.BackgroundColor,
                     DataGrid.VisualRows.BackgroundColor);
@@ -172,15 +162,15 @@ namespace DataGridSam.Elements
             // 2) trigger
             // 3) column
             // 4) default
-            foreach (var cell in cells)
+            foreach (var cell in Cells)
             {
                 if (cell.IsCustomTemplate)
                     continue;
 
-                if (isSelected)
+                if (IsSelected)
                 {
                     // SELECT
-                    if (enableTrigger == null)
+                    if (EnabledTrigger == null)
                     {
                         MergeVisual(cell.Label,
                             DataGrid.VisualSelectedRowFromStyle,
@@ -196,8 +186,8 @@ namespace DataGridSam.Elements
                         MergeVisual(cell.Label,
                             DataGrid.VisualSelectedRowFromStyle,
                             DataGrid.VisualSelectedRow,
-                            enableTrigger.VisualContainerStyle,
-                            enableTrigger.VisualContainer,
+                            EnabledTrigger.VisualContainerStyle,
+                            EnabledTrigger.VisualContainer,
                             cell.Column.VisualCellFromStyle,
                             cell.Column.VisualCell,
                             DataGrid.VisualRowsFromStyle,
@@ -207,13 +197,13 @@ namespace DataGridSam.Elements
                     cell.Wrapper.BackgroundColor = Color.Transparent;
                 }
                 // TRIGGER
-                else if (enableTrigger != null)
+                else if (EnabledTrigger != null)
                 {
                     cell.Wrapper.BackgroundColor = Color.Transparent;
 
                     MergeVisual(cell.Label,
-                        enableTrigger.VisualContainerStyle,
-                        enableTrigger.VisualContainer,
+                        EnabledTrigger.VisualContainerStyle,
+                        EnabledTrigger.VisualContainer,
                         cell.Column.VisualCellFromStyle,
                         cell.Column.VisualCell,
                         DataGrid.VisualRowsFromStyle,
@@ -236,10 +226,10 @@ namespace DataGridSam.Elements
             }
         }
 
-        internal void UpdateAutoNumeric(int num, int itemsCount)
+        public void UpdateAutoNumeric(int num, int itemsCount)
         {
             // Auto numeric
-            foreach(var cell in cells)
+            foreach(var cell in Cells)
             {
                 switch (cell.AutoNumber)
                 {
@@ -255,9 +245,9 @@ namespace DataGridSam.Elements
             }
         }
 
-        internal void UpdateLineVisibility(bool isVisible)
+        public void UpdateLineVisibility(bool isVisible)
         {
-            if (line.IsVisible != isVisible)
+            if (Line.IsVisible != isVisible)
             {
                 if (isVisible)
                 {
@@ -269,7 +259,13 @@ namespace DataGridSam.Elements
                 }
             }
 
-            line.IsVisible = isVisible;
+            Line.IsVisible = isVisible;
+        }
+
+        public void UpdateCellVisibility(int cellId, bool isVisible)
+        {
+            ColumnDefinitions[cellId].Width = Cells[cellId].Column.CalcWidth;
+            Cells[cellId].Wrapper.IsVisible = isVisible;
         }
 
         private BoxView CreateHorizontalLine()
@@ -284,7 +280,6 @@ namespace DataGridSam.Elements
             };
             return line;
         }
-
 
         private void MergeVisual(Label label, params VisualCollector[] styles)
         {

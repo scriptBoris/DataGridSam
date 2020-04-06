@@ -190,7 +190,7 @@ namespace DataGridSam
             return false;
         }
 
-        internal static RowTrigger SetTriggerStyle(GridRow row, string propName, bool isNeedUpdate = true)
+        internal static RowTrigger SetTriggerStyle(IGridRow row, string propName, bool isNeedUpdate = true)
         {
             if (row.DataGrid.RowTriggers.Count == 0)
                 return null;
@@ -204,7 +204,7 @@ namespace DataGridSam
                 if (propName == trigger.PropertyTrigger)
                 {
                     anyTrigger = trigger;
-                    if (trigger.CheckTriggerActivated(row.BindingContext))
+                    if (trigger.CheckTriggerActivated(row.Context))
                     {
                         isTriggerActive = true;
                         if (!isNeedUpdate)
@@ -220,16 +220,16 @@ namespace DataGridSam
             if (anyTrigger == null)
                 return null;
 
-            if (anyTrigger != null && (row.enableTrigger==anyTrigger || row.enableTrigger==null) )
+            if (anyTrigger != null && (row.EnabledTrigger==anyTrigger || row.EnabledTrigger==null) )
             {
                 if (isTriggerActive)
                 {
-                    row.enableTrigger = anyTrigger;
+                    row.EnabledTrigger = anyTrigger;
                     row.UpdateStyle();
                 }
                 else
                 {
-                    row.enableTrigger = GetFirstTrigger(row);
+                    row.EnabledTrigger = GetFirstTrigger(row);
                     row.UpdateStyle();
                 }
             }
@@ -237,11 +237,11 @@ namespace DataGridSam
             return anyTrigger;
         }
 
-        private static RowTrigger GetFirstTrigger(GridRow row)
+        private static RowTrigger GetFirstTrigger(IGridRow row)
         {
             foreach (var trigger in row.DataGrid.RowTriggers)
             {
-                if (trigger.CheckTriggerActivated(row.BindingContext))
+                if (trigger.CheckTriggerActivated(row.Context))
                 {
                     return trigger;
                 }

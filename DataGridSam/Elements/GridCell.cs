@@ -18,7 +18,7 @@ namespace DataGridSam.Elements
             private set => Content = value;
         }
 
-        public GridCell(DataGridColumn column, GridRow row, DataGrid host)
+        public GridCell(DataGridColumn column, IGridRow row, DataGrid host)
         {
             Column = column;
 
@@ -33,7 +33,7 @@ namespace DataGridSam.Elements
             {
                 IsCustomTemplate = true;
                 Content = column.CellTemplate.CreateContent() as View;
-                Content.BindingContext = row.BindingContext;
+                Content.BindingContext = row.Context;
                 //Content.HeightRequest = 1.0;
                 //Content.VerticalOptions = LayoutOptions.StartAndExpand;
 
@@ -57,7 +57,7 @@ namespace DataGridSam.Elements
                         column.PropertyName,
                         BindingMode.Default,
                         stringFormat: column.StringFormat,
-                        source: row.BindingContext));
+                        source: row.Context));
             }
 
             Wrapper.Content = Content;

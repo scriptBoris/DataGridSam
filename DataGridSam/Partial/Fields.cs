@@ -51,7 +51,7 @@ namespace DataGridSam
         /// <summary>
         /// Current time: selected row by user
         /// </summary>
-        internal GridRow SelectedRow;
+        internal IGridRow SelectedRow;
 
 
 

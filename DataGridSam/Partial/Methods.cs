@@ -127,9 +127,8 @@ namespace DataGridSam
                 
             foreach (var item in stackList.Children)
             {
-                var row = item as GridRow;
-                row.cells[i].Content.IsVisible = isVisible;
-                SolveWidth(row.ColumnDefinitions[i], isVisible);
+                var row = item as IGridRow;
+                row?.UpdateCellVisibility(i, isVisible);
             }
         }
 
@@ -307,7 +306,7 @@ namespace DataGridSam
 
             if (n == null && lastRow != null)
             {
-                lastRow.isSelected = false;
+                lastRow.IsSelected = false;
                 lastRow.UpdateStyle();
 
                 self.SelectedRow = null;
@@ -318,8 +317,8 @@ namespace DataGridSam
 
                 if (match >= 0 && self.stackList.Children.Count > 0)
                 {
-                    var row = (GridRow)self.stackList.Children[match];
-                    row.isSelected = true;
+                    var row = self.stackList.Children[match] as IGridRow;
+                    row.IsSelected = true;
                     row.UpdateStyle();
 
                     self.SelectedRow = row;
