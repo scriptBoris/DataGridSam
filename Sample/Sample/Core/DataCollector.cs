@@ -149,48 +149,48 @@ namespace Sample.Core
                     Weight = 0.0f,
                     Need = 100,
                 },
-                new Ware
-                {
-                    Name = "Toaster oven kaj-B",
-                    Price = 87.4f,
-                    Weight = 0.0f,
-                    Need = 150,
-                },
-                new Ware
-                {
-                    Name = "Thermal magic cooker NFI-A",
-                    Price = 159.56f,
-                    Weight = 100.00f,
-                    Need = 100,
-                },
-                new Ware
-                {
-                    Name = "Close-up of jeans pockets",
-                    Price = 199.0f,
-                    Weight = 88.0f,
-                    Need = 300.0f,
-                },
-                new Ware
-                {
-                    Name = "Game Handles for Playing Games",
-                    Price = 1200.0f,
-                    Need = 1000.0f,
-                    Weight = 0.0f,
-                },
-                new Ware
-                {
-                    Name = "Children's sweets. Dark chocolate with lemon and mint flavor, twenty cubes per pack.",
-                    Price = 18.3f,
-                    Need = 100.0f,
-                    Weight = 0.0f,
-                },
-                new Ware
-                {
-                    Name = "Cola",
-                    Price = 2.0f,
-                    Need = 710.0f,
-                    Weight = 0.0f,
-                },
+                //new Ware
+                //{
+                //    Name = "Toaster oven kaj-B",
+                //    Price = 87.4f,
+                //    Weight = 0.0f,
+                //    Need = 150,
+                //},
+                //new Ware
+                //{
+                //    Name = "Thermal magic cooker NFI-A",
+                //    Price = 159.56f,
+                //    Weight = 100.00f,
+                //    Need = 100,
+                //},
+                //new Ware
+                //{
+                //    Name = "Close-up of jeans pockets",
+                //    Price = 199.0f,
+                //    Weight = 88.0f,
+                //    Need = 300.0f,
+                //},
+                //new Ware
+                //{
+                //    Name = "Game Handles for Playing Games",
+                //    Price = 1200.0f,
+                //    Need = 1000.0f,
+                //    Weight = 0.0f,
+                //},
+                //new Ware
+                //{
+                //    Name = "Children's sweets. Dark chocolate with lemon and mint flavor, twenty cubes per pack.",
+                //    Price = 18.3f,
+                //    Need = 100.0f,
+                //    Weight = 0.0f,
+                //},
+                //new Ware
+                //{
+                //    Name = "Cola",
+                //    Price = 2.0f,
+                //    Need = 710.0f,
+                //    Weight = 0.0f,
+                //},
             };
 
             return res;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataGridSam.Enums;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -85,7 +86,7 @@ namespace DataGridSam.Elements
             if (newList != null)
             {
                 int i = 0;
-                GridRow last = null;
+                IGridRow last = null;
                 foreach (var item in newList)
                 {
                     // Say triggers what binding context changed
@@ -137,12 +138,12 @@ namespace DataGridSam.Elements
                 else
                     isAdd = true;
 
-                GridRow lastRow = null;
+                IGridRow lastRow = null;
 
                 // For add - previous line set visible
                 if (isAdd)
                 {
-                    lastRow = Children.LastOrDefault() as GridRow;
+                    lastRow = Children.LastOrDefault() as IGridRow;
                     if (lastRow != null)
                     {
                         lastRow.UpdateLineVisibility(true);
@@ -179,17 +180,17 @@ namespace DataGridSam.Elements
                     if (DataGrid.AutoNumberStrategy == Enums.AutoNumberStrategyType.Both)
                     {
                         for (int i = 0; i < Children.Count; i++)
-                            ((GridRow)Children[i]).UpdateAutoNumeric(i + 1, ItemsCount);
+                            ((IGridRow)Children[i]).UpdateAutoNumeric(i + 1, ItemsCount);
                     }
                     else if (DataGrid.AutoNumberStrategy == Enums.AutoNumberStrategyType.Down)
                     {
                         for (int i = pause; i < Children.Count; i++)
-                            ((GridRow)Children[i]).UpdateAutoNumeric(i + 1, ItemsCount);
+                            ((IGridRow)Children[i]).UpdateAutoNumeric(i + 1, ItemsCount);
                     }
                     else if (DataGrid.AutoNumberStrategy == Enums.AutoNumberStrategyType.Up)
                     {
                         for (int i = pause; i >= 0; i--)
-                            ((GridRow)Children[i]).UpdateAutoNumeric(i + 1, ItemsCount);
+                            ((IGridRow)Children[i]).UpdateAutoNumeric(i + 1, ItemsCount);
                     }
                 }
             }
@@ -208,7 +209,7 @@ namespace DataGridSam.Elements
 
                 if (isLast)
                 {
-                    var last = Children.LastOrDefault() as GridRow;
+                    var last = Children.LastOrDefault() as IGridRow;
                     if (last != null)
                     {
                         last.UpdateLineVisibility(false);
@@ -221,12 +222,12 @@ namespace DataGridSam.Elements
                     if (DataGrid.AutoNumberStrategy == Enums.AutoNumberStrategyType.Both)
                     {
                         for (int i = 0; i < Children.Count; i++)
-                            (Children[i] as GridRow).UpdateAutoNumeric(i + 1, ItemsCount);
+                            (Children[i] as IGridRow).UpdateAutoNumeric(i + 1, ItemsCount);
                     }
                     else if (DataGrid.AutoNumberStrategy == Enums.AutoNumberStrategyType.Down)
                     {
                         for (int i = delIndex; i < Children.Count; i++)
-                            (Children[i] as GridRow).UpdateAutoNumeric(i + 1, ItemsCount);
+                            (Children[i] as IGridRow).UpdateAutoNumeric(i + 1, ItemsCount);
                     }
                     else if (DataGrid.AutoNumberStrategy == Enums.AutoNumberStrategyType.Up)
                     {
@@ -237,7 +238,7 @@ namespace DataGridSam.Elements
                                 delIndex = 0;
 
                             for (int i = delIndex; i >= 0; i--)
-                                (Children[i] as GridRow).UpdateAutoNumeric(i + 1, ItemsCount);
+                                (Children[i] as IGridRow).UpdateAutoNumeric(i + 1, ItemsCount);
                         }
                     }
                 }
@@ -263,17 +264,39 @@ namespace DataGridSam.Elements
         /// <param name="host">Корневой элемент</param>        
         /// <param name="index">Индекс элемента таблицы</param>
         /// <param name="itemsCount">Количество элементов таблицы</param>
-        private GridRow AddRow(object bindItem, int index, int itemsCount)
+        private IGridRow AddRow(object bindItem, int index, int itemsCount)
         {
-            var row = new GridRow(bindItem, DataGrid, index, itemsCount);
-            Children.Add(row);
+            var type = RowImplementations.CustomGrid;
+            IGridRow row = null;
+
+            if (type == RowImplementations.StackLine)
+            {
+                row = new GridRow(bindItem, DataGrid, index, itemsCount);
+            }
+            else if (type == RowImplementations.CustomGrid)
+            {
+                row = new RowCustom(bindItem, DataGrid, index, itemsCount);
+            }
+
+            Children.Add(row as View);
             return row;
         }
 
-        private GridRow InsertRow(object bindItem, int index, int itemsCount)
+        private IGridRow InsertRow(object bindItem, int index, int itemsCount)
         {
-            var row = new GridRow(bindItem, DataGrid, index, itemsCount);
-            Children.Insert(index, row);
+            var type = RowImplementations.CustomGrid;
+            IGridRow row = null;
+
+            if (type == RowImplementations.StackLine)
+            {
+                row = new GridRow(bindItem, DataGrid, index, itemsCount);
+            }
+            else if (type == RowImplementations.CustomGrid)
+            {
+                row = new RowCustom(bindItem, DataGrid, index, itemsCount);
+            }
+
+            Children.Insert(index, row as View);
             return row;
         }
     }

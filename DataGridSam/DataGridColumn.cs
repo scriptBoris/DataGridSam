@@ -11,13 +11,15 @@ namespace DataGridSam
     public class DataGridColumn : BindableObject, IDefinition
     {
         public event EventHandler SizeChanged;
-        internal DataGrid DataGrid;
-        internal int Index;
+        public double FacticalWidth { get; internal set; }
+        public DataGrid DataGrid { get; private set; }
+        public int Index { get; private set; }
 
-        internal ContentView HeaderWrapper = new ContentView();
         internal Label HeaderLabel;
+        internal ContentView HeaderWrapper = new ContentView();
         internal VisualCollector VisualCell = new VisualCollector();
         internal VisualCollector VisualCellFromStyle = new VisualCollector();
+
         internal GridLength CalcWidth => (IsVisible) ? Width : new GridLength(0.0);
 
         public DataGridColumn()

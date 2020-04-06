@@ -11,7 +11,7 @@ using Xamarin.Forms;
 namespace DataGridSam.Elements
 {
     [Xamarin.Forms.Internals.Preserve(AllMembers = true)]
-    internal sealed class GridRow : Grid, IGridRow
+    internal sealed class RowCustom : RelativeLayout, IGridRow
     {
         public DataGrid DataGrid { get; set; }
         public int Index { get; set; }
@@ -23,26 +23,18 @@ namespace DataGridSam.Elements
         public List<GridCell> Cells { get; set; }
         public RowTrigger EnabledTrigger { get; set; }
 
-        public GridRow(object context, DataGrid host, int id, int itemsCount)
+        public RowCustom(object context, DataGrid host, int id, int itemsCount)
         {
             Context = context;
             BindingContext = context;
             DataGrid = host;
             Index = id;
 
-            RowSpacing = 0;
-            ColumnSpacing = 0;
             IsClippedToBounds = true;
             BackgroundColor = Color.Transparent;
             VerticalOptions = LayoutOptions.Start;
             HorizontalOptions = LayoutOptions.FillAndExpand;
             Cells = new List<GridCell>();
-
-            RowDefinitions = new RowDefinitionCollection
-            {
-                new RowDefinition { Height = GridLength.Star },
-                new RowDefinition { Height = new GridLength(DataGrid.BorderWidth) },
-            };
 
             // Triggers event
             if (context is INotifyPropertyChanged model)
@@ -54,34 +46,54 @@ namespace DataGridSam.Elements
             SelectionBox.BackgroundColor = Color.Transparent;
             SelectionBox.VerticalOptions = LayoutOptions.FillAndExpand;
             SelectionBox.HorizontalOptions = LayoutOptions.FillAndExpand;
-            SetColumnSpan(SelectionBox, DataGrid.Columns.Count);
-            Children.Add(SelectionBox);
+            //Children.Add(SelectionBox);
+
+            
 
             // Init cells
             int i = 0;
             foreach (var column in DataGrid.Columns)
             {
-                ColumnDefinitions.Add(new ColumnDefinition() { Width = column.CalcWidth });
 
                 var cell = new GridCell(column, this, DataGrid);
                 Cells.Add(cell);
-
                 // add wrapper
-                Children.Add(cell.Wrapper, i, 0);
+                Children.Add(cell.Wrapper, 
+                    // X
+                    Constraint.RelativeToParent((parent) => 
+                    {
+                        return CalcX(parent.Width, cell.Index);
+                    }),
+                    // Y
+                    Constraint.RelativeToParent((parent) =>
+                    {
+                        return 0.0;
+                    }),
+                    // Width
+                    Constraint.RelativeToParent((parent) =>
+                    {
+                        return CalcWidthPercent(parent.Width, cell.Index);
+                    }),
+                    null
+                    //// Height
+                    //Constraint.RelativeToParent((parent) =>
+                    //{
+                    //    return cell.Wrapper.Height;
+                    //})
+                    );
 
                 i++;
             }
 
             // Create touch box
             TouchBox = new TouchBox(BindingContext, DataGrid, ActionRowSelect);
-            SetColumnSpan(TouchBox, DataGrid.Columns.Count);
-            Children.Add(TouchBox);
+            //Children.Add(TouchBox);
 
             // Create horizontal line table
             Line = CreateHorizontalLine();
-            SetRow(Line, 1);
-            SetColumnSpan(Line, DataGrid.Columns.Count);
-            Children.Add(Line);
+            //SetRow(Line, 1);
+            //SetColumnSpan(Line, DataGrid.Columns.Count);
+            //Children.Add(Line);
 
             // Auto number
             if (DataGrid.IsAutoNumberCalc)
@@ -226,6 +238,29 @@ namespace DataGridSam.Elements
             }
         }
 
+        private double height = -1;
+        internal bool isSolve = true;
+        public void UpdateHeight(double tryHeight)
+        {
+            if (tryHeight == height)
+                return;
+
+            double h = -1;
+            foreach (var item in Cells)
+            {
+                if (item.Wrapper.Height > h)
+                    h = item.Wrapper.Height;
+            }
+
+            isSolve = false;
+            foreach (var item in Cells)
+                item.Wrapper.HeightRequest = h;
+                //RelativeLayout.SetHeightConstraint(item.Wrapper, Constraint.Constant(h));
+            isSolve = true;
+
+            height = h;
+        }
+
         public void UpdateAutoNumeric(int num, int itemsCount)
         {
             // Auto numeric
@@ -247,25 +282,25 @@ namespace DataGridSam.Elements
 
         public void UpdateLineVisibility(bool isVisible)
         {
-            if (Line.IsVisible != isVisible)
-            {
-                if (isVisible)
-                {
-                    RowDefinitions[1].Height = DataGrid.BorderWidth;
-                }
-                else
-                {
-                    RowDefinitions[1].Height = new GridLength(0.0);
-                }
-            }
+            //if (Line.IsVisible != isVisible)
+            //{
+            //    if (isVisible)
+            //    {
+            //        RowDefinitions[1].Height = DataGrid.BorderWidth;
+            //    }
+            //    else
+            //    {
+            //        RowDefinitions[1].Height = new GridLength(0.0);
+            //    }
+            //}
 
-            Line.IsVisible = isVisible;
+            //Line.IsVisible = isVisible;
         }
 
         public void UpdateCellVisibility(int cellId, bool isVisible)
         {
-            ColumnDefinitions[cellId].Width = Cells[cellId].Column.CalcWidth;
-            Cells[cellId].Wrapper.IsVisible = isVisible;
+            //ColumnDefinitions[cellId].Width = Cells[cellId].Column.CalcWidth;
+            //Cells[cellId].Wrapper.IsVisible = isVisible;
         }
 
         private BoxView CreateHorizontalLine()
@@ -293,8 +328,69 @@ namespace DataGridSam.Elements
             label.HorizontalTextAlignment = ValueSelector.GetHorizontalAlignment(styles);
         }
 
-        public void UpdateHeight(double height)
+        private double CalcWidthPercent(double width, int colId)
         {
+            var col = DataGrid.Columns[colId];
+
+            if (!col.IsVisible)
+                return 0.0;
+
+            if (col.Width.IsAbsolute)
+            {
+                return col.Width.Value;
+            }
+            else
+            {
+                double com = 0;
+                double dif = 0;
+                foreach (var c in DataGrid.Columns)
+                    if (c.Width.IsStar)
+                        com += c.Width.Value;
+                    else
+                        dif += c.Width.Value;
+
+                return (width - dif) * (col.Width.Value / com);
+            }
+        }
+
+        private double CalcX(double width, int colId)
+        {
+            var col = DataGrid.Columns[colId];
+            double sum = 0;
+            for (int i = (colId - 1); i >= 0; i--)
+                sum += DataGrid.Columns[i].FacticalWidth;
+
+            if (!col.IsVisible)
+            {
+                return sum;
+            }
+            else if (col.Width.IsStar)
+            {
+                double dif = 0;
+                double com = 0;
+                foreach (var c in DataGrid.Columns)
+                    if (c.Width.IsStar)
+                        com += c.Width.Value;
+                    else
+                        dif += c.Width.Value;
+
+                double final = col.Width.Value / com;
+                col.FacticalWidth = (width - dif) * final;
+
+                if (colId == 0)
+                    return 0;
+
+                return sum;
+            }
+            else
+            {
+                col.FacticalWidth = col.Width.Value;
+
+                if (colId == 0)
+                    return 0;
+
+                return sum;
+            }
         }
     }
 }
