@@ -97,7 +97,7 @@ namespace DataGridSam.Elements
                 }
 
                 if (last != null)
-                    last.line.IsVisible = false;
+                    last.UpdateLineVisibility(false);
             }
 
             self.HasItems = (self.ItemsCount > 0);
@@ -110,14 +110,15 @@ namespace DataGridSam.Elements
             // Replace
             if (e.Action == NotifyCollectionChangedAction.Replace)
             {
-                Children.RemoveAt(e.OldStartingIndex);
+                int oldId = e.OldStartingIndex;
+                int newId = e.NewStartingIndex;
 
-                var item = e.NewItems[e.NewStartingIndex];
-                var row = InsertRow(item, e.NewStartingIndex, ItemsCount);
+                Children.RemoveAt(oldId);
+                var row = InsertRow(e.NewItems[newId], newId, ItemsCount);
 
                 // Hide line if row is last
-                if (Children.LastOrDefault() == row)
-                    row.line.IsVisible = false;
+                if (ItemsCount == oldId + 1)
+                    row.UpdateLineVisibility(false);
             }
             // Add
             else if (e.Action == NotifyCollectionChangedAction.Add)
@@ -138,13 +139,13 @@ namespace DataGridSam.Elements
 
                 GridRow lastRow = null;
 
-                // For add - last line set visible
+                // For add - previous line set visible
                 if (isAdd)
                 {
                     lastRow = Children.LastOrDefault() as GridRow;
                     if (lastRow != null)
                     {
-                        lastRow.line.IsVisible = true;
+                        lastRow.UpdateLineVisibility(true);
                         lastRow = null;
                     }
                 }
@@ -157,14 +158,20 @@ namespace DataGridSam.Elements
                     var item = e.NewItems[i];
 
                     if (isInsert)
+                    {
+                        // Insert row
                         lastRow = InsertRow(item, index, ItemsCount);
+                    }
                     else
+                    {
+                        // Add row
                         lastRow = AddRow(item, index, ItemsCount);
+                    }
                 }
 
-                // Hide last 
+                // Hide last row line
                 if (lastRow != null && isAdd)
-                    lastRow.line.IsVisible = false;
+                    lastRow.UpdateLineVisibility(false);
 
                 // recalc autonumber
                 if (DataGrid.IsAutoNumberCalc)
@@ -204,7 +211,7 @@ namespace DataGridSam.Elements
                     var last = Children.LastOrDefault() as GridRow;
                     if (last != null)
                     {
-                        last.line.IsVisible = false;
+                        last.UpdateLineVisibility(false);
                     }
                 }
                     

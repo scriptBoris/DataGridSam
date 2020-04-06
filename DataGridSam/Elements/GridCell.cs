@@ -11,7 +11,7 @@ namespace DataGridSam.Elements
         internal AutoNumberType AutoNumber;
         internal bool IsCustomTemplate;
         internal DataGridColumn Column;
-        internal BoxView Wrapper;
+        internal ContentView Wrapper;
         internal View Content;
         internal Label Label {
             get         => Content as Label;
@@ -23,20 +23,19 @@ namespace DataGridSam.Elements
             Column = column;
 
             // Create wrapper
-            Wrapper = new BoxView();
+            Wrapper = new ContentView();
             Wrapper.BackgroundColor = Color.Transparent;
-            Wrapper.HeightRequest = 1.0;
+            //Wrapper.HeightRequest = 1.0;
             Wrapper.InputTransparent = true;
 
             // Create custom template
             if (column.CellTemplate != null)
             {
                 IsCustomTemplate = true;
-
                 Content = column.CellTemplate.CreateContent() as View;
-                Content.IsVisible = column.IsVisible;
-                Content.InputTransparent = true;
                 Content.BindingContext = row.BindingContext;
+                //Content.HeightRequest = 1.0;
+                //Content.VerticalOptions = LayoutOptions.StartAndExpand;
 
                 if (Content is Layout layout)
                 {
@@ -49,9 +48,7 @@ namespace DataGridSam.Elements
             else
             {
                 Label = new Label();
-                Label.IsVisible = column.IsVisible;
                 Label.Margin = host.CellPadding;
-                Label.InputTransparent = true;
                 Label.HorizontalOptions = LayoutOptions.FillAndExpand;
                 Label.VerticalOptions = LayoutOptions.FillAndExpand;
 
@@ -62,6 +59,11 @@ namespace DataGridSam.Elements
                         stringFormat: column.StringFormat,
                         source: row.BindingContext));
             }
+
+            Wrapper.Content = Content;
+
+            // Set started column visible
+            Content.IsVisible = column.IsVisible;
 
             // Detect auto number cell
             AutoNumber = column.AutoNumber;

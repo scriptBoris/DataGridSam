@@ -89,6 +89,8 @@ namespace Sample.ViewModels
                 Weight = 0.0f,
                 Need = 100,
             });
+
+            (View as Views.DevView).ScrollToIndex(Items.Count);
         }
 
         private void ActionInsertItem(object obj)

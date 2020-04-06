@@ -11,7 +11,7 @@ using Xamarin.Forms;
 namespace DataGridSam.Elements
 {
     [Xamarin.Forms.Internals.Preserve(AllMembers = true)]
-    internal sealed class GridRow2 : Grid
+    internal sealed class GridRow : Grid
     {
         internal readonly DataGrid DataGrid;
         internal int index;
@@ -23,7 +23,7 @@ namespace DataGridSam.Elements
         internal RowTrigger enableTrigger;
         internal bool isStyleDefault = true;
 
-        public GridRow2(object context, DataGrid host, int id, int itemsCount)
+        public GridRow(object context, DataGrid host, int id, int itemsCount)
         {
             BindingContext = context;
             DataGrid = host;

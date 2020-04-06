@@ -123,7 +123,8 @@ namespace Sample.Core
                     Family = "DiCaprio",
                     PhotoUrl = "https://m.media-amazon.com/images/M/MV5BMjI0MTg3MzI0M15BMl5BanBnXkFtZTcwMzQyODU2Mw@@._V1_UY209_CR7,0,140,209_AL_.jpg",
                     FamousRole = "Inception",
-                    Description = "Few actors in the world have had a career quite as diverse as Leonardo DiCaprio's. DiCaprio has gone from relatively humble beginnings",
+                    //Description = "Few actors in the world have had a career quite as diverse as Leonardo DiCaprio's. DiCaprio has gone from relatively humble beginnings",
+                    Description = "Just great actor",
                 },
                 new Actor
                 {

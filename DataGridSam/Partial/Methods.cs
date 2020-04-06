@@ -316,38 +316,13 @@ namespace DataGridSam
             {
                 var match = list.IndexOf(n);
 
-                // Without pagination
-                if (self.PaginationItemCount == 0)
+                if (match >= 0 && self.stackList.Children.Count > 0)
                 {
-                    if (match >= 0 && self.stackList.Children.Count > 0)
-                    {
-                        var row = (GridRow)self.stackList.Children[match];
-                        row.isSelected = true;
-                        row.UpdateStyle();
+                    var row = (GridRow)self.stackList.Children[match];
+                    row.isSelected = true;
+                    row.UpdateStyle();
 
-                        self.SelectedRow = row;
-                    }
-                }
-                // With pagination
-                else
-                {
-                    int pageStart = self.PaginationCurrentPageStartIndex;
-                    int dif = match - self.PaginationCurrentPageStartIndex;
-
-                    if (dif >= 0 && dif <= pageStart + self.PaginationItemCount - 1)
-                    {
-                        // Safe
-                        if (dif >= self.stackList.Children.Count)
-                        {
-
-                        }
-
-                        var row = (GridRow)self.stackList.Children[dif];
-                        row.isSelected = true;
-                        row.UpdateStyle();
-
-                        self.SelectedRow = row;
-                    }
+                    self.SelectedRow = row;
                 }
             }
         }

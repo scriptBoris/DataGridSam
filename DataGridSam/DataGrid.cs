@@ -181,29 +181,6 @@ namespace DataGridSam
 
 
 
-        // Pagination items count
-        public static readonly BindableProperty PaginationItemCountProperty =
-            BindableProperty.Create(nameof(PaginationItemCount), typeof(int), typeof(DataGrid), 0);
-        public int PaginationItemCount
-        {
-            get { return (int)GetValue(PaginationItemCountProperty); }
-            set { SetValue(PaginationItemCountProperty, value); }
-        }
-
-
-
-        // Pagination current page
-        public static readonly BindableProperty PaginationCurrentPageProperty =
-            BindableProperty.Create(nameof(PaginationCurrentPage), typeof(int), typeof(DataGrid), 1);
-        /// <summary>
-        /// Current page if pagination is enabled (default: 1)
-        /// </summary>
-        public int PaginationCurrentPage
-        {
-            get { return (int)GetValue(PaginationCurrentPageProperty); }
-            set { SetValue(PaginationCurrentPageProperty, value); }
-        }
-
 
 
         /// <summary>

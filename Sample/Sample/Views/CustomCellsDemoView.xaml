@@ -31,17 +31,7 @@
                       CellPadding="10"
                       TapColor="#bbdefb"
                       CommandLongTapItem="{Binding CommandLongTap}">
-            <!--Photo-->
-            <sam:DataGridColumn Title="Photo" 
-                                IsVisible="{Binding IsShowColumnPhotos}"
-                                Width="80">
-                <sam:DataGridColumn.CellTemplate>
-                    <DataTemplate>
-                        <Image Source="{Binding PhotoUrl}"
-                               Aspect="AspectFill"/>
-                    </DataTemplate>
-                </sam:DataGridColumn.CellTemplate>
-            </sam:DataGridColumn>
+            
                 
             <!--Name-->
             <sam:DataGridColumn Title="Name"  
@@ -68,6 +58,18 @@
             <sam:DataGridColumn Title="Description" 
                                 PropertyName="Description"
                                 Width="2*"/>
+
+            <!--Photo-->
+            <sam:DataGridColumn Title="Photo" 
+                                IsVisible="{Binding IsShowColumnPhotos}"
+                                Width="80">
+                <sam:DataGridColumn.CellTemplate>
+                    <DataTemplate>
+                        <Image Source="{Binding PhotoUrl}"
+                               Aspect="AspectFill"/>
+                    </DataTemplate>
+                </sam:DataGridColumn.CellTemplate>
+            </sam:DataGridColumn>
         </sam:DataGrid>
         <Button Text="Hide photos"
                 Command="{Binding CommandHidePhotos}"/>

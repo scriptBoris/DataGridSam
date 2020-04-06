@@ -106,16 +106,18 @@ namespace DataGridSam.iOS
             }
         }
 
+        private CoreGraphics.CGPoint tapCoord;
         private void OnTap(UILongPressGestureRecognizer press)
         {
-            var coordinate = press.LocationInView(press.View);
-            bool isInside = press.View.PointInside(coordinate, null);
+            var coord = press.LocationInView(press.View);
+            bool isInside = press.View.PointInside(coord, null);
 
             switch (press.State)
             {
                 case UIGestureRecognizerState.Began:
                     if (isEnabled)
                     {
+                        tapCoord = coord;
                         isTaped = true;
                         if (timer != null)
                         {
@@ -123,7 +125,6 @@ namespace DataGridSam.iOS
                             timer.Start();
                         }
                         AnimRun();
-                        //TapAnimation(0.3, 0, _alpha, false);
                     }
                     break;
                 case UIGestureRecognizerState.Changed:
@@ -131,7 +132,19 @@ namespace DataGridSam.iOS
                     {
                         isTaped = false;
                         AnimStop();
-                        //TapAnimation(0.3, _alpha);
+                    }
+                    else
+                    {
+                        nfloat x = tapCoord.X;
+                        nfloat y = tapCoord.Y;
+                        nfloat x1 = coord.X;
+                        nfloat y1 = coord.Y;
+                        double d = Math.Sqrt((x1-x) * (x1-x) +  (y1-y) * (y1-y));
+                        if (d > 10.0)
+                        {
+                            isTaped = false;
+                            AnimStop();
+                        }
                     }
                     break;
                 case UIGestureRecognizerState.Ended:
@@ -152,7 +165,6 @@ namespace DataGridSam.iOS
                             }
                         }
                         AnimStop();
-                        //TapAnimation(0.3, _alpha);
                     }
                     isTaped = false;
                     break;
@@ -162,7 +174,6 @@ namespace DataGridSam.iOS
                     {
                         isTaped = false;
                         AnimStop();
-                        //TapAnimation(0.3, _alpha);
                     }
                     break;
             }
