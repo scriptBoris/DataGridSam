@@ -11,7 +11,7 @@ using Xamarin.Forms;
 namespace DataGridSam.Elements
 {
     [Xamarin.Forms.Internals.Preserve(AllMembers = true)]
-    internal sealed class RowCustom : RelativeLayout, IGridRow
+    internal sealed class Row3 : Layout<View>, IGridRow
     {
         public DataGrid DataGrid { get; set; }
         public int Index { get; set; }
@@ -23,7 +23,7 @@ namespace DataGridSam.Elements
         public List<GridCell> Cells { get; set; }
         public RowTrigger EnabledTrigger { get; set; }
 
-        public RowCustom(object context, DataGrid host, int id, int itemsCount)
+        public Row3(object context, DataGrid host, int id, int itemsCount)
         {
             Context = context;
             BindingContext = context;
@@ -54,39 +54,15 @@ namespace DataGridSam.Elements
             int i = 0;
             foreach (var column in DataGrid.Columns)
             {
-
                 var cell = new GridCell(column, this, DataGrid);
-                Cells.Add(cell);
-                // add wrapper
-                Children.Add(cell.Wrapper, 
-                    // X
-                    Constraint.RelativeToParent((parent) => 
-                    {
-                        return CalcX(parent.Width, cell.Index);
-                    }),
-                    // Y
-                    Constraint.RelativeToParent((parent) =>
-                    {
-                        return 0.0;
-                    }),
-                    // Width
-                    Constraint.RelativeToParent((parent) =>
-                    {
-                        return CalcWidthPercent(parent.Width, cell.Index);
-                    }),
-                    null
-                    //// Height
-                    //Constraint.RelativeToParent((parent) =>
-                    //{
-                    //    return cell.Wrapper.Height;
-                    //})
-                    );
 
+                Children.Add(cell.Wrapper);
+                Cells.Add(cell);
                 i++;
             }
 
             // Create touch box
-            TouchBox = new TouchBox(BindingContext, DataGrid, ActionRowSelect);
+            //TouchBox = new TouchBox(BindingContext, DataGrid, ActionRowSelect);
             //Children.Add(TouchBox);
 
             // Create horizontal line table
@@ -238,27 +214,8 @@ namespace DataGridSam.Elements
             }
         }
 
-        private double height = -1;
-        internal bool isSolve = true;
-        public void UpdateHeight(double tryHeight)
+        public void UpdateHeight(GridCell from, double tryHeight)
         {
-            if (tryHeight == height)
-                return;
-
-            double h = -1;
-            foreach (var item in Cells)
-            {
-                if (item.Wrapper.Height > h)
-                    h = item.Wrapper.Height;
-            }
-
-            isSolve = false;
-            foreach (var item in Cells)
-                item.Wrapper.HeightRequest = h;
-                //RelativeLayout.SetHeightConstraint(item.Wrapper, Constraint.Constant(h));
-            isSolve = true;
-
-            height = h;
         }
 
         public void UpdateAutoNumeric(int num, int itemsCount)
@@ -328,7 +285,49 @@ namespace DataGridSam.Elements
             label.HorizontalTextAlignment = ValueSelector.GetHorizontalAlignment(styles);
         }
 
-        private double CalcWidthPercent(double width, int colId)
+        #region Layot calculation
+        protected override void LayoutChildren(double x, double y, double width, double height)
+        {
+            foreach (var cell in Cells)
+                CalculatePositionCell(cell, width, height, false);
+        }
+
+        protected override SizeRequest OnMeasure(double width, double height)
+        {
+            if (Children.Count == 0)
+                return new SizeRequest(new Size(width, 0));
+
+            double actualHeight = 0.0;
+            foreach (var cell in Cells)
+            {
+                double cellHeight = CalculatePositionCell(cell, width, height, true);
+
+                if (actualHeight < cellHeight)
+                    actualHeight = cellHeight;
+            }
+
+            return new SizeRequest(new Size(width, actualHeight));
+        }
+
+        private double CalculatePositionCell(GridCell cell, double width, double height, bool isRequest)
+        {
+            double w = CalcWidth(width, cell.Index);
+
+            if (isRequest)
+            {
+                var cellSize = cell.Wrapper.Measure(w, double.PositiveInfinity, MeasureFlags.IncludeMargins);
+                return cellSize.Request.Height;
+            }
+            else
+            {
+                double x = CalcX(width, cell.Index);
+                var rect = new Rectangle(x, 0, w, height);
+                LayoutChildIntoBoundingRegion(cell.Wrapper, rect);
+                return 0.0;
+            }
+        }
+
+        private double CalcWidth(double rowWidth, int colId)
         {
             var col = DataGrid.Columns[colId];
 
@@ -349,11 +348,11 @@ namespace DataGridSam.Elements
                     else
                         dif += c.Width.Value;
 
-                return (width - dif) * (col.Width.Value / com);
+                return (rowWidth - dif) * (col.Width.Value / com);
             }
         }
 
-        private double CalcX(double width, int colId)
+        private double CalcX(double rowWidth, int colId)
         {
             var col = DataGrid.Columns[colId];
             double sum = 0;
@@ -375,7 +374,7 @@ namespace DataGridSam.Elements
                         dif += c.Width.Value;
 
                 double final = col.Width.Value / com;
-                col.FacticalWidth = (width - dif) * final;
+                col.FacticalWidth = (rowWidth - dif) * final;
 
                 if (colId == 0)
                     return 0;
@@ -392,5 +391,6 @@ namespace DataGridSam.Elements
                 return sum;
             }
         }
+        #endregion Layout calculation
     }
 }

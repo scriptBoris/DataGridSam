@@ -284,7 +284,7 @@ namespace DataGridSam
         {
             foreach (var item in stackList.Children)
             {
-                var row = item as GridRow;
+                var row = item as Row1;
                 DataGridSam.Platform.Touch.SetTap(row, command);
             }
         }
@@ -293,7 +293,7 @@ namespace DataGridSam
         {
             foreach (var item in stackList.Children)
             {
-                var row = item as GridRow;
+                var row = item as Row1;
                 DataGridSam.Platform.Touch.SetLongTap(row, command);
             }
         }

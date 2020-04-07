@@ -11,7 +11,7 @@ using Xamarin.Forms;
 namespace DataGridSam.Elements
 {
     [Xamarin.Forms.Internals.Preserve(AllMembers = true)]
-    internal sealed class GridRow : Grid, IGridRow
+    internal sealed class Row1 : Grid, IGridRow
     {
         public DataGrid DataGrid { get; set; }
         public int Index { get; set; }
@@ -23,7 +23,7 @@ namespace DataGridSam.Elements
         public List<GridCell> Cells { get; set; }
         public RowTrigger EnabledTrigger { get; set; }
 
-        public GridRow(object context, DataGrid host, int id, int itemsCount)
+        public Row1(object context, DataGrid host, int id, int itemsCount)
         {
             Context = context;
             BindingContext = context;
@@ -121,6 +121,10 @@ namespace DataGridSam.Elements
                 rowTapped.IsSelected = true;
                 rowTapped.UpdateStyle();
             }
+        }
+
+        public void UpdateHeight(GridCell cell, double height)
+        {
         }
 
         public void UpdateStyle()
@@ -291,10 +295,6 @@ namespace DataGridSam.Elements
             label.LineBreakMode = ValueSelector.GetLineBreakMode(styles);
             label.VerticalTextAlignment = ValueSelector.GetVerticalAlignment(styles);
             label.HorizontalTextAlignment = ValueSelector.GetHorizontalAlignment(styles);
-        }
-
-        public void UpdateHeight(double height)
-        {
         }
     }
 }

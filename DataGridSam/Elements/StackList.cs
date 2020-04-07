@@ -266,16 +266,20 @@ namespace DataGridSam.Elements
         /// <param name="itemsCount">Количество элементов таблицы</param>
         private IGridRow AddRow(object bindItem, int index, int itemsCount)
         {
-            var type = RowImplementations.CustomGrid;
+            var type = RowImplementations.CustomLayout;
             IGridRow row = null;
 
             if (type == RowImplementations.StackLine)
             {
-                row = new GridRow(bindItem, DataGrid, index, itemsCount);
+                row = new Row1(bindItem, DataGrid, index, itemsCount);
             }
             else if (type == RowImplementations.CustomGrid)
             {
-                row = new RowCustom(bindItem, DataGrid, index, itemsCount);
+                row = new Row2(bindItem, DataGrid, index, itemsCount);
+            }
+            else if (type == RowImplementations.CustomLayout)
+            {
+                row = new Row3(bindItem, DataGrid, index, itemsCount);
             }
 
             Children.Add(row as View);
@@ -284,16 +288,20 @@ namespace DataGridSam.Elements
 
         private IGridRow InsertRow(object bindItem, int index, int itemsCount)
         {
-            var type = RowImplementations.CustomGrid;
+            var type = RowImplementations.CustomLayout;
             IGridRow row = null;
 
             if (type == RowImplementations.StackLine)
             {
-                row = new GridRow(bindItem, DataGrid, index, itemsCount);
+                row = new Row1(bindItem, DataGrid, index, itemsCount);
             }
             else if (type == RowImplementations.CustomGrid)
             {
-                row = new RowCustom(bindItem, DataGrid, index, itemsCount);
+                row = new Row2(bindItem, DataGrid, index, itemsCount);
+            }
+            else if (type == RowImplementations.CustomLayout)
+            {
+                row = new Row3(bindItem, DataGrid, index, itemsCount);
             }
 
             Children.Insert(index, row as View);

@@ -8,5 +8,6 @@ namespace DataGridSam.Enums
     {
         StackLine,
         CustomGrid,
+        CustomLayout,
     }
 }

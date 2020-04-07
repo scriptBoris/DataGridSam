@@ -10,6 +10,7 @@ namespace DataGridSam.Elements
     {
         internal AutoNumberType AutoNumber;
         internal bool IsCustomTemplate;
+        internal bool IsSizeDone;
         internal DataGridColumn Column;
         internal RequestBox Wrapper;
         internal View Content;
@@ -26,13 +27,10 @@ namespace DataGridSam.Elements
             Column = column;
 
             // Create wrapper
-            Wrapper = new RequestBox(row);
+            Wrapper = new RequestBox(this);
             Wrapper.BackgroundColor = Color.Transparent;
-            //Wrapper.HeightRequest = 1.0;
             Wrapper.InputTransparent = true;
-
-            //if (row is RowCustom)
-            //    Wrapper.SizeChanged += Wrapper_SizeChanged;
+            //Wrapper.HeightRequest = 1.0;
 
             // Create custom template
             if (column.CellTemplate != null)
@@ -42,7 +40,6 @@ namespace DataGridSam.Elements
                 Content.BindingContext = row.Context;
                 Content.VerticalOptions = LayoutOptions.FillAndExpand;
                 Content.HorizontalOptions = LayoutOptions.FillAndExpand;
-                //Content.HeightRequest = 1.0;
 
                 if (Content is Layout layout)
                 {
@@ -67,6 +64,7 @@ namespace DataGridSam.Elements
                         source: row.Context));
             }
 
+            // Set content
             Wrapper.Content = Content;
 
             // Set started column visible
@@ -74,13 +72,6 @@ namespace DataGridSam.Elements
 
             // Detect auto number cell
             AutoNumber = column.AutoNumber;
-        }
-
-        private void Wrapper_SizeChanged(object sender, EventArgs e)
-        {
-            var row = Row as RowCustom;
-            if (row.isSolve)
-                row.UpdateHeight(Wrapper.Height);
         }
     }
 }
