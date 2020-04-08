@@ -8,11 +8,9 @@ namespace DataGridSam.Elements
 {
     internal class GridCell
     {
-        internal AutoNumberType AutoNumber;
         internal bool IsCustomTemplate;
-        internal bool IsSizeDone;
         internal DataGridColumn Column;
-        internal RequestBox Wrapper;
+        internal BoxView Wrapper;
         internal View Content;
         internal IGridRow Row;
         internal Label Label {
@@ -27,10 +25,9 @@ namespace DataGridSam.Elements
             Column = column;
 
             // Create wrapper
-            Wrapper = new RequestBox(this);
+            Wrapper = new BoxView();
             Wrapper.BackgroundColor = Color.Transparent;
             Wrapper.InputTransparent = true;
-            //Wrapper.HeightRequest = 1.0;
 
             // Create custom template
             if (column.CellTemplate != null)
@@ -38,12 +35,9 @@ namespace DataGridSam.Elements
                 IsCustomTemplate = true;
                 Content = column.CellTemplate.CreateContent() as View;
                 Content.BindingContext = row.Context;
-                Content.VerticalOptions = LayoutOptions.FillAndExpand;
-                Content.HorizontalOptions = LayoutOptions.FillAndExpand;
 
                 if (Content is Layout layout)
                 {
-                    layout.IsClippedToBounds = true;
                     layout.InputTransparent = true;
                     layout.CascadeInputTransparent = true;
                 }
@@ -53,8 +47,6 @@ namespace DataGridSam.Elements
             {
                 Label = new Label();
                 Label.Margin = host.CellPadding;
-                Label.HorizontalOptions = LayoutOptions.FillAndExpand;
-                Label.VerticalOptions = LayoutOptions.FillAndExpand;
 
                 if (column.PropertyName != null)
                     Label.SetBinding(Label.TextProperty, new Binding(
@@ -64,14 +56,8 @@ namespace DataGridSam.Elements
                         source: row.Context));
             }
 
-            // Set content
-            Wrapper.Content = Content;
-
             // Set started column visible
             Content.IsVisible = column.IsVisible;
-
-            // Detect auto number cell
-            AutoNumber = column.AutoNumber;
         }
     }
 }

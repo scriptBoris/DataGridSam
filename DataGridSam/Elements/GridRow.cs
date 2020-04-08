@@ -11,7 +11,7 @@ using Xamarin.Forms;
 namespace DataGridSam.Elements
 {
     [Xamarin.Forms.Internals.Preserve(AllMembers = true)]
-    internal sealed class Row3 : Layout<View>, IGridRow
+    internal sealed class GridRow : Layout<View>, IGridRow
     {
         private bool isLineVisible;
 
@@ -25,7 +25,7 @@ namespace DataGridSam.Elements
         public List<GridCell> Cells { get; set; }
         public RowTrigger EnabledTrigger { get; set; }
 
-        public Row3(object context, DataGrid host, int id, int itemsCount, bool isLineVisible)
+        public GridRow(object context, DataGrid host, int id, int itemsCount, bool isLineVisible)
         {
             Context = context;
             BindingContext = context;
@@ -56,6 +56,7 @@ namespace DataGridSam.Elements
                 var cell = new GridCell(column, this, DataGrid);
 
                 Children.Add(cell.Wrapper);
+                Children.Add(cell.Content);
                 Cells.Add(cell);
                 i++;
             }
@@ -228,7 +229,7 @@ namespace DataGridSam.Elements
             // Auto numeric
             foreach(var cell in Cells)
             {
-                switch (cell.AutoNumber)
+                switch (cell.Column.AutoNumber)
                 {
                     case Enums.AutoNumberType.Up:
                         cell.Label.Text = (itemsCount + 1 - num).ToString(cell.Column.StringFormat);
@@ -236,8 +237,6 @@ namespace DataGridSam.Elements
                     case Enums.AutoNumberType.Down:
                         cell.Label.Text = num.ToString(cell.Column.StringFormat);
                         break;
-                    //default:
-                    //    break;
                 }
             }
         }
@@ -326,7 +325,7 @@ namespace DataGridSam.Elements
 
             if (isRequest)
             {
-                var cellSize = cell.Wrapper.Measure(w, double.PositiveInfinity, MeasureFlags.IncludeMargins);
+                var cellSize = cell.Content.Measure(w, double.PositiveInfinity, MeasureFlags.IncludeMargins);
                 return cellSize.Request.Height;
             }
             else
@@ -334,6 +333,7 @@ namespace DataGridSam.Elements
                 double x = CalcX(width, cell.Index);
                 var rect = new Rectangle(x, 0, w, height);
                 LayoutChildIntoBoundingRegion(cell.Wrapper, rect);
+                LayoutChildIntoBoundingRegion(cell.Content, rect);
                 return 0.0;
             }
         }
