@@ -13,22 +13,25 @@ namespace DataGridSam.Elements
     [Xamarin.Forms.Internals.Preserve(AllMembers = true)]
     internal sealed class Row3 : Layout<View>, IGridRow
     {
+        private bool isLineVisible;
+
         public DataGrid DataGrid { get; set; }
         public int Index { get; set; }
         public bool IsSelected { get; set; }
         public object Context { get; set; }
         public View SelectionBox { get; set; }
-        public View TouchBox { get; set; }
+        public View TouchBox { get => this; set { } }
         public View Line { get; set; }
         public List<GridCell> Cells { get; set; }
         public RowTrigger EnabledTrigger { get; set; }
 
-        public Row3(object context, DataGrid host, int id, int itemsCount)
+        public Row3(object context, DataGrid host, int id, int itemsCount, bool isLineVisible)
         {
             Context = context;
             BindingContext = context;
             DataGrid = host;
             Index = id;
+            this.isLineVisible = isLineVisible;
 
             IsClippedToBounds = true;
             BackgroundColor = Color.Transparent;
@@ -42,13 +45,9 @@ namespace DataGridSam.Elements
 
             // Selection box
             SelectionBox = new BoxView();
-            SelectionBox.HeightRequest = 1.0;
+            SelectionBox.InputTransparent = true;
             SelectionBox.BackgroundColor = Color.Transparent;
-            SelectionBox.VerticalOptions = LayoutOptions.FillAndExpand;
-            SelectionBox.HorizontalOptions = LayoutOptions.FillAndExpand;
-            //Children.Add(SelectionBox);
-
-            
+            Children.Add(SelectionBox);
 
             // Init cells
             int i = 0;
@@ -61,15 +60,25 @@ namespace DataGridSam.Elements
                 i++;
             }
 
-            // Create touch box
-            //TouchBox = new TouchBox(BindingContext, DataGrid, ActionRowSelect);
-            //Children.Add(TouchBox);
+            // Add tap system event
+            Touch.SetSelect(this, new Command(ActionRowSelect));
+
+            if (DataGrid.TapColor != Color.Default)
+                Touch.SetColor(this, DataGrid.TapColor);
+
+            if (DataGrid.CommandSelectedItem != null)
+                Touch.SetTap(this, DataGrid.CommandSelectedItem);
+
+            if (DataGrid.CommandLongTapItem != null)
+                Touch.SetLongTap(this, DataGrid.CommandLongTapItem);
+
 
             // Create horizontal line table
-            Line = CreateHorizontalLine();
-            //SetRow(Line, 1);
-            //SetColumnSpan(Line, DataGrid.Columns.Count);
-            //Children.Add(Line);
+            Line = new BoxView();
+            Line.BackgroundColor = DataGrid.BorderColor;
+            Line.HeightRequest = DataGrid.BorderWidth;
+            Line.InputTransparent = true;
+            Children.Add(Line);
 
             // Auto number
             if (DataGrid.IsAutoNumberCalc)
@@ -214,10 +223,6 @@ namespace DataGridSam.Elements
             }
         }
 
-        public void UpdateHeight(GridCell from, double tryHeight)
-        {
-        }
-
         public void UpdateAutoNumeric(int num, int itemsCount)
         {
             // Auto numeric
@@ -239,38 +244,28 @@ namespace DataGridSam.Elements
 
         public void UpdateLineVisibility(bool isVisible)
         {
-            //if (Line.IsVisible != isVisible)
-            //{
-            //    if (isVisible)
-            //    {
-            //        RowDefinitions[1].Height = DataGrid.BorderWidth;
-            //    }
-            //    else
-            //    {
-            //        RowDefinitions[1].Height = new GridLength(0.0);
-            //    }
-            //}
+            if (isLineVisible == isVisible)
+                return;
 
-            //Line.IsVisible = isVisible;
+            if (isVisible)
+            {
+                double height = Height + DataGrid.BorderWidth;
+                HeightRequest = height;
+                LayoutChildIntoBoundingRegion(Line, new Rectangle(0, height - DataGrid.BorderWidth, Width, DataGrid.BorderWidth));
+            }
+            else
+            {
+                HeightRequest = Height - DataGrid.BorderWidth;
+                LayoutChildIntoBoundingRegion(Line, new Rectangle(0, 0, 0, 0));
+            }
+
+            isLineVisible = isVisible;
         }
 
         public void UpdateCellVisibility(int cellId, bool isVisible)
         {
             //ColumnDefinitions[cellId].Width = Cells[cellId].Column.CalcWidth;
             //Cells[cellId].Wrapper.IsVisible = isVisible;
-        }
-
-        private BoxView CreateHorizontalLine()
-        {
-            var line = new BoxView()
-            {
-                BackgroundColor = DataGrid.BorderColor,
-                VerticalOptions = LayoutOptions.FillAndExpand,
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                HeightRequest = DataGrid.BorderWidth,
-                InputTransparent = true,
-            };
-            return line;
         }
 
         private void MergeVisual(Label label, params VisualCollector[] styles)
@@ -288,8 +283,20 @@ namespace DataGridSam.Elements
         #region Layot calculation
         protected override void LayoutChildren(double x, double y, double width, double height)
         {
+            // Render cells
             foreach (var cell in Cells)
                 CalculatePositionCell(cell, width, height, false);
+
+            // Selection box
+            var rectSelection = new Rectangle(0, 0, width, height + DataGrid.BorderWidth);
+            LayoutChildIntoBoundingRegion(SelectionBox, rectSelection);
+
+            // Render line
+            if (isLineVisible)
+            {
+                var rect = new Rectangle(0, height - DataGrid.BorderWidth, width, height);
+                LayoutChildIntoBoundingRegion(Line, rect);
+            }
         }
 
         protected override SizeRequest OnMeasure(double width, double height)
@@ -305,6 +312,10 @@ namespace DataGridSam.Elements
                 if (actualHeight < cellHeight)
                     actualHeight = cellHeight;
             }
+
+            // Position for line
+            if (isLineVisible)
+                actualHeight += DataGrid.BorderWidth;
 
             return new SizeRequest(new Size(width, actualHeight));
         }
@@ -327,6 +338,7 @@ namespace DataGridSam.Elements
             }
         }
 
+        // TODO Upgrade performance
         private double CalcWidth(double rowWidth, int colId)
         {
             var col = DataGrid.Columns[colId];
@@ -352,12 +364,13 @@ namespace DataGridSam.Elements
             }
         }
 
+        // TODO Upgrade performance
         private double CalcX(double rowWidth, int colId)
         {
             var col = DataGrid.Columns[colId];
             double sum = 0;
             for (int i = (colId - 1); i >= 0; i--)
-                sum += DataGrid.Columns[i].FacticalWidth;
+                sum += DataGrid.Columns[i].ActualWidth;
 
             if (!col.IsVisible)
             {
@@ -374,7 +387,7 @@ namespace DataGridSam.Elements
                         dif += c.Width.Value;
 
                 double final = col.Width.Value / com;
-                col.FacticalWidth = (rowWidth - dif) * final;
+                col.ActualWidth = (rowWidth - dif) * final;
 
                 if (colId == 0)
                     return 0;
@@ -383,7 +396,7 @@ namespace DataGridSam.Elements
             }
             else
             {
-                col.FacticalWidth = col.Width.Value;
+                col.ActualWidth = col.Width.Value;
 
                 if (colId == 0)
                     return 0;

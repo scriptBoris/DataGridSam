@@ -38,7 +38,5 @@ namespace DataGridSam.Elements
         void UpdateAutoNumeric(int num, int itemsCount);
         void UpdateLineVisibility(bool isVisible);
         void UpdateCellVisibility(int cellId, bool isVisible);
-
-        void UpdateHeight(GridCell from, double height);
     }
 }

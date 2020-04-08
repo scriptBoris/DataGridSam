@@ -1,5 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+﻿<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -28,8 +27,7 @@
                       RowsColor="White"
                       RowsTextColor="Black"
                       BorderColor="#2196F3"
-                      BorderWidth="2"
-                      CellPadding="5"
+                      CellPadding="10"
                       TapColor="#03a9f4">
             <sam:DataGrid.RowsFontSize>
                 <OnIdiom x:TypeArguments="x:Double"
@@ -54,20 +52,21 @@
                                 Width="2*"
                                 CellBackgroundColor="#EEE"
                                 PropertyName="NameView"/>
-            <sam:DataGridColumn Title="Need" 
+            <!--<sam:DataGridColumn Title="Need" 
                                 Width="2*"
                                 HorizontalTextAlignment="End"
-                                PropertyName="Need"/>
-            <sam:DataGridColumn Title="Price" 
+                                PropertyName="Need"/>-->
+            <!--<sam:DataGridColumn Title="Price" 
                                 Width="1*"
                                 CellBackgroundColor="#EEE"
                                 HorizontalTextAlignment="End"
-                                PropertyName="Price"/>
-            <!--<sam:DataGridColumn Title="Weight" 
+                                PropertyName="Price"/>-->
+            <sam:DataGridColumn Title="Weight" 
                                 Width="1*"
+                                CellBackgroundColor="#EEE"
                                 CellTextColor="Red"
                                 PropertyName="Weight"
-                                HorizontalTextAlignment="End"/>-->
+                                HorizontalTextAlignment="End"/>
 
             <sam:DataGrid.RowTriggers>
                 <!--If item is process-->

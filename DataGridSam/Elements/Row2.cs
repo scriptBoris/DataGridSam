@@ -359,7 +359,7 @@ namespace DataGridSam.Elements
             var col = DataGrid.Columns[colId];
             double sum = 0;
             for (int i = (colId - 1); i >= 0; i--)
-                sum += DataGrid.Columns[i].FacticalWidth;
+                sum += DataGrid.Columns[i].ActualWidth;
 
             if (!col.IsVisible)
             {
@@ -376,7 +376,7 @@ namespace DataGridSam.Elements
                         dif += c.Width.Value;
 
                 double final = col.Width.Value / com;
-                col.FacticalWidth = (width - dif) * final;
+                col.ActualWidth = (width - dif) * final;
 
                 if (colId == 0)
                     return 0;
@@ -385,7 +385,7 @@ namespace DataGridSam.Elements
             }
             else
             {
-                col.FacticalWidth = col.Width.Value;
+                col.ActualWidth = col.Width.Value;
 
                 if (colId == 0)
                     return 0;

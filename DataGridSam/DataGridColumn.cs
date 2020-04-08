@@ -11,8 +11,9 @@ namespace DataGridSam
     public class DataGridColumn : BindableObject, IDefinition
     {
         public event EventHandler SizeChanged;
-        public double FacticalWidth { get; internal set; }
         public DataGrid DataGrid { get; private set; }
+        public double ActualWidth { get; internal set; }
+        public double ActualX { get; internal set; }
         public int Index { get; private set; }
 
         internal Label HeaderLabel;

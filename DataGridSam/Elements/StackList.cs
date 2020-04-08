@@ -21,7 +21,7 @@ namespace DataGridSam.Elements
         // ItemsSource
         public static BindableProperty ItemsSourceProperty =
             BindableProperty.Create(nameof(ItemsSource), typeof(IEnumerable), typeof(StackList), null, defaultBindingMode: BindingMode.OneWay,
-                propertyChanged: ItemsChanged);
+                propertyChanged: ItemsSourceChanged);
         public IEnumerable ItemsSource
         {
             get { return (IEnumerable)GetValue(ItemsSourceProperty); }
@@ -46,7 +46,7 @@ namespace DataGridSam.Elements
             set { SetValue(DataGridProperty, value); }
         }
 
-        private static void ItemsChanged(BindableObject bindable, object oldValue, object newValue)
+        private static void ItemsSourceChanged(BindableObject bindable, object oldValue, object newValue)
         {
             var self = (StackList)bindable;
 
@@ -93,12 +93,10 @@ namespace DataGridSam.Elements
                     if (i == 0)
                         self.DataGrid.OnChangeItemsBindingContext(item.GetType());
 
-                    last = self.AddRow(item, i, self.ItemsCount);
+                    bool isLast = (i == self.ItemsCount - 1);
+                    last = self.AddRow(item, i, self.ItemsCount, !isLast);
                     i++;
                 }
-
-                if (last != null)
-                    last.UpdateLineVisibility(false);
             }
 
             self.HasItems = (self.ItemsCount > 0);
@@ -138,41 +136,33 @@ namespace DataGridSam.Elements
                 else
                     isAdd = true;
 
-                IGridRow lastRow = null;
-
                 // For add - previous line set visible
                 if (isAdd)
                 {
-                    lastRow = Children.LastOrDefault() as IGridRow;
+                    var lastRow = Children.LastOrDefault() as IGridRow;
                     if (lastRow != null)
                     {
                         lastRow.UpdateLineVisibility(true);
-                        lastRow = null;
                     }
                 }
 
-                int pause = 0;
+                int index = 0;
                 for (var i = 0; i < e.NewItems.Count; ++i)
                 {
-                    int index = i + e.NewStartingIndex;
-                    pause = index;
+                    index = i + e.NewStartingIndex;
                     var item = e.NewItems[i];
 
                     if (isInsert)
                     {
                         // Insert row
-                        lastRow = InsertRow(item, index, ItemsCount);
+                        InsertRow(item, index, ItemsCount);
                     }
                     else
                     {
                         // Add row
-                        lastRow = AddRow(item, index, ItemsCount);
+                        AddRow(item, index, ItemsCount, (i<e.NewItems.Count-1 ) );
                     }
                 }
-
-                // Hide last row line
-                if (lastRow != null && isAdd)
-                    lastRow.UpdateLineVisibility(false);
 
                 // recalc autonumber
                 if (DataGrid.IsAutoNumberCalc)
@@ -184,12 +174,12 @@ namespace DataGridSam.Elements
                     }
                     else if (DataGrid.AutoNumberStrategy == Enums.AutoNumberStrategyType.Down)
                     {
-                        for (int i = pause; i < Children.Count; i++)
+                        for (int i = index; i < Children.Count; i++)
                             ((IGridRow)Children[i]).UpdateAutoNumeric(i + 1, ItemsCount);
                     }
                     else if (DataGrid.AutoNumberStrategy == Enums.AutoNumberStrategyType.Up)
                     {
-                        for (int i = pause; i >= 0; i--)
+                        for (int i = index; i >= 0; i--)
                             ((IGridRow)Children[i]).UpdateAutoNumeric(i + 1, ItemsCount);
                     }
                 }
@@ -264,23 +254,9 @@ namespace DataGridSam.Elements
         /// <param name="host">Корневой элемент</param>        
         /// <param name="index">Индекс элемента таблицы</param>
         /// <param name="itemsCount">Количество элементов таблицы</param>
-        private IGridRow AddRow(object bindItem, int index, int itemsCount)
+        private IGridRow AddRow(object bindItem, int index, int itemsCount, bool isLineVisible)
         {
-            var type = RowImplementations.CustomLayout;
-            IGridRow row = null;
-
-            if (type == RowImplementations.StackLine)
-            {
-                row = new Row1(bindItem, DataGrid, index, itemsCount);
-            }
-            else if (type == RowImplementations.CustomGrid)
-            {
-                row = new Row2(bindItem, DataGrid, index, itemsCount);
-            }
-            else if (type == RowImplementations.CustomLayout)
-            {
-                row = new Row3(bindItem, DataGrid, index, itemsCount);
-            }
+            IGridRow row = new Row3(bindItem, DataGrid, index, itemsCount, isLineVisible);
 
             Children.Add(row as View);
             return row;
@@ -288,21 +264,12 @@ namespace DataGridSam.Elements
 
         private IGridRow InsertRow(object bindItem, int index, int itemsCount)
         {
-            var type = RowImplementations.CustomLayout;
-            IGridRow row = null;
+            IGridRow row;            
 
-            if (type == RowImplementations.StackLine)
-            {
-                row = new Row1(bindItem, DataGrid, index, itemsCount);
-            }
-            else if (type == RowImplementations.CustomGrid)
-            {
-                row = new Row2(bindItem, DataGrid, index, itemsCount);
-            }
-            else if (type == RowImplementations.CustomLayout)
-            {
-                row = new Row3(bindItem, DataGrid, index, itemsCount);
-            }
+            if (index == itemsCount - 1)
+                row = new Row3(bindItem, DataGrid, index, itemsCount, false);
+            else
+                row = new Row3(bindItem, DataGrid, index, itemsCount, true);
 
             Children.Insert(index, row as View);
             return row;
