@@ -59,7 +59,8 @@ namespace Sample.ViewModels
                 lastWare.IsSelected = true;
 
                 int pos = Items.IndexOf(ware);
-                View.DisplayAlert("Select", $"You are selected {pos} {ware.Name}", "OK");
+                lastWare.Name += " Selected ";
+                //View.DisplayAlert("Select", $"You are selected {pos} {ware.Name}", "OK");
             }
         }
 
@@ -69,7 +70,7 @@ namespace Sample.ViewModels
             {
                 SelectedItem = ware;
                 int pos = Items.IndexOf(ware);
-                View.DisplayAlert("Long tap", $"You are selected {pos} {ware.Name}", "OK");
+                //View.DisplayAlert("Long tap", $"You are selected {pos} {ware.Name}", "OK");
             }
         }
 

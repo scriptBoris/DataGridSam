@@ -99,9 +99,9 @@ namespace DataGridSam
         {
             var row = RowDefinitions.First();
 
-            if (height == 0)
+            if (height < 0)
                 row.Height = GridLength.Auto;
-            else if (height > 0)
+            else
                 row.Height = new GridLength(height);
         }
 
@@ -254,18 +254,6 @@ namespace DataGridSam
             {
                 wrapper.absoluteBottom.IsVisible = true;
             }
-        }
-
-        internal void ShowPaginationBackButton(bool isVisible)
-        {
-            if (buttonLatest != null)
-                buttonLatest.IsVisible = isVisible;
-        }
-        
-        internal void ShowPaginationNextButton(bool isVisible)
-        {
-            if (buttonLatest != null)
-                buttonNext.IsVisible = isVisible;
         }
 
         /// <summary>

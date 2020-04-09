@@ -13,7 +13,9 @@ namespace DataGridSam.Elements
     [Xamarin.Forms.Internals.Preserve(AllMembers = true)]
     internal sealed class GridRow : Layout<View>, IGridRow
     {
+        private StackList stackList;
         private bool isLineVisible;
+        private double rowHeight = -1;
 
         public DataGrid DataGrid { get; set; }
         public int Index { get; set; }
@@ -25,16 +27,16 @@ namespace DataGridSam.Elements
         public List<GridCell> Cells { get; set; }
         public RowTrigger EnabledTrigger { get; set; }
 
-        public GridRow(object context, DataGrid host, int id, int itemsCount, bool isLineVisible)
+        public GridRow(object context, StackList host, int id, int itemsCount, bool isLineVisible)
         {
             Context = context;
             BindingContext = context;
-            DataGrid = host;
+            DataGrid = host.DataGrid;
             Index = id;
             this.isLineVisible = isLineVisible;
+            stackList = host;
 
             IsClippedToBounds = true;
-            BackgroundColor = Color.Transparent;
             VerticalOptions = LayoutOptions.Start;
             HorizontalOptions = LayoutOptions.FillAndExpand;
             Cells = new List<GridCell>();
@@ -150,6 +152,7 @@ namespace DataGridSam.Elements
             }
             else
             {
+                // Row color 
                 BackgroundColor = ValueSelector.GetBackgroundColor(
                     DataGrid.VisualRowsFromStyle.BackgroundColor,
                     DataGrid.VisualRows.BackgroundColor);
@@ -167,6 +170,8 @@ namespace DataGridSam.Elements
 
                 if (IsSelected)
                 {
+                    cell.Wrapper.BackgroundColor = Color.Transparent;
+
                     // SELECT
                     if (EnabledTrigger == null)
                     {
@@ -191,8 +196,6 @@ namespace DataGridSam.Elements
                             DataGrid.VisualRowsFromStyle,
                             DataGrid.VisualRows);
                     }
-
-                    cell.Wrapper.BackgroundColor = Color.Transparent;
                 }
                 // TRIGGER
                 else if (EnabledTrigger != null)
@@ -210,10 +213,12 @@ namespace DataGridSam.Elements
                 // DEFAULT
                 else
                 {
-                    // row background
-                    cell.Wrapper.BackgroundColor = ValueSelector.GetSelectedColor(
+                    // cell background
+                    var color = ValueSelector.GetSelectedColor(
                         cell.Column.VisualCellFromStyle.BackgroundColor,
                         cell.Column.VisualCell.BackgroundColor);
+                    color = color.MultiplyAlpha(0.5);
+                    cell.Wrapper.BackgroundColor = color;
 
                     MergeVisual(cell.Label,
                         cell.Column.VisualCellFromStyle,
@@ -263,8 +268,36 @@ namespace DataGridSam.Elements
 
         public void UpdateCellVisibility(int cellId, bool isVisible)
         {
-            //ColumnDefinitions[cellId].Width = Cells[cellId].Column.CalcWidth;
-            //Cells[cellId].Wrapper.IsVisible = isVisible;
+            var currentCell = Cells[cellId];
+
+            if (isVisible)
+            {
+                Children.Add(currentCell.Wrapper);
+                Children.Add(currentCell.Content);
+            }
+            else
+            {
+                Children.Remove(currentCell.Wrapper);
+                Children.Remove(currentCell.Content);
+            }
+
+            double height = 0.0;
+            foreach (var cell in Cells)
+            {
+                if (cell.Column.IsVisible)
+                {
+                    double h = CalculateCellHeight(cell, Width);
+                    if (height < h)
+                        height = h;
+                }
+            }
+
+            LayoutChildren(0, 0, Width, height);
+            //foreach (var cell in Cells)
+            //{
+            //    if (cell.Column.IsVisible)
+            //        RenderCellOnLayout(cell, Width, height);
+            //}
         }
 
         private void MergeVisual(Label label, params VisualCollector[] styles)
@@ -282,9 +315,17 @@ namespace DataGridSam.Elements
         #region Layot calculation
         protected override void LayoutChildren(double x, double y, double width, double height)
         {
+            if (rowHeight > 0)
+                height = rowHeight;
+
             // Render cells
             foreach (var cell in Cells)
-                CalculatePositionCell(cell, width, height, false);
+            {
+                if (!cell.Column.IsVisible)
+                    continue;
+
+                RenderCellOnLayout(cell, width, height);
+            }
 
             // Selection box
             var rectSelection = new Rectangle(0, 0, width, height + DataGrid.BorderWidth);
@@ -296,17 +337,23 @@ namespace DataGridSam.Elements
                 var rect = new Rectangle(0, height - DataGrid.BorderWidth, width, height);
                 LayoutChildIntoBoundingRegion(Line, rect);
             }
+
+            if (rowHeight > 0)
+                HeightRequest = height;
         }
 
         protected override SizeRequest OnMeasure(double width, double height)
         {
-            if (Children.Count == 0)
+            if (Cells.Count == 0)
                 return new SizeRequest(new Size(width, 0));
 
             double actualHeight = 0.0;
             foreach (var cell in Cells)
             {
-                double cellHeight = CalculatePositionCell(cell, width, height, true);
+                if (!cell.Column.IsVisible)
+                    continue;
+
+                double cellHeight = CalculateCellHeight(cell, width);
 
                 if (actualHeight < cellHeight)
                     actualHeight = cellHeight;
@@ -316,33 +363,30 @@ namespace DataGridSam.Elements
             if (isLineVisible)
                 actualHeight += DataGrid.BorderWidth;
 
+            rowHeight = actualHeight;
             return new SizeRequest(new Size(width, actualHeight));
         }
 
-        private double CalculatePositionCell(GridCell cell, double width, double height, bool isRequest)
+        private double CalculateCellHeight(GridCell cell, double rowWidth)
         {
-            double w = CalcWidth(width, cell.Index);
+            double width = CalcWidth(rowWidth, cell.Column);
+            var cellSize = cell.Content.Measure(width, double.PositiveInfinity, MeasureFlags.IncludeMargins);
+            return cellSize.Request.Height;
+        }
 
-            if (isRequest)
-            {
-                var cellSize = cell.Content.Measure(w, double.PositiveInfinity, MeasureFlags.IncludeMargins);
-                return cellSize.Request.Height;
-            }
-            else
-            {
-                double x = CalcX(width, cell.Index);
-                var rect = new Rectangle(x, 0, w, height);
-                LayoutChildIntoBoundingRegion(cell.Wrapper, rect);
-                LayoutChildIntoBoundingRegion(cell.Content, rect);
-                return 0.0;
-            }
+        private void RenderCellOnLayout(GridCell cell, double rowWidth, double rowHeight)
+        {
+            double w = CalcWidth(rowWidth, cell.Column);
+            double x = CalcX(rowWidth, cell.Column);
+            var rect = new Rectangle(x, 0, w, rowHeight);
+
+            LayoutChildIntoBoundingRegion(cell.Wrapper, rect);
+            LayoutChildIntoBoundingRegion(cell.Content, rect);
         }
 
         // TODO Upgrade performance
-        private double CalcWidth(double rowWidth, int colId)
+        private double CalcWidth(double rowWidth, DataGridColumn col)
         {
-            var col = DataGrid.Columns[colId];
-
             if (!col.IsVisible)
                 return 0.0;
 
@@ -355,22 +399,29 @@ namespace DataGridSam.Elements
                 double com = 0;
                 double dif = 0;
                 foreach (var c in DataGrid.Columns)
+                {
+                    if (!c.IsVisible)
+                        continue;
+
                     if (c.Width.IsStar)
                         com += c.Width.Value;
                     else
                         dif += c.Width.Value;
+                }
 
                 return (rowWidth - dif) * (col.Width.Value / com);
             }
         }
 
         // TODO Upgrade performance
-        private double CalcX(double rowWidth, int colId)
+        private double CalcX(double rowWidth, DataGridColumn col)
         {
-            var col = DataGrid.Columns[colId];
             double sum = 0;
-            for (int i = (colId - 1); i >= 0; i--)
-                sum += DataGrid.Columns[i].ActualWidth;
+            for (int i = col.Index-1; i >= 0; i--)
+            {
+                if (DataGrid.Columns[i].IsVisible)
+                    sum += DataGrid.Columns[i].ActualWidth;
+            }
 
             if (!col.IsVisible)
             {
@@ -381,15 +432,20 @@ namespace DataGridSam.Elements
                 double dif = 0;
                 double com = 0;
                 foreach (var c in DataGrid.Columns)
+                {
+                    if (!c.IsVisible)
+                        continue;
+
                     if (c.Width.IsStar)
                         com += c.Width.Value;
                     else
                         dif += c.Width.Value;
+                }
 
                 double final = col.Width.Value / com;
                 col.ActualWidth = (rowWidth - dif) * final;
 
-                if (colId == 0)
+                if (col.Index == 0)
                     return 0;
 
                 return sum;
@@ -398,7 +454,7 @@ namespace DataGridSam.Elements
             {
                 col.ActualWidth = col.Width.Value;
 
-                if (colId == 0)
+                if (col.Index == 0)
                     return 0;
 
                 return sum;

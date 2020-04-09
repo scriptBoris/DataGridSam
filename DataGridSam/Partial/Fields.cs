@@ -39,46 +39,17 @@ namespace DataGridSam
         /// <summary>
         /// Contains: stackList, maskGrid
         /// </summary>
-        internal Grid bodyGrid;
+        internal GridBody bodyGrid;
 
         /// <summary>
         /// Group of BoxViews imitate wrapper (for max FPS)
         /// </summary>
         internal BorderWrapper wrapper;
 
-
-
         /// <summary>
         /// Current time: selected row by user
         /// </summary>
         internal IGridRow SelectedRow;
-
-
-
-        /// <summary>
-        /// Only for pagination
-        /// </summary>
-        internal int PaginationCurrentPageStartIndex;
-
-        /// <summary>
-        /// Only for pagination
-        /// </summary>
-        internal int PaginationCurrentPageItemsEndIndex;
-
-        /// <summary>
-        /// Only for pagination
-        /// </summary>
-        internal int PaginationCurrentPageEndIndex;
-
-        /// <summary>
-        /// For pagination
-        /// </summary>
-        internal Button buttonLatest;
-
-        /// <summary>
-        /// For pagination
-        /// </summary>
-        internal Button buttonNext;
 
         /// <summary>
         /// Need calc auto number?
@@ -91,10 +62,27 @@ namespace DataGridSam
         internal AutoNumberStrategyType AutoNumberStrategy = AutoNumberStrategyType.None;
 
 
+        /// <summary>
+        /// Visual container for ROWs from style
+        /// </summary>
         internal VisualCollector VisualRowsFromStyle = new VisualCollector();
+        /// <summary>
+        /// Visual container for ROWs from DataGrid props
+        /// </summary>
         internal VisualCollector VisualRows = new VisualCollector();
-
+        /// <summary>
+        /// Visual container for SELECTED ROW from style
+        /// </summary>
         internal VisualCollector VisualSelectedRowFromStyle = new VisualCollector();
+        /// <summary>
+        /// Visual container for SELECTED ROW from DataGrid props
+        /// </summary>
         internal VisualCollector VisualSelectedRow = new VisualCollector();
+
+        /// <summary>
+        /// Solve columns count for feature calculate 
+        /// (dodge exceptions as ColumnSpan can not be zero)
+        /// </summary>
+        internal int ColumnSpan => (Columns?.Count > 0) ? Columns.Count : 1;
     }
 }

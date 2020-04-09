@@ -22,7 +22,6 @@
                       IsWrapped="True"
                       HeaderBackgroundColor="#1976d2"
                       HeaderTextColor="White"
-                      SelectedRowAttribute="Bold"
                       SelectedRowColor="#64b5f6"
                       RowsColor="White"
                       RowsTextColor="Black"
@@ -51,11 +50,11 @@
             <sam:DataGridColumn Title="Name" 
                                 Width="2*"
                                 CellBackgroundColor="#EEE"
-                                PropertyName="NameView"/>
-            <!--<sam:DataGridColumn Title="Need" 
+                                PropertyName="Name"/>
+            <sam:DataGridColumn Title="Need" 
                                 Width="2*"
                                 HorizontalTextAlignment="End"
-                                PropertyName="Need"/>-->
+                                PropertyName="Need"/>
             <!--<sam:DataGridColumn Title="Price" 
                                 Width="1*"
                                 CellBackgroundColor="#EEE"
@@ -91,6 +90,7 @@
                        FontSize="20"
                        TextColor="Black"/>
                 <Label Text="{Binding SelectedItem.Name}"
+                       IsVisible="False"
                        FontSize="20"
                        TextColor="Black"/>
                 <Label Text="{Binding SelectedItem.Weight, StringFormat='(weight: {0})'}"

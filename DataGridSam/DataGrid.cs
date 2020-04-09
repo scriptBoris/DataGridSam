@@ -29,28 +29,11 @@ namespace DataGridSam
             SetRow(headGrid, 0);
             Children.Add(headGrid);
 
-            // Scroll (1)
-            mainScroll = new GridScroll();
-            SetRow(mainScroll, 1);
-            Children.Add(mainScroll);
-
-            // Body Grid (2)
-            bodyGrid = new Grid();
-            bodyGrid.VerticalOptions = LayoutOptions.Start;
-            bodyGrid.RowSpacing = 0;
-            bodyGrid.RowDefinitions = new RowDefinitionCollection
-            {
-                new RowDefinition { Height = GridLength.Auto },
-                new RowDefinition { Height = GridLength.Auto },
-            };
-            mainScroll.Content = bodyGrid;
-
             // Stack list (3)
             stackList = new StackList();
+            stackList.VerticalOptions = LayoutOptions.FillAndExpand;
             stackList.Spacing = 0;
             stackList.DataGrid = this;
-            bodyGrid.Children.Add(stackList);
-
 
             // Mask Grid (3)
             maskGrid = new Grid();
@@ -60,8 +43,16 @@ namespace DataGridSam
             maskGrid.InputTransparent = true;
             maskGrid.SetBinding(Grid.IsVisibleProperty, new Binding(nameof(stackList.HasItems), source: stackList));
 
-            bodyGrid.Children.Add(maskGrid);
+            // Body Grid (2)
+            bodyGrid = new GridBody(this, stackList, maskGrid);
+            bodyGrid.VerticalOptions = LayoutOptions.Start;
 
+
+            // Scroll (1)
+            mainScroll = new GridScroll();
+            SetRow(mainScroll, 1);
+            mainScroll.Content = bodyGrid;
+            this.Children.Add(mainScroll);
 
             // Wrapper (1)
             wrapper = new BorderWrapper(this);
@@ -124,7 +115,6 @@ namespace DataGridSam
                 propertyChanged: (thisObject, oldValue, newValue) =>
                 {
                     DataGrid self = thisObject as DataGrid;
-
                     self.stackList.ItemsSource = newValue as ICollection;
                 });
         public IEnumerable ItemsSource
@@ -189,7 +179,7 @@ namespace DataGridSam
         public static readonly BindableProperty BorderWidthProperty =
             BindableProperty.Create(nameof(BorderWidth), typeof(double), typeof(DataGrid), 1.0, BindingMode.Default);
         /// <summary>
-        /// default: 1
+        /// Border width (default: 1)
         /// </summary>
         public double BorderWidth
         {
@@ -198,8 +188,9 @@ namespace DataGridSam
         }
 
 
-
-        // Border color
+        /// <summary>
+        /// Border color (default: Color.Gray)
+        /// </summary>
         public static readonly BindableProperty BorderColorProperty =
             BindableProperty.Create(nameof(BorderColor), typeof(Color), typeof(DataGrid), Color.Gray);
         /// <summary>
@@ -215,11 +206,13 @@ namespace DataGridSam
 
 
 
-        // Cell padding
+        /// <summary>
+        /// Cell padding (thickness) (default { 5,5,5,5 })
+        /// </summary>
         public static readonly BindableProperty CellPaddingProperty =
             BindableProperty.Create(nameof(CellPadding), typeof(Thickness), typeof(DataGrid), defaultValue: new Thickness(5));
         /// <summary>
-        /// Cell padding (thickness). Default: {5,5,5,5}
+        /// Cell padding (thickness) (default: { 5,5,5,5 })
         /// </summary>
         public Thickness CellPadding
         {
@@ -231,12 +224,12 @@ namespace DataGridSam
 
 
         /// <summary>
-        /// Color when user taped on item (Default: none (default))
+        /// Color when user taped on item (default: none (default))
         /// </summary>
         public static readonly BindableProperty TapColorProperty =
             BindableProperty.Create(nameof(TapColor), typeof(Color), typeof(DataGrid), Color.Default);
         /// <summary>
-        /// Color when user taped on item (Default: none (default))
+        /// Color when user taped on item (default: none (default))
         /// </summary>
         public Color TapColor
         {
@@ -247,7 +240,9 @@ namespace DataGridSam
 
 
 
-        // Is wrapped by borders
+        /// <summary>
+        /// Is wrapped by borders (default: true)
+        /// </summary>
         public static readonly BindableProperty IsWrappedProperty =
             BindableProperty.Create(nameof(IsWrapped), typeof(bool), typeof(DataGrid), true,
                 propertyChanged: (b, o, n) =>
@@ -264,7 +259,7 @@ namespace DataGridSam
         }
 
 
-        #region header
+        #region header visual
         // Header has borders
         public static readonly BindableProperty HeaderHasBorderProperty =
             BindableProperty.Create(nameof(HeaderHasBorder), typeof(bool), typeof(DataGrid), true,
@@ -284,15 +279,19 @@ namespace DataGridSam
 
 
 
-
-        // Header height
+        /// <summary>
+        /// Header height (default: -1 (AutoSize))
+        /// </summary>
         public static readonly BindableProperty HeaderHeightProperty =
-            BindableProperty.Create(nameof(HeaderHeight), typeof(int), typeof(DataGrid), 0,
+            BindableProperty.Create(nameof(HeaderHeight), typeof(int), typeof(DataGrid), -1,
                 propertyChanged: (b, o, n) =>
                 {
                     var self = b as DataGrid;
                     self.UpdateHeadHeight((int)n);
                 });
+        /// <summary>
+        /// Header height (default: 0 (AutoSize))
+        /// </summary>
         public int HeaderHeight
         {
             get { return (int)GetValue(HeaderHeightProperty); }

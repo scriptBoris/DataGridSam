@@ -35,6 +35,7 @@ namespace DataGridSam.Elements
                 IsCustomTemplate = true;
                 Content = column.CellTemplate.CreateContent() as View;
                 Content.BindingContext = row.Context;
+                Content.VerticalOptions = LayoutOptions.FillAndExpand;
 
                 if (Content is Layout layout)
                 {
@@ -47,6 +48,7 @@ namespace DataGridSam.Elements
             {
                 Label = new Label();
                 Label.Margin = host.CellPadding;
+                Label.InputTransparent = true;
 
                 if (column.PropertyName != null)
                     Label.SetBinding(Label.TextProperty, new Binding(

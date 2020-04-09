@@ -100,8 +100,6 @@ namespace DataGridSam.Elements
             }
 
             self.HasItems = (self.ItemsCount > 0);
-            self.UpdateChildrenLayout();
-            self.InvalidateLayout();
         }
 
         private void OnItemsSourceCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -256,7 +254,7 @@ namespace DataGridSam.Elements
         /// <param name="itemsCount">Количество элементов таблицы</param>
         private IGridRow AddRow(object bindItem, int index, int itemsCount, bool isLineVisible)
         {
-            IGridRow row = new GridRow(bindItem, DataGrid, index, itemsCount, isLineVisible);
+            IGridRow row = new GridRow(bindItem, this, index, itemsCount, isLineVisible);
 
             Children.Add(row as View);
             return row;
@@ -267,9 +265,9 @@ namespace DataGridSam.Elements
             IGridRow row;            
 
             if (index == itemsCount - 1)
-                row = new GridRow(bindItem, DataGrid, index, itemsCount, false);
+                row = new GridRow(bindItem, this, index, itemsCount, false);
             else
-                row = new GridRow(bindItem, DataGrid, index, itemsCount, true);
+                row = new GridRow(bindItem, this, index, itemsCount, true);
 
             Children.Insert(index, row as View);
             return row;
