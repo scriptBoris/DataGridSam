@@ -49,7 +49,7 @@ namespace DataGridSam
         /// <summary>
         /// Current time: selected row by user
         /// </summary>
-        internal IGridRow SelectedRow;
+        internal GridRow SelectedRow;
 
         /// <summary>
         /// Need calc auto number?

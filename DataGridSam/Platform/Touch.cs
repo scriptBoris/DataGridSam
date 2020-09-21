@@ -84,7 +84,7 @@ namespace DataGridSam.Platform
 
         // Long tap latency
         public static readonly BindableProperty LongTapLatencyProperty = BindableProperty.CreateAttached(
-                "LongTap", typeof(double), typeof(Touch), 700.0);
+                "LongTapLantency", typeof(double), typeof(Touch), 700.0);
         public static void SetLongTapLatency(BindableObject view, double value)
         {
             view.SetValue(LongTapLatencyProperty, value);
@@ -106,36 +106,6 @@ namespace DataGridSam.Platform
 
             view.InputTransparent = false;
             view.Effects.Add(new TouchEffect());
-
-            //if (bindable is Layout layout)
-            //{
-            //    foreach (var item in layout.Children)
-            //    {
-            //        if (item is Button b)
-            //            b.InputTransparent = false;
-            //        else if (item is View v)
-            //            v.InputTransparent = true;
-            //    }
-            //}
-
-            //if (EffectsConfig.AutoChildrenInputTransparent && b is Layout &&
-            //    !EffectsConfig.GetChildrenInputTransparent(view))
-            //{
-            //    EffectsConfig.SetChildrenInputTransparent(view, true);
-            //}
-            //else
-            //{
-            //    if (effect == null || view.BindingContext == null)
-            //        return;
-
-            //    view.Effects.Remove(effect);
-
-            //    if (EffectsConfig.AutoChildrenInputTransparent && b is Layout &&
-            //        EffectsConfig.GetChildrenInputTransparent(view))
-            //    {
-            //        EffectsConfig.SetChildrenInputTransparent(view, false);
-            //    }
-            //}
         }
 
         private static void IsEnabledChanged(BindableObject b, object o, object n)

@@ -127,7 +127,7 @@ namespace DataGridSam
                 
             foreach (var item in stackList.Children)
             {
-                var row = item as IGridRow;
+                var row = item as GridRow;
                 row?.UpdateCellVisibility(i, isVisible);
             }
         }
@@ -272,8 +272,8 @@ namespace DataGridSam
         {
             foreach (var item in stackList.Children)
             {
-                var row = item as IGridRow;
-                DataGridSam.Platform.Touch.SetTap(row.TouchBox, command);
+                var row = item as GridRow;
+                DataGridSam.Platform.Touch.SetTap(row.SelectionBox, command);
             }
         }
 
@@ -281,8 +281,8 @@ namespace DataGridSam
         {
             foreach (var item in stackList.Children)
             {
-                var row = item as IGridRow;
-                DataGridSam.Platform.Touch.SetLongTap(row.TouchBox, command);
+                var row = item as GridRow;
+                DataGridSam.Platform.Touch.SetLongTap(row.SelectionBox, command);
             }
         }
 
@@ -305,7 +305,7 @@ namespace DataGridSam
 
                 if (match >= 0 && self.stackList.Children.Count > 0)
                 {
-                    var row = self.stackList.Children[match] as IGridRow;
+                    var row = self.stackList.Children[match] as GridRow;
                     row.IsSelected = true;
                     row.UpdateStyle();
 

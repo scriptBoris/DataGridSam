@@ -11,13 +11,13 @@ namespace DataGridSam.Elements
         internal DataGridColumn Column;
         internal BoxView Wrapper;
         internal View Content;
-        internal IGridRow Row;
+        internal GridRow Row;
         internal Label Label {
             get         => Content as Label;
             private set => Content = value;
         }
 
-        public GridCell(IGridRow row, DataGridColumn column)
+        public GridCell(GridRow row, DataGridColumn column)
         {
             Row = row;
             Column = column;

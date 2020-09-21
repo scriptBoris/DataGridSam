@@ -86,7 +86,7 @@ namespace DataGridSam.Elements
             if (newList != null)
             {
                 int i = 0;
-                IGridRow last = null;
+                GridRow last = null;
                 foreach (var item in newList)
                 {
                     // Say triggers what binding context changed
@@ -137,7 +137,7 @@ namespace DataGridSam.Elements
                 // For add - previous line set visible
                 if (isAdd)
                 {
-                    var lastRow = Children.LastOrDefault() as IGridRow;
+                    var lastRow = Children.LastOrDefault() as GridRow;
                     if (lastRow != null)
                     {
                         lastRow.UpdateLineVisibility(true);
@@ -168,17 +168,17 @@ namespace DataGridSam.Elements
                     if (DataGrid.AutoNumberStrategy == Enums.AutoNumberStrategyType.Both)
                     {
                         for (int i = 0; i < Children.Count; i++)
-                            ((IGridRow)Children[i]).UpdateAutoNumeric(i + 1, ItemsCount);
+                            ((GridRow)Children[i]).UpdateAutoNumeric(i + 1, ItemsCount);
                     }
                     else if (DataGrid.AutoNumberStrategy == Enums.AutoNumberStrategyType.Down)
                     {
                         for (int i = index; i < Children.Count; i++)
-                            ((IGridRow)Children[i]).UpdateAutoNumeric(i + 1, ItemsCount);
+                            ((GridRow)Children[i]).UpdateAutoNumeric(i + 1, ItemsCount);
                     }
                     else if (DataGrid.AutoNumberStrategy == Enums.AutoNumberStrategyType.Up)
                     {
                         for (int i = index; i >= 0; i--)
-                            ((IGridRow)Children[i]).UpdateAutoNumeric(i + 1, ItemsCount);
+                            ((GridRow)Children[i]).UpdateAutoNumeric(i + 1, ItemsCount);
                     }
                 }
             }
@@ -197,7 +197,7 @@ namespace DataGridSam.Elements
 
                 if (isLast)
                 {
-                    var last = Children.LastOrDefault() as IGridRow;
+                    var last = Children.LastOrDefault() as GridRow;
                     if (last != null)
                     {
                         last.UpdateLineVisibility(false);
@@ -210,12 +210,12 @@ namespace DataGridSam.Elements
                     if (DataGrid.AutoNumberStrategy == Enums.AutoNumberStrategyType.Both)
                     {
                         for (int i = 0; i < Children.Count; i++)
-                            (Children[i] as IGridRow).UpdateAutoNumeric(i + 1, ItemsCount);
+                            (Children[i] as GridRow).UpdateAutoNumeric(i + 1, ItemsCount);
                     }
                     else if (DataGrid.AutoNumberStrategy == Enums.AutoNumberStrategyType.Down)
                     {
                         for (int i = delIndex; i < Children.Count; i++)
-                            (Children[i] as IGridRow).UpdateAutoNumeric(i + 1, ItemsCount);
+                            (Children[i] as GridRow).UpdateAutoNumeric(i + 1, ItemsCount);
                     }
                     else if (DataGrid.AutoNumberStrategy == Enums.AutoNumberStrategyType.Up)
                     {
@@ -226,7 +226,7 @@ namespace DataGridSam.Elements
                                 delIndex = 0;
 
                             for (int i = delIndex; i >= 0; i--)
-                                (Children[i] as IGridRow).UpdateAutoNumeric(i + 1, ItemsCount);
+                                (Children[i] as GridRow).UpdateAutoNumeric(i + 1, ItemsCount);
                         }
                     }
                 }
@@ -252,17 +252,17 @@ namespace DataGridSam.Elements
         /// <param name="host">Корневой элемент</param>        
         /// <param name="index">Индекс элемента таблицы</param>
         /// <param name="itemsCount">Количество элементов таблицы</param>
-        private IGridRow AddRow(object bindItem, int index, int itemsCount, bool isLineVisible)
+        private GridRow AddRow(object bindItem, int index, int itemsCount, bool isLineVisible)
         {
-            IGridRow row = new GridRow(bindItem, this, index, itemsCount, isLineVisible);
+            GridRow row = new GridRow(bindItem, this, index, itemsCount, isLineVisible);
 
             Children.Add(row as View);
             return row;
         }
 
-        private IGridRow InsertRow(object bindItem, int index, int itemsCount)
+        private GridRow InsertRow(object bindItem, int index, int itemsCount)
         {
-            IGridRow row;            
+            GridRow row;            
 
             if (index == itemsCount - 1)
                 row = new GridRow(bindItem, this, index, itemsCount, false);

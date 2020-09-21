@@ -188,7 +188,7 @@ namespace DataGridSam
             return false;
         }
 
-        internal static RowTrigger SetTriggerStyle(IGridRow row, string propName)
+        internal static RowTrigger SetTriggerStyle(GridRow row, string propName)
         {
             if (row.DataGrid.RowTriggers.Count == 0)
                 return null;
@@ -212,18 +212,6 @@ namespace DataGridSam
             row.UpdateStyle();
 
             return matchTrigger;
-        }
-
-        private static RowTrigger GetFirstTrigger(IGridRow row)
-        {
-            foreach (var trigger in row.DataGrid.RowTriggers)
-            {
-                if (trigger.CheckTriggerActivated(row.Context))
-                {
-                    return trigger;
-                }
-            }
-            return null;
         }
         #endregion
     }

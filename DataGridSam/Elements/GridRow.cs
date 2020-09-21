@@ -11,21 +11,20 @@ using Xamarin.Forms;
 namespace DataGridSam.Elements
 {
     [Xamarin.Forms.Internals.Preserve(AllMembers = true)]
-    internal sealed class GridRow : Layout<View>, IGridRow
+    internal sealed class GridRow : Layout<View>
     {
-        private StackList stackList;
         private bool isLineVisible;
         private double rowHeight = -1;
 
-        public DataGrid DataGrid { get; set; }
-        public int Index { get; set; }
-        public bool IsSelected { get; set; }
-        public object Context { get; set; }
-        public View SelectionBox { get; set; }
-        public View TouchBox { get => this; set { } }
-        public View Line { get; set; }
-        public List<GridCell> Cells { get; set; }
-        public RowTrigger EnabledTrigger { get; set; }
+        internal DataGrid DataGrid;
+        internal int Index;
+        internal bool IsSelected;
+        internal object Context;
+        internal View SelectionBox;
+        //internal View TouchBox;
+        internal View Line;
+        internal List<GridCell> Cells;
+        internal RowTrigger EnabledTrigger;
 
         public GridRow(object context, StackList host, int id, int itemsCount, bool isLineVisible)
         {
@@ -34,7 +33,6 @@ namespace DataGridSam.Elements
             DataGrid = host.DataGrid;
             Index = id;
             this.isLineVisible = isLineVisible;
-            stackList = host;
 
             IsClippedToBounds = true;
             VerticalOptions = LayoutOptions.Start;
