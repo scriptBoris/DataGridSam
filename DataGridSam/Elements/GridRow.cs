@@ -55,7 +55,7 @@ namespace DataGridSam.Elements
             int i = 0;
             foreach (var column in DataGrid.Columns)
             {
-                var cell = new GridCell(column, this, DataGrid);
+                var cell = new GridCell(this, column);
 
                 Children.Add(cell.Wrapper);
                 Children.Add(cell.Content);
@@ -165,7 +165,7 @@ namespace DataGridSam.Elements
             // 4) default
             foreach (var cell in Cells)
             {
-                if (cell.IsCustomTemplate)
+                if (cell.Column.CellTemplate != null)
                     continue;
 
                 if (IsSelected)

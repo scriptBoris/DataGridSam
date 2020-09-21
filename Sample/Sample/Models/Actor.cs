@@ -12,5 +12,6 @@ namespace Sample.Models
         public string Family { get; set; }
         public string FamousRole { get; set; }
         public string Description { get; set; }
+        public bool HasOskar { get; set; }
     }
 }

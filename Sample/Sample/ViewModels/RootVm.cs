@@ -21,6 +21,11 @@ namespace Sample.ViewModels
                 var vm = new CustomCellsDemoVm();
                 await NavigationGoAsync(vm);
             });
+            CommandButtons = new Command(async () =>
+            {
+                var vm = new ButtonsDemoVm();
+                await NavigationGoAsync(vm);
+            });
             CommandStyles = new Command(async () =>
             {
                 var vm = new StylesVm();
@@ -40,6 +45,7 @@ namespace Sample.ViewModels
 
         public ICommand CommandDev { get; set; }
         public ICommand CommandCustomCells { get; set; }
+        public ICommand CommandButtons { get; set; }
         public ICommand CommandStyles { get; set; }
         public ICommand CommandTriggersDemo { get; set; }
         public ICommand CommandEmbeddedDemo { get; set; }

@@ -25,7 +25,6 @@
         <!--Table-->
         <sam:DataGrid ItemsSource="{Binding Items}"
                       SelectedItem="{Binding SelectedItem}"
-                      PaginationItemCount="10"
                       VerticalOptions="FillAndExpand"
                       HeaderTextColor="White"
                       HeaderFontSize="16"

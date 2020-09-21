@@ -95,10 +95,10 @@ namespace DataGridSam
                         return;
                     }
 
-                    foreach (var item in self.RowTriggers)
-                    {
-                        item.OnAttached(self);
-                    }
+                    //foreach (var item in self.RowTriggers)
+                    //{
+                    //    item.OnAttached(self);
+                    //}
                 });
         public List<RowTrigger> RowTriggers
         {

@@ -8,7 +8,6 @@ namespace DataGridSam.Elements
 {
     internal class GridCell
     {
-        internal bool IsCustomTemplate;
         internal DataGridColumn Column;
         internal BoxView Wrapper;
         internal View Content;
@@ -17,9 +16,8 @@ namespace DataGridSam.Elements
             get         => Content as Label;
             private set => Content = value;
         }
-        internal int Index => Column.Index;
 
-        public GridCell(DataGridColumn column, IGridRow row, DataGrid host)
+        public GridCell(IGridRow row, DataGridColumn column)
         {
             Row = row;
             Column = column;
@@ -32,22 +30,27 @@ namespace DataGridSam.Elements
             // Create custom template
             if (column.CellTemplate != null)
             {
-                IsCustomTemplate = true;
                 Content = column.CellTemplate.CreateContent() as View;
                 Content.BindingContext = row.Context;
-                Content.VerticalOptions = LayoutOptions.FillAndExpand;
+                //Content.InputTransparent = true;
+                //Content.VerticalOptions = LayoutOptions.FillAndExpand;
 
-                if (Content is Layout layout)
+                if (CheckInput(Content))
                 {
-                    layout.InputTransparent = true;
-                    layout.CascadeInputTransparent = true;
+                    //Content.InputTransparent = false;
                 }
+                //if (Content is Layout layout)
+                //{
+                //    layout.CascadeInputTransparent = true;
+                //    layout.InputTransparent = true;
+                //}
             }
             // Create standart cell
             else
             {
                 Label = new Label();
-                Label.Margin = host.CellPadding;
+                Label.Margin = column.DataGrid.CellPadding;
+
                 Label.InputTransparent = true;
 
                 if (column.PropertyName != null)
@@ -60,6 +63,40 @@ namespace DataGridSam.Elements
 
             // Set started column visible
             Content.IsVisible = column.IsVisible;
+        }
+
+        private bool CheckInput(Element element)
+        {
+            if (element is Layout layout)
+            {
+                layout.CascadeInputTransparent = false;
+                layout.InputTransparent = true;
+                foreach (var item in layout.Children)
+                {
+                    bool res = CheckInput(item);
+                    if (res) return true;
+                }
+                return false;
+            }
+            else if (element is Button button)
+            {
+                button.InputTransparent = false;
+                return true;
+            }
+            else if (element is Entry entry)
+            {
+                entry.InputTransparent = false;
+                return true;
+            }
+            else if (element is View view)
+            {
+                view.InputTransparent = true;
+                return false;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

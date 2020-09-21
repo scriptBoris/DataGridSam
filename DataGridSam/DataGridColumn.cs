@@ -212,6 +212,18 @@ namespace DataGridSam
             set { SetValue(HeaderLabelStyleProperty, value); }
         }
 
+        // Is selectable
+        public static readonly BindableProperty IsSelectableProperty =
+            BindableProperty.Create(nameof(IsSelectable), typeof(bool), typeof(DataGridColumn), true);
+        /// <summary>
+        /// Can select cells? (default: true)
+        /// </summary>
+        public bool IsSelectable
+        {
+            get { return (bool)GetValue(IsSelectableProperty); }
+            set { SetValue(IsSelectableProperty, value); }
+        }
+
         // Cell template
         public static readonly BindableProperty CellTemplateProperty =
             BindableProperty.Create(nameof(CellTemplate), typeof(DataTemplate), typeof(DataGridColumn), null);

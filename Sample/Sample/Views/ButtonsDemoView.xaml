@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:Sample.ViewModels"
+             xmlns:sam="clr-namespace:DataGridSam;assembly=DataGridSam"
+             mc:Ignorable="d"
+             x:Class="Sample.Views.ButtonsDemoView"
+             x:Name="root"
+             Title="DataGridSam: With buttons demo">
+
+    <d:ContentPage.BindingContext>
+        <vm:ButtonsDemoVm/>
+    </d:ContentPage.BindingContext>
+
+    <ContentPage.Resources>
+        
+    </ContentPage.Resources>
+    
+    <StackLayout>
+        <!--Table-->
+        <sam:DataGrid ItemsSource="{Binding Items}"
+                      HeaderBackgroundColor="#E0DFE1"
+                      IsWrapped="True"
+                      RowsColor="White"
+                      SelectedRowColor="#bbdefb"
+                      RowsTextColor="Black"
+                      BorderColor="#C1C1C1"
+                      BorderWidth="1"
+                      CellPadding="10"
+                      TapColor="#bbdefb"
+                      CommandLongTapItem="{Binding CommandLongTap}">
+            
+                
+            <!--Name-->
+            <sam:DataGridColumn Title="Name"  
+                                Width="1*">
+                <sam:DataGridColumn.CellTemplate>
+                    <DataTemplate>
+                        <StackLayout Padding="10" Spacing="0">
+                            <Label Text="{Binding Name}"
+                                   TextColor="Black"
+                                   FontAttributes="Bold"/>
+                            <Label Text="{Binding Family}"
+                                   TextColor="Black"/>
+                        </StackLayout>
+                    </DataTemplate>
+                </sam:DataGridColumn.CellTemplate>
+            </sam:DataGridColumn>
+            
+            <!--Action-->
+            <sam:DataGridColumn Title="Action"
+                                Width="1*">
+                <sam:DataGridColumn.CellTemplate>
+                    <DataTemplate>
+                        <StackLayout>
+                            <Button Text="Add oskar"
+                                    Command="{Binding BindingContext.CommandGiveOskar, Source={Reference root}}"
+                                    CommandParameter="{Binding .}"
+                                    Margin="0,7,0,0"
+                                    VerticalOptions="Start">
+                                <Button.Triggers>
+                                    <DataTrigger TargetType="Button" Binding="{Binding HasOskar}" Value="True">
+                                        <Setter Property="Text" Value="Return oskar"/>
+                                    </DataTrigger>
+                                </Button.Triggers>
+                            </Button>
+                            <Entry/>
+                            <Switch/>
+                        </StackLayout>
+                    </DataTemplate>
+                </sam:DataGridColumn.CellTemplate>
+            </sam:DataGridColumn>
+            
+            <!--Description-->
+            <sam:DataGridColumn Title="Description" 
+                                PropertyName="Description"
+                                Width="2*"/>
+
+            <!--Photo-->
+            <sam:DataGridColumn Title="Photo" 
+                                IsVisible="{Binding IsShowColumnPhotos}"
+                                Width="80">
+                <sam:DataGridColumn.CellTemplate>
+                    <DataTemplate>
+                        <Image Source="{Binding PhotoUrl}"
+                               Aspect="AspectFill"/>
+                    </DataTemplate>
+                </sam:DataGridColumn.CellTemplate>
+            </sam:DataGridColumn>
+        </sam:DataGrid>
+        <Button Text="Hide photos"
+                Command="{Binding CommandHidePhotos}"/>
+    </StackLayout>
+</ContentPage>

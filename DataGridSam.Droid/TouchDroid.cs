@@ -6,6 +6,7 @@ using Android.OS;
 using Android.Views;
 using Android.Widget;
 using DataGridSam.Platform;
+using Java.Interop;
 using System;
 using System.ComponentModel;
 using Xamarin.Forms.Platform.Android;
@@ -14,6 +15,46 @@ using Xamarin.Forms.Platform.Android;
 [assembly: Xamarin.Forms.ExportEffect(typeof(DataGridSam.Droid.TouchDroid), "Touch")]
 namespace DataGridSam.Droid
 {
+    //public class ClassClick : Java.Lang.Object, View.IOnTouchListener
+    //{
+    //    public bool OnTouch(View v, MotionEvent e)
+    //    {
+    //        int nX = (int)e.RawX;
+    //        int nY = (int)e.RawY;
+    //        string action = e.Action.ToString();
+    //        DebugMsg.SendMsg($"{action}\nX{nX}   Y{nY}");
+    //        return true;
+    //    }
+    //}
+
+    //public class ClassLongClick : Java.Lang.Object, View.IOnLongClickListener
+    //{
+    //    public bool OnLongClick(View v)
+    //    {
+    //        DebugMsg.SendMsg($"On Long click TRUE");
+    //        return true;
+    //    }
+    //}
+
+#if DEBUG
+    public static class DebugMsg
+    {
+        private static Toast toast = null;
+        private static string msgL = null;
+        public static void SendMsg(string msg)
+        {
+            if (toast != null && msg != msgL)
+            {
+                toast.Cancel();
+                toast.Dispose();
+            }
+
+            toast = Toast.MakeText(Android.App.Application.Context, msg, ToastLength.Short);
+            toast.Show();
+        }
+    }
+#endif
+
     public class TouchDroid : PlatformEffect
     {
         readonly Rect _rect = new Rect();
@@ -36,6 +77,7 @@ namespace DataGridSam.Droid
         {
         }
 
+
         protected override void OnAttached()
         {
             if (Touch.GetLongTap(Element) != null)
@@ -44,14 +86,15 @@ namespace DataGridSam.Droid
                 timer.Elapsed += OnTimerEvent;
             }
             isEnabled = Touch.GetIsEnabled(Element);
-            View.Clickable = true;
-            View.LongClickable = true;
-            View.SoundEffectsEnabled = true;
+            //View.Clickable = true;
+            //View.LongClickable = true;
+            //View.SoundEffectsEnabled = true;
 
             viewOverlay = new FrameLayout(Container.Context)
             {
                 LayoutParameters = new ViewGroup.LayoutParams(-1, -1),
                 Clickable = false,
+                LongClickable = false,
                 Focusable = false,
             };
             Container.LayoutChange += ViewOnLayoutChange;
@@ -61,9 +104,15 @@ namespace DataGridSam.Droid
 
             SetEffectColor();
             View.Touch += OnTouch;
+            //View.SetOnTouchListener(new ClassClick());
+            //View.SetOnLongClickListener(new ClassLongClick());
 
             Container.AddView(viewOverlay);
             viewOverlay.BringToFront();
+        }
+
+        private void View_Click(object sender, EventArgs e)
+        {
         }
 
         protected override void OnDetached()
@@ -109,9 +158,6 @@ namespace DataGridSam.Droid
             if (!isEnabled)
                 return;
 
-            //var x = args.Event.GetX();
-            //var y = args.Event.GetY();
-            //Console.Out.WriteLine($"x: {x}; y: {y} (action: {args.Event.Action.ToString()})");
             motion = args.Event;
 
             if (args.Event.Action == MotionEventActions.Down)

@@ -95,17 +95,28 @@ namespace DataGridSam.Platform
         }
 
 
-        private static void PropertyChanged(BindableObject b, object o, object n)
+        private static void PropertyChanged(BindableObject bindable, object o, object n)
         {
-            if (!(b is View view))
+            if (!(bindable is View view))
                 return;
 
             var effect = view.Effects.FirstOrDefault(e => e is TouchEffect);
             if (effect != null)
                 return;
 
-            //view.InputTransparent = false;
+            view.InputTransparent = false;
             view.Effects.Add(new TouchEffect());
+
+            //if (bindable is Layout layout)
+            //{
+            //    foreach (var item in layout.Children)
+            //    {
+            //        if (item is Button b)
+            //            b.InputTransparent = false;
+            //        else if (item is View v)
+            //            v.InputTransparent = true;
+            //    }
+            //}
 
             //if (EffectsConfig.AutoChildrenInputTransparent && b is Layout &&
             //    !EffectsConfig.GetChildrenInputTransparent(view))

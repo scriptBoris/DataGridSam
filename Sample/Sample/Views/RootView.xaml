@@ -16,6 +16,9 @@
         <Button Text="Custom cells demo"
                 Command="{Binding CommandCustomCells}"/>
         
+        <Button Text="With buttons demo"
+                Command="{Binding CommandButtons}"/>
+        
         <Button Text="Styles demo"
                 Command="{Binding CommandStyles}"/>
         

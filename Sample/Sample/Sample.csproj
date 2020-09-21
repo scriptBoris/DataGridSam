@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="PropertyChanged.Fody" Version="3.1.3" />
-    <PackageReference Include="Xamarin.Forms" Version="4.5.0.530" />
+    <PackageReference Include="Xamarin.Forms" Version="4.8.0.1364" />
   </ItemGroup>
 
   <ItemGroup>
@@ -15,6 +15,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Views\ButtonsDemoView.xaml.cs">
+      <DependentUpon>ButtonsDemoView.xaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\CustomCellsDemoView.xaml.cs">
       <DependentUpon>CustomCellsDemoView.xaml</DependentUpon>
     </Compile>

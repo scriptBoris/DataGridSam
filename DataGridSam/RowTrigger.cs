@@ -12,7 +12,6 @@ namespace DataGridSam
     public sealed class RowTrigger : BindableObject
     {
         // System
-        private DataGrid grid;
         private Type sourceType;
         private PropertyInfo targetProp;
 
@@ -155,10 +154,9 @@ namespace DataGridSam
             }
         }
 
-        internal void OnAttached(DataGrid host)
-        {
-            grid = host;
-        }
+        //internal void OnAttached(DataGrid host)
+        //{
+        //}
 
         internal void OnSourceTypeChanged(Type newSourceType)
         {
@@ -190,51 +188,30 @@ namespace DataGridSam
             return false;
         }
 
-        internal static RowTrigger SetTriggerStyle(IGridRow row, string propName, bool isNeedUpdate = true)
+        internal static RowTrigger SetTriggerStyle(IGridRow row, string propName)
         {
             if (row.DataGrid.RowTriggers.Count == 0)
                 return null;
 
             // Any trigger is activated
-            RowTrigger anyTrigger = null;
-            bool isTriggerActive = false;
+            RowTrigger matchTrigger = null;
 
             foreach (var trigger in row.DataGrid.RowTriggers)
             {
                 if (propName == trigger.PropertyTrigger)
                 {
-                    anyTrigger = trigger;
                     if (trigger.CheckTriggerActivated(row.Context))
                     {
-                        isTriggerActive = true;
-                        if (!isNeedUpdate)
-                            return anyTrigger;
+                        matchTrigger = trigger;
+                        break;
                     }
-                    break;
                 }
             }
 
-            if (!isNeedUpdate)
-                return null;
+            row.EnabledTrigger = matchTrigger;
+            row.UpdateStyle();
 
-            if (anyTrigger == null)
-                return null;
-
-            if (anyTrigger != null && (row.EnabledTrigger==anyTrigger || row.EnabledTrigger==null) )
-            {
-                if (isTriggerActive)
-                {
-                    row.EnabledTrigger = anyTrigger;
-                    row.UpdateStyle();
-                }
-                else
-                {
-                    row.EnabledTrigger = GetFirstTrigger(row);
-                    row.UpdateStyle();
-                }
-            }
-
-            return anyTrigger;
+            return matchTrigger;
         }
 
         private static RowTrigger GetFirstTrigger(IGridRow row)
