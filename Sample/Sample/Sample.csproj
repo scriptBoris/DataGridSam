@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="PropertyChanged.Fody" Version="3.2.9" />
-    <PackageReference Include="Xamarin.Forms" Version="4.0.0.709238" />
+    <PackageReference Include="Xamarin.Forms" Version="4.3.0.991250" />
   </ItemGroup>
 
   <ItemGroup>

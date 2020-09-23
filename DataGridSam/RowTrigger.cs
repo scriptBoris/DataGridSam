@@ -3,6 +3,7 @@ using DataGridSam.Utils;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using Xamarin.Forms;
 
@@ -22,6 +23,11 @@ namespace DataGridSam
         // Fast style variables
         internal VisualCollector VisualContainerStyle = new VisualCollector();
         internal VisualCollector VisualContainer = new VisualCollector();
+
+        /// <summary>
+        /// 0 - most higher priority
+        /// </summary>
+        internal int Priority;
 
         #region BindProps
         // Property trigger
@@ -188,30 +194,64 @@ namespace DataGridSam
             return false;
         }
 
-        internal static RowTrigger SetTriggerStyle(GridRow row, string propName)
+        private static void SetTriggerStyle(GridRow row)
+        {
+
+        }
+
+        internal static void SetTriggerStyle(GridRow row, string propName)
         {
             if (row.DataGrid.RowTriggers.Count == 0)
-                return null;
+                return;
 
             // Any trigger is activated
             RowTrigger matchTrigger = null;
+            bool isTriggerActive = false;
 
             foreach (var trigger in row.DataGrid.RowTriggers)
             {
                 if (propName == trigger.PropertyTrigger)
                 {
+                    matchTrigger = trigger;
                     if (trigger.CheckTriggerActivated(row.Context))
                     {
-                        matchTrigger = trigger;
+                        isTriggerActive = true;
                         break;
                     }
                 }
             }
 
-            row.EnabledTrigger = matchTrigger;
-            row.UpdateStyle();
+            if (matchTrigger == null)
+                return;
 
-            return matchTrigger;
+            // No active trigger
+            if (row.EnabledTrigger == null)
+            {
+                if (isTriggerActive)
+                {
+                    row.EnabledTrigger = matchTrigger;
+                    row.UpdateStyle();
+                }
+            }
+            // Has active trigger
+            else
+            {
+                // Find other active trigger
+                // Искать другие активные тригеры
+                RowTrigger finalTrigger = null;
+                for (int i=0; i<row.DataGrid.RowTriggers.Count; i++)
+                {
+                    var t = row.DataGrid.RowTriggers[i];
+                    if (t.CheckTriggerActivated(row.Context))
+                    {
+                        finalTrigger = t;
+                        break;
+                    }
+                }
+
+                row.EnabledTrigger = finalTrigger;
+                row.UpdateStyle();
+            }
         }
         #endregion
     }

@@ -15,27 +15,6 @@ using Xamarin.Forms.Platform.Android;
 [assembly: Xamarin.Forms.ExportEffect(typeof(DataGridSam.Droid.TouchDroid), "Touch")]
 namespace DataGridSam.Droid
 {
-    //public class ClassClick : Java.Lang.Object, View.IOnTouchListener
-    //{
-    //    public bool OnTouch(View v, MotionEvent e)
-    //    {
-    //        int nX = (int)e.RawX;
-    //        int nY = (int)e.RawY;
-    //        string action = e.Action.ToString();
-    //        DebugMsg.SendMsg($"{action}\nX{nX}   Y{nY}");
-    //        return true;
-    //    }
-    //}
-
-    //public class ClassLongClick : Java.Lang.Object, View.IOnLongClickListener
-    //{
-    //    public bool OnLongClick(View v)
-    //    {
-    //        DebugMsg.SendMsg($"On Long click TRUE");
-    //        return true;
-    //    }
-    //}
-
 #if DEBUG
     public static class DebugMsg
     {
@@ -103,6 +82,8 @@ namespace DataGridSam.Droid
                 viewOverlay.Background = CreateRipple(color);
 
             SetEffectColor();
+            View.Clickable = true;
+            View.SoundEffectsEnabled = true;
             View.Touch += OnTouch;
             //View.SetOnTouchListener(new ClassClick());
             //View.SetOnLongClickListener(new ClassLongClick());

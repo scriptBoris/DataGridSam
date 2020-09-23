@@ -13,7 +13,7 @@
     <MtouchEnableSGenConc>true</MtouchEnableSGenConc>
     <MtouchHttpClientHandler>NSUrlSessionHandler</MtouchHttpClientHandler>
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
-    <ProvisioningType>manual</ProvisioningType>
+    <ProvisioningType>automatic</ProvisioningType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
     <DebugSymbols>true</DebugSymbols>
@@ -46,9 +46,15 @@
     <WarningLevel>4</WarningLevel>
     <MtouchArch>ARM64</MtouchArch>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
-    <CodesignKey>iPhone Developer</CodesignKey>
+    <CodesignKey>Apple Development: Evgeny Bainov (494MKA76N9)</CodesignKey>
     <MtouchDebug>true</MtouchDebug>
     <MtouchLink>None</MtouchLink>
+    <CodesignProvision>VS: WildCard Development</CodesignProvision>
+    <MtouchInterpreter>-all</MtouchInterpreter>
+    <MtouchFloat32>false</MtouchFloat32>
+    <MtouchFastDev>true</MtouchFastDev>
+    <MtouchSdkVersion>14.0</MtouchSdkVersion>
+    <MtouchHttpClientHandler>NSUrlSessionHandler</MtouchHttpClientHandler>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <DebugType>none</DebugType>
@@ -58,7 +64,8 @@
     <WarningLevel>4</WarningLevel>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <MtouchArch>ARM64</MtouchArch>
-    <CodesignKey>iPhone Developer</CodesignKey>
+    <CodesignKey>Apple Development: Evgeny Bainov (494MKA76N9)</CodesignKey>
+    <CodesignProvision>VS: WildCard Development</CodesignProvision>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'Default' ">
     <AppExtensionDebugBundleId />
@@ -81,7 +88,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Xamarin.Forms">
-      <Version>4.0.0.709238</Version>
+      <Version>4.3.0.991250</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

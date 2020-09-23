@@ -9,7 +9,7 @@ namespace DataGridSam
         protected override void OnParentSet()
         {
             base.OnParentSet();
-            InitHeaderView();
+            Init();
         }
 
         protected override void OnBindingContextChanged()

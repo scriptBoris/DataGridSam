@@ -11,7 +11,7 @@
     <PackageProjectUrl>https://github.com/scriptBoris/DataGridSam</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
-    <Version>1.1.1</Version>
+    <Version>1.2.0</Version>
     <PackageReleaseNotes>- Added command Double click on row
 - Add simple pagination
 - Fix bug with RowTriggers, when application has multiple DataGrid
@@ -19,7 +19,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Xamarin.Forms" Version="4.0.0.709238" />
+    <PackageReference Include="Xamarin.Forms" Version="4.3.0.991250" />
   </ItemGroup>
 
   <ItemGroup>

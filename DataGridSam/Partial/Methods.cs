@@ -13,6 +13,12 @@ namespace DataGridSam
 {
     public partial class DataGrid
     {
+        private void Init()
+        {
+            InitHeaderView();
+            UpdateRowTriggers();
+        }
+
         private void InitHeaderView()
         {
             SetColumnsBindingContext();
@@ -189,6 +195,15 @@ namespace DataGridSam
             maskHeadGrid.Children.Add(row);
         }
 
+        private void UpdateRowTriggers()
+        {
+            int i = 0;
+            foreach (var item in RowTriggers)
+            {
+                item.Priority = i++;
+            }
+        }
+
         /// <summary>
         /// Create header label over column
         /// </summary>
@@ -265,24 +280,6 @@ namespace DataGridSam
             foreach (var trigger in RowTriggers)
             {
                 trigger.OnSourceTypeChanged(newTypeItems);
-            }
-        }
-
-        private void UpdateTapCommand(ICommand command)
-        {
-            foreach (var item in stackList.Children)
-            {
-                var row = item as GridRow;
-                DataGridSam.Platform.Touch.SetTap(row.SelectionBox, command);
-            }
-        }
-
-        private void UpdateLongTapCommand(ICommand command)
-        {
-            foreach (var item in stackList.Children)
-            {
-                var row = item as GridRow;
-                DataGridSam.Platform.Touch.SetLongTap(row.SelectionBox, command);
             }
         }
 

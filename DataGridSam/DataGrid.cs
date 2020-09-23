@@ -95,10 +95,7 @@ namespace DataGridSam
                         return;
                     }
 
-                    //foreach (var item in self.RowTriggers)
-                    //{
-                    //    item.OnAttached(self);
-                    //}
+                    self.UpdateRowTriggers();
                 });
         public List<RowTrigger> RowTriggers
         {
@@ -128,12 +125,7 @@ namespace DataGridSam
 
         // Command selected item 
         public static readonly BindableProperty CommandSelectedItemProperty =
-            BindableProperty.Create(nameof(CommandSelectedItem), typeof(ICommand), typeof(DataGrid), null,
-                propertyChanged: (b, o, n)=>
-                {
-                    var self = b as DataGrid;
-                    self.UpdateTapCommand(n as ICommand);
-                });
+            BindableProperty.Create(nameof(CommandSelectedItem), typeof(ICommand), typeof(DataGrid), null);
         public ICommand CommandSelectedItem
         {
             get { return (ICommand)GetValue(CommandSelectedItemProperty); }
@@ -144,12 +136,7 @@ namespace DataGridSam
 
         // Command long tap item
         public static readonly BindableProperty CommandLongTapItemProperty =
-            BindableProperty.Create(nameof(CommandLongTapItem), typeof(ICommand), typeof(DataGrid), null,
-                propertyChanged: (b, o, n) =>
-                {
-                    var self = b as DataGrid;
-                    self.UpdateLongTapCommand(n as ICommand);
-                });
+            BindableProperty.Create(nameof(CommandLongTapItem), typeof(ICommand), typeof(DataGrid), null);
         public ICommand CommandLongTapItem
         {
             get { return (ICommand)GetValue(CommandLongTapItemProperty); }

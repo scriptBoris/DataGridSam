@@ -21,7 +21,6 @@ namespace DataGridSam.Elements
         internal bool IsSelected;
         internal object Context;
         internal View SelectionBox;
-        //internal View TouchBox;
         internal View Line;
         internal List<GridCell> Cells;
         internal RowTrigger EnabledTrigger;
@@ -40,7 +39,7 @@ namespace DataGridSam.Elements
             Cells = new List<GridCell>();
 
             // Triggers event
-            if (context is INotifyPropertyChanged model)
+            if (context is INotifyPropertyChanged model && DataGrid.RowTriggers.Count > 0)
                 model.PropertyChanged += (obj, e) => RowTrigger.SetTriggerStyle(this, e.PropertyName);
 
             // Selection box

@@ -104,13 +104,13 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Xamarin.Forms">
-      <Version>4.0.0.709238</Version>
+      <Version>4.3.0.991250</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties XamarinHotReloadXFormsNugetUpgradeInfoBarSampleAndroidHideInfoBar="True" />
+      <UserProperties XamarinHotReloadGenericExceptionInfoBarSampleAndroidHideInfoBar="True" XamarinHotReloadXFormsNugetUpgradeInfoBarSampleAndroidHideInfoBar="True" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>
