@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
 
@@ -13,7 +14,6 @@ namespace Sample.ViewModels
 {
     public class EmbeddedDemoVm : BaseViewModel
     {
-        private Ware lastWare;
 
         public EmbeddedDemoVm()
         {
@@ -26,8 +26,11 @@ namespace Sample.ViewModels
             CommandAddValue = new Command(ActionAddValue);
             CommandRemoveValue = new Command(ActionRemoveValue);
 
-            Items = DataCollector.GetVehicle();
-            SelectedItem = Items.FirstOrDefault();
+        }
+
+        public override void OnAppearing()
+        {
+            LatencyInit();
         }
 
         #region Props
@@ -98,5 +101,19 @@ namespace Sample.ViewModels
             }
         }
         #endregion
+
+        #region methods
+        private async void LatencyInit()
+        {
+            await Task.Delay(100);
+            var vehicles = DataCollector.GetVehicle();
+
+            Items = new ObservableCollection<Vehicle>();
+            foreach (var item in vehicles)
+                Items.Add(item);
+
+            SelectedItem = Items.FirstOrDefault();
+        }
+        #endregion methods
     }
 }

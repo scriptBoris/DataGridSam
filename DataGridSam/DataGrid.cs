@@ -18,21 +18,25 @@ namespace DataGridSam
         public DataGrid()
         {
             RowSpacing = 0;
-            RowDefinitions.Add(new RowDefinition{ Height = GridLength.Auto });
             RowDefinitions.Add(new RowDefinition{ Height = GridLength.Star });
+            RowDefinitions.Add(new RowDefinition{ Height = GridLength.Auto });
 
             // Head Grid (1)
-            headGrid = new Grid();
-            headGrid.ColumnSpacing = 0;
-            headGrid.RowSpacing = 0;
-            headGrid.SetBinding(Grid.BackgroundColorProperty, new Binding(nameof(HeaderBackgroundColor), source: this));
-            SetRow(headGrid, 0);
-            Children.Add(headGrid);
+            //headGrid = new Grid();
+            //headGrid.VerticalOptions = LayoutOptions.Start;
+            //headGrid.ColumnSpacing = 0;
+            //headGrid.RowSpacing = 0;
+            //headGrid.SetBinding(Grid.BackgroundColorProperty, new Binding(nameof(HeaderBackgroundColor), source: this));
+            //SetRow(headGrid, 0);
+            //Children.Add(headGrid);
+
+            // Head Row (1)
+            // Is HeadRow init in method UpdateHeaderCells()
 
             // Stack list (3)
             stackList = new StackList();
             stackList.VerticalOptions = LayoutOptions.FillAndExpand;
-            stackList.Spacing = 0;
+            //stackList.Spacing = 0;
             stackList.DataGrid = this;
 
             // Mask Grid (3)

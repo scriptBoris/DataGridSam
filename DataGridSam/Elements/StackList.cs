@@ -14,7 +14,7 @@ namespace DataGridSam.Elements
     /// StackLayout corresponding to ItemsSource and ItemTemplate
     /// </summary>
     [Xamarin.Forms.Internals.Preserve(AllMembers = true)]
-    internal class StackList : StackLayout
+    internal class StackList : Layout<GridRow>
     {
         internal int ItemsCount;
 
@@ -85,14 +85,15 @@ namespace DataGridSam.Elements
 
             if (newList != null)
             {
+                // Say triggers what binding context changed
+                var targetType = newList.GetType().GetGenericArguments()[0];
+                self.DataGrid.OnChangeItemsBindingContext(targetType);
+
+
                 int i = 0;
                 GridRow last = null;
                 foreach (var item in newList)
                 {
-                    // Say triggers what binding context changed
-                    if (i == 0)
-                        self.DataGrid.OnChangeItemsBindingContext(item.GetType());
-
                     bool isLast = (i == self.ItemsCount - 1);
                     last = self.AddRow(item, i, self.ItemsCount, !isLast);
                     i++;
@@ -256,7 +257,7 @@ namespace DataGridSam.Elements
         {
             GridRow row = new GridRow(bindItem, this, index, itemsCount, isLineVisible);
 
-            Children.Add(row as View);
+            Children.Add(row);
             return row;
         }
 
@@ -269,8 +270,56 @@ namespace DataGridSam.Elements
             else
                 row = new GridRow(bindItem, this, index, itemsCount, true);
 
-            Children.Insert(index, row as View);
+            Children.Insert(index, row);
             return row;
+        }
+
+        protected override SizeRequest OnMeasure(double widthConstraint, double heightConstraint)
+        {
+            if (Children.Count == 0)
+                return new SizeRequest(new Size(widthConstraint, 0));
+            else
+            {
+                double height = 0;
+                foreach (var item in Children)
+                {
+                    item.Measure(widthConstraint, heightConstraint);
+                    height += item.RowHeight;
+                }
+
+                return new SizeRequest(new Size(widthConstraint, height));
+            }
+        }
+
+        double lastWidth = -1;
+        double lastHeight = -1;
+
+        protected override void LayoutChildren(double x, double y, double width, double height)
+        {
+            if (lastWidth == width && lastHeight == height)
+                return;
+
+            lastWidth = width;
+            lastHeight = height;
+
+            if (Children.Count == 0)
+                return;
+
+            double offsetY = y;
+            for (int i=0; i<Children.Count; i++)
+            {
+                var row = Children[i];
+                double rowHeight = row.RowHeight;
+                var rect = new Rectangle(0, offsetY, width, rowHeight);
+
+                // Draw row
+                row.RenderRow(0, 0, width, rowHeight);
+                // And draw row? O_O (joke) This thing is needed to fix 
+                // bug with empty rows after Foreach=>Itemsource.Add(item)
+                LayoutChildIntoBoundingRegion(row, rect);
+
+                offsetY += rowHeight;
+            }
         }
     }
 }

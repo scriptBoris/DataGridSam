@@ -11,13 +11,24 @@ namespace Sample.Core
         public BaseViewModel()
         {
             View.BindingContext = this;
+            View.Appearing += OnAppearing;
         }
+
 
         #region Props
         public abstract Page View { get; set; }
         #endregion
 
         #region Methods
+        private void OnAppearing(object sender, EventArgs e)
+        {
+            OnAppearing();
+        }
+
+        public virtual void OnAppearing()
+        {
+        }
+
         public async Task NavigationGoAsync(BaseViewModel vm)
         {
             await View.Navigation.PushAsync(vm.View);

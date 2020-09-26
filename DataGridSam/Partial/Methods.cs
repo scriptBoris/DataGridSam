@@ -63,10 +63,11 @@ namespace DataGridSam
 
             // Clear old GUI elements and values
             AutoNumberStrategy = Enums.AutoNumberStrategyType.None;
-            headGrid.Children.Clear();
-            headGrid.ColumnDefinitions.Clear();
-            UpdateHeadHeight(HeaderHeight);
-
+            //headGrid.Children.Clear();
+            //headGrid.ColumnDefinitions.Clear();
+            if (headRow != null)
+                Children.Remove(headRow);
+            
             if (Columns == null)
                 return;
 
@@ -76,13 +77,13 @@ namespace DataGridSam
                 col.OnAttached(this, i);
 
                 // Header table
-                headGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = col.CalcWidth });
+                //headGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = col.CalcWidth });
 
-                var headCell = CreateColumnHeader(col);
-                headCell.IsVisible = col.IsVisible;
+                //var headCell = CreateColumnHeader(col);
+                //headCell.IsVisible = col.IsVisible;
 
-                Grid.SetColumn(headCell, i);
-                headGrid.Children.Add(headCell);
+                //Grid.SetColumn(headCell, i);
+                //headGrid.Children.Add(headCell);
 
                 // Detect auto number
                 if (col.AutoNumber == Enums.AutoNumberType.Up)
@@ -92,6 +93,12 @@ namespace DataGridSam
 
                 i++;
             }
+
+            headRow = new GridHeadRow(BindingContext, this, HeaderHasBorder);
+            SetRow(headRow, 0);
+            Children.Add(headRow);
+
+            UpdateHeadHeight(HeaderHeight);
 
             if (isUp)
                 AutoNumberStrategy = Enums.AutoNumberStrategyType.Up;
@@ -103,12 +110,21 @@ namespace DataGridSam
 
         internal void UpdateHeadHeight(int height)
         {
-            var row = RowDefinitions.First();
+            //var rowGrid = headGrid.RowDefinitions.First();
+            //var rowHead = RowDefinitions.First();
 
-            if (height < 0)
-                row.Height = GridLength.Auto;
-            else
-                row.Height = new GridLength(height);
+            //GridLength result;
+            //if (height < 0)
+            //    result = GridLength.Auto;
+            //else
+            //    result = new GridLength(height);
+
+            //RowDefinitions[0] = new RowDefinition { Height = result };
+            //headGrid.RowDefinitions[0] = new RowDefinition { Height = result };
+            //headGrid.RowSpacing
+            //rowHead.Height = result;
+            //rowGrid.Height = result;
+
         }
 
         internal void UpdateColumnVisibile(DataGridColumn col, bool isVisible)
@@ -124,18 +140,19 @@ namespace DataGridSam
                     target.Width = new GridLength(0.0);
             }
 
-            int i = col.Index;
+            int colId = col.Index;
             col.HeaderWrapper.IsVisible = isVisible;
 
-            SolveWidth(headGrid?.ColumnDefinitions[i], isVisible);
-            SolveWidth(maskGrid?.ColumnDefinitions[i], isVisible);
-            SolveWidth(maskHeadGrid?.ColumnDefinitions[i], isVisible);
-                
+            //SolveWidth(headGrid?.ColumnDefinitions[colId], isVisible);
+            SolveWidth(maskGrid?.ColumnDefinitions[colId], isVisible);
+            SolveWidth(maskHeadGrid?.ColumnDefinitions[colId], isVisible);
+
+            // Header cell
+            headRow?.UpdateCellVisibility(colId, isVisible);
+
+            // Row cells
             foreach (var item in stackList.Children)
-            {
-                var row = item as GridRow;
-                row?.UpdateCellVisibility(i, isVisible);
-            }
+                item.UpdateCellVisibility(colId, isVisible);
         }
 
         private void UpdateHeadMaskBorders()
@@ -218,6 +235,8 @@ namespace DataGridSam
 
             // Drop in wrap container
             column.HeaderWrapper.Content = column.HeaderLabel;
+            // TODO TEST
+            column.HeaderWrapper.BackgroundColor = Color.Blue;
 
             return column.HeaderWrapper;
         }
@@ -247,16 +266,17 @@ namespace DataGridSam
 
         private void UpdateHeaderStyle(Style style)
         {
-            if (headGrid == null)
-                return;
+            // TODO Сделать стили для HeadRow
+            //if (headGrid == null)
+            //    return;
 
-            foreach (var col in headGrid.Children)
-            {
-                if (col is StackLayout stackLayout && stackLayout.Children.First() is Label label)
-                {
-                    label.Style = style ?? HeaderDefaultStyle;
-                }
-            }
+            //foreach (var col in headGrid.Children)
+            //{
+            //    if (col is StackLayout stackLayout && stackLayout.Children.First() is Label label)
+            //    {
+            //        label.Style = style ?? HeaderDefaultStyle;
+            //    }
+            //}
         }
 
         internal void CheckWrapperBottomVisible(object obj, EventArgs e)

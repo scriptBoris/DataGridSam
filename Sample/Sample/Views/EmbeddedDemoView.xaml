@@ -12,118 +12,111 @@
     <d:ContentPage.BindingContext>
         <vm:EmbeddedDemoVm/>
     </d:ContentPage.BindingContext>
-    
-    <StackLayout>
-        <!--Table-->
-        <sam:DataGrid ItemsSource="{Binding Items}"
-                      SelectedItem="{Binding SelectedItem}"
-                      CommandSelectedItem="{Binding CommandSelectItem}"
-                      CommandLongTapItem="{Binding CommandLongTap}"
-                      HeaderBackgroundColor="#1976d2"
-                      HeaderTextColor="White"
-                      SelectedRowAttribute="Bold"
-                      RowsColor="White"
-                      RowsTextColor="Black"
-                      BorderColor="#2196F3"
-                      BorderWidth="2"
-                      CellPadding="5"
-                      TapColor="#03a9f4">
-            <sam:DataGrid.RowsFontSize>
-                <OnIdiom x:TypeArguments="x:Double"
-                         Phone="12"
-                         Desktop="14"
-                         Tablet="14"/>
-            </sam:DataGrid.RowsFontSize>
-            <sam:DataGrid.HeaderFontSize>
-                <OnIdiom x:TypeArguments="x:Double"
-                         Phone="12"
-                         Desktop="14"
-                         Tablet="14"/>
-            </sam:DataGrid.HeaderFontSize>
+
+    <Grid>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+        
+            <!--Table-->
+            <sam:DataGrid Grid.Row="0"
+                          ItemsSource="{Binding Items}"
+                          SelectedItem="{Binding SelectedItem}"
+                          CommandSelectedItem="{Binding CommandSelectItem}"
+                          CommandLongTapItem="{Binding CommandLongTap}"
+                          HeaderBackgroundColor="#1976d2"
+                          HeaderTextColor="White"
+                          SelectedRowAttribute="Bold"
+                          RowsColor="White"
+                          RowsTextColor="Black"
+                          BorderColor="#2196F3"
+                          BorderWidth="2"
+                          CellPadding="5"
+                          TapColor="#03a9f4">
+                <sam:DataGrid.RowsFontSize>
+                    <OnIdiom x:TypeArguments="x:Double"
+                             Phone="12"
+                             Desktop="14"
+                             Tablet="14"/>
+                </sam:DataGrid.RowsFontSize>
+                <sam:DataGrid.HeaderFontSize>
+                    <OnIdiom x:TypeArguments="x:Double"
+                             Phone="12"
+                             Desktop="14"
+                             Tablet="14"/>
+                </sam:DataGrid.HeaderFontSize>
             
-            <!--Columns-->
-            <sam:DataGrid.Columns>
-                <sam:DataGridColumn Title="#" 
-                                    Width="40"
-                                    AutoNumber="Down"
-                                    HorizontalTextAlignment="Center"
-                                    StringFormat="{}0\."/>
-                <sam:DataGridColumn Title="Name" 
-                                    Width="2*"
-                                    PropertyName="Name"/>
-                <sam:DataGridColumn Title="Company" 
-                                    Width="1*"
-                                    HorizontalTextAlignment="End"
-                                    PropertyName="Company"/>
+                <!--Columns-->
+                <sam:DataGrid.Columns>
+                    <sam:DataGridColumn Title="#" 
+                                        Width="40"
+                                        AutoNumber="Down"
+                                        HorizontalTextAlignment="Center"
+                                        StringFormat="{}0\."/>
+                    <sam:DataGridColumn Title="Name" 
+                                        Width="2*"
+                                        PropertyName="Name"/>
+                    <sam:DataGridColumn Title="Company" 
+                                        Width="1*"
+                                        HorizontalTextAlignment="End"
+                                        PropertyName="Company"/>
                 
-                <!--Power-->
-                <sam:DataGridColumn Title="Power" 
-                                    Width="1*"
-                                    HorizontalTextAlignment="End"
-                                    PropertyName="Engine.HorsePower"/>
-                <!--Volume-->
-                <sam:DataGridColumn Title="Weight" 
-                                    Width="1*"
-                                    PropertyName="Engine.Volume"
-                                    HorizontalTextAlignment="End">
-                </sam:DataGridColumn>
+                    <!--Power-->
+                    <sam:DataGridColumn Title="Power" 
+                                        Width="1*"
+                                        HorizontalTextAlignment="End"
+                                        PropertyName="Engine.HorsePower"/>
+                    <!--Volume-->
+                    <sam:DataGridColumn Title="Weight" 
+                                        Width="1*"
+                                        PropertyName="Engine.Volume"
+                                        HorizontalTextAlignment="End">
+                    </sam:DataGridColumn>
                 
-                <!--Serial number-->
-                <sam:DataGridColumn Title="Serial" 
-                                    Width="1*"
-                                    PropertyName="Engine.SerialNumber"
-                                    HorizontalTextAlignment="End"/>
-            </sam:DataGrid.Columns>
+                    <!--Serial number-->
+                    <sam:DataGridColumn Title="Serial" 
+                                        Width="1*"
+                                        PropertyName="Engine.SerialNumber"
+                                        HorizontalTextAlignment="End"/>
+                </sam:DataGrid.Columns>
+            </sam:DataGrid>
 
-            <sam:DataGrid.RowTriggers>
-                <!--If item is process-->
-                <sam:RowTrigger PropertyTrigger="IsProcess" Value="True"
-                                RowBackgroundColor="#f0f4c3"/>
-
-                <!--If item is complete-->
-                <sam:RowTrigger PropertyTrigger="IsCompleted" Value="True"
-                                RowBackgroundColor="#c8e6c9"/>
-
-                <!--If item is overload-->
-                <sam:RowTrigger PropertyTrigger="IsOverload" Value="True"
-                                RowBackgroundColor="#e57373"/>
-
-            </sam:DataGrid.RowTriggers>
-        </sam:DataGrid>
-
-        <StackLayout BackgroundColor="Gray"
-                     VerticalOptions="EndAndExpand">
-            <StackLayout Orientation="Horizontal">
-                <Label Text="{Binding SelectedItem.Pos}"
-                       FontSize="20"
-                       TextColor="Black"/>
+            <StackLayout Grid.Row="1" Padding="15,15,15,250"
+                         BackgroundColor="Gray">
                 <Label Text="{Binding SelectedItem.Name}"
-                       FontSize="20"
-                       TextColor="Black"/>
-                <Label Text="{Binding SelectedItem.Weight, StringFormat='(weight: {0})'}"
-                       FontSize="20"
-                       TextColor="Black"/>
-            </StackLayout>
+                        FontSize="20"
+                        TextColor="Black"/>
 
-            <!--Trigger controll-->
-            <StackLayout Orientation="Horizontal">
-                <Button Text="Add +10 power"
-                        HorizontalOptions="FillAndExpand"
-                        Command="{Binding CommandAddValue}"/>
-                <Button Text="Add -10 power"
-                        HorizontalOptions="FillAndExpand"
-                        Command="{Binding CommandRemoveValue}"/>
-            </StackLayout>
+                <!--Power controll-->
+                <StackLayout Orientation="Horizontal">
+                    <Button Text="Add +10 power"
+                            HorizontalOptions="FillAndExpand"
+                            Command="{Binding CommandAddValue}"/>
+                    <Button Text="Add -10 power"
+                            HorizontalOptions="FillAndExpand"
+                            Command="{Binding CommandRemoveValue}"/>
+                </StackLayout>
 
-            <StackLayout Orientation="Horizontal">
-                <Button Text="Add"
-                        HorizontalOptions="FillAndExpand"
-                        Command="{Binding CommandAddItem}"/>
-                <Button Text="Remove item"
-                        HorizontalOptions="FillAndExpand"
-                        Command="{Binding CommandRemoveItem}"/>
+                <StackLayout Orientation="Horizontal" Margin="20">
+                    <Button Text="Add"
+                            HorizontalOptions="FillAndExpand"
+                            Command="{Binding CommandAddItem}"/>
+                    <Button Text="Remove item"
+                            HorizontalOptions="FillAndExpand"
+                            Command="{Binding CommandRemoveItem}"/>
+                </StackLayout>
             </StackLayout>
-        </StackLayout>
-    </StackLayout>
+        </Grid>
+
+        <!--Loading--><!--
+        <StackLayout BackgroundColor="#8000">
+            <ActivityIndicator HeightRequest="64" WidthRequest="64"
+                               IsRunning="True"
+                               VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
+        </StackLayout>-->
+
+    </Grid>
 
 </ContentPage>

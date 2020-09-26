@@ -34,7 +34,10 @@ namespace DataGridSam
         /// <summary>
         /// Heads
         /// </summary>
+        [Obsolete("Use headRow")]
         internal Grid headGrid;
+
+        internal GridHeadRow headRow;
 
         /// <summary>
         /// Contains: stackList, maskGrid

@@ -194,11 +194,6 @@ namespace DataGridSam
             return false;
         }
 
-        private static void SetTriggerStyle(GridRow row)
-        {
-
-        }
-
         internal static void SetTriggerStyle(GridRow row, string propName)
         {
             if (row.DataGrid.RowTriggers.Count == 0)

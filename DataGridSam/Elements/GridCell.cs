@@ -32,18 +32,7 @@ namespace DataGridSam.Elements
             {
                 Content = column.CellTemplate.CreateContent() as View;
                 Content.BindingContext = row.Context;
-                //Content.InputTransparent = true;
-                //Content.VerticalOptions = LayoutOptions.FillAndExpand;
-
-                if (CheckInput(Content))
-                {
-                    //Content.InputTransparent = false;
-                }
-                //if (Content is Layout layout)
-                //{
-                //    layout.CascadeInputTransparent = true;
-                //    layout.InputTransparent = true;
-                //}
+                CheckInput(Content);
             }
             // Create standart cell
             else
@@ -59,6 +48,8 @@ namespace DataGridSam.Elements
                         BindingMode.Default,
                         stringFormat: column.StringFormat,
                         source: row.Context));
+                else
+                    Label.RemoveBinding(Label.TextProperty);
             }
 
             // Set started column visible

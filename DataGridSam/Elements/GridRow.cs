@@ -14,8 +14,8 @@ namespace DataGridSam.Elements
     internal sealed class GridRow : Layout<View>
     {
         private bool isLineVisible;
-        private double rowHeight = -1;
-
+        
+        internal double RowHeight = -1;
         internal DataGrid DataGrid;
         internal int Index;
         internal bool IsSelected;
@@ -25,7 +25,7 @@ namespace DataGridSam.Elements
         internal List<GridCell> Cells;
         internal RowTrigger EnabledTrigger;
 
-        public GridRow(object context, StackList host, int id, int itemsCount, bool isLineVisible)
+        public GridRow(object context, StackList host, int id, int itemsCount, bool isLineVisible) 
         {
             Context = context;
             BindingContext = context;
@@ -40,7 +40,12 @@ namespace DataGridSam.Elements
 
             // Triggers event
             if (context is INotifyPropertyChanged model && DataGrid.RowTriggers.Count > 0)
+            {
                 model.PropertyChanged += (obj, e) => RowTrigger.SetTriggerStyle(this, e.PropertyName);
+
+                foreach (var trigger in DataGrid.RowTriggers)
+                    RowTrigger.SetTriggerStyle(this, trigger.PropertyTrigger);
+            }
 
             // Selection box
             SelectionBox = new BoxView();
@@ -49,7 +54,6 @@ namespace DataGridSam.Elements
             Children.Add(SelectionBox);
 
             // Init cells
-            int i = 0;
             foreach (var column in DataGrid.Columns)
             {
                 var cell = new GridCell(this, column);
@@ -57,7 +61,6 @@ namespace DataGridSam.Elements
                 Children.Add(cell.Wrapper);
                 Children.Add(cell.Content);
                 Cells.Add(cell);
-                i++;
             }
 
             // Add tap system event
@@ -267,34 +270,8 @@ namespace DataGridSam.Elements
         {
             var currentCell = Cells[cellId];
 
-            if (isVisible)
-            {
-                Children.Add(currentCell.Wrapper);
-                Children.Add(currentCell.Content);
-            }
-            else
-            {
-                Children.Remove(currentCell.Wrapper);
-                Children.Remove(currentCell.Content);
-            }
-
-            double height = 0.0;
-            foreach (var cell in Cells)
-            {
-                if (cell.Column.IsVisible)
-                {
-                    double h = CalculateCellHeight(cell, Width);
-                    if (height < h)
-                        height = h;
-                }
-            }
-
-            LayoutChildren(0, 0, Width, height);
-            //foreach (var cell in Cells)
-            //{
-            //    if (cell.Column.IsVisible)
-            //        RenderCellOnLayout(cell, Width, height);
-            //}
+            currentCell.Wrapper.IsVisible = isVisible;
+            currentCell.Content.IsVisible = isVisible;
         }
 
         private void MergeVisual(Label label, params VisualCollector[] styles)
@@ -312,9 +289,6 @@ namespace DataGridSam.Elements
         #region Layot calculation
         protected override void LayoutChildren(double x, double y, double width, double height)
         {
-            if (rowHeight > 0)
-                height = rowHeight;
-
             // Render cells
             foreach (var cell in Cells)
             {
@@ -334,14 +308,17 @@ namespace DataGridSam.Elements
                 var rect = new Rectangle(0, height - DataGrid.BorderWidth, width, height);
                 LayoutChildIntoBoundingRegion(Line, rect);
             }
+        }
 
-            if (rowHeight > 0)
-                HeightRequest = height;
+        internal void RenderRow(double x, double y, double width, double height)
+        {
+            LayoutChildren(x, y, width, height);
+            HeightRequest = RowHeight;
         }
 
         protected override SizeRequest OnMeasure(double width, double height)
         {
-            if (Cells.Count == 0)
+            if (Cells.Count == 0 || !IsVisible)
                 return new SizeRequest(new Size(width, 0));
 
             double actualHeight = 0.0;
@@ -360,7 +337,8 @@ namespace DataGridSam.Elements
             if (isLineVisible)
                 actualHeight += DataGrid.BorderWidth;
 
-            rowHeight = actualHeight;
+            RowHeight = actualHeight;
+
             return new SizeRequest(new Size(width, actualHeight));
         }
 

@@ -17,7 +17,7 @@ namespace DataGridSam
         public int Index { get; private set; }
 
         internal Label HeaderLabel;
-        internal ContentView HeaderWrapper = new ContentView();
+        internal ContentView HeaderWrapper;
         internal VisualCollector VisualCell = new VisualCollector();
         internal VisualCollector VisualCellFromStyle = new VisualCollector();
 
@@ -26,6 +26,8 @@ namespace DataGridSam
         public DataGridColumn()
         {
             HeaderLabel = new Label();
+            HeaderWrapper = new ContentView();
+            HeaderWrapper.VerticalOptions = LayoutOptions.FillAndExpand;
         }
 
         #region Bindable props

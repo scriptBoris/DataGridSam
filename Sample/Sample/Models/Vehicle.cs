@@ -10,6 +10,7 @@ namespace Sample.Models
         public string Name { get; set; }
         public string Company { get; set; }
         public Engine Engine { get; set; }
+        public Ware Ware { get; set; }
     }
 
     public class Engine : BaseNotify
