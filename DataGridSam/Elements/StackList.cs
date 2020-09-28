@@ -17,6 +17,12 @@ namespace DataGridSam.Elements
     internal class StackList : Layout<GridRow>
     {
         internal int ItemsCount;
+        internal double HeightMeasure = 0;
+
+        public StackList(DataGrid host)
+        {
+            DataGrid = host;
+        }
 
         // ItemsSource
         public static BindableProperty ItemsSourceProperty =
@@ -67,21 +73,20 @@ namespace DataGridSam.Elements
             if (newValue is INotifyCollectionChanged newObservableCollection)
                 newObservableCollection.CollectionChanged += self.OnItemsSourceCollectionChanged;
 
+            self.ItemsCount = 0;
             self.Children.Clear();
 
-            // Detect items count 
-            self.ItemsCount = 0;
-            if (newValue is ICollection collection)
-            {
-                self.ItemsCount = collection.Count;
-            }
-            else if (newList != null)
-            {
-                var enumerator = newList.GetEnumerator();
-                if (enumerator != null)
-                    while (enumerator.MoveNext())
-                        self.ItemsCount++;
-            }
+            //if (newValue is ICollection collection)
+            //{
+            //    self.ItemsCount = collection.Count;
+            //}
+            //else if (newList != null)
+            //{
+            //    var enumerator = newList.GetEnumerator();
+            //    if (enumerator != null)
+            //        while (enumerator.MoveNext())
+            //            self.ItemsCount++;
+            //}
 
             if (newList != null)
             {
@@ -91,13 +96,33 @@ namespace DataGridSam.Elements
 
 
                 int i = 0;
-                GridRow last = null;
-                foreach (var item in newList)
+                object item = null;
+                var enumerator = newList.GetEnumerator();
+                if (enumerator.MoveNext())
                 {
-                    bool isLast = (i == self.ItemsCount - 1);
-                    last = self.AddRow(item, i, self.ItemsCount, !isLast);
-                    i++;
+                    while(true)
+                    {
+                        item = enumerator.Current;
+
+                        if (enumerator.MoveNext())
+                        {
+                            self.AddRow(item, i, true);
+                            i++;
+                        }
+                        else
+                        {
+                            self.AddRow(item, i, false);
+                            break;
+                        }
+                    }
                 }
+
+                //foreach (var item in newList)
+                //{
+                //    bool isLast = (i == self.ItemsCount - 1);
+                //    last = self.AddRow(item, i, !isLast);
+                //    i++;
+                //}
             }
 
             self.HasItems = (self.ItemsCount > 0);
@@ -159,7 +184,7 @@ namespace DataGridSam.Elements
                     else
                     {
                         // Add row
-                        AddRow(item, index, ItemsCount, (i<e.NewItems.Count-1 ) );
+                        AddRow(item, index, (i<e.NewItems.Count-1 ) );
                     }
                 }
 
@@ -169,17 +194,17 @@ namespace DataGridSam.Elements
                     if (DataGrid.AutoNumberStrategy == Enums.AutoNumberStrategyType.Both)
                     {
                         for (int i = 0; i < Children.Count; i++)
-                            ((GridRow)Children[i]).UpdateAutoNumeric(i + 1, ItemsCount);
+                            Children[i].UpdateAutoNumeric(i + 1, ItemsCount);
                     }
                     else if (DataGrid.AutoNumberStrategy == Enums.AutoNumberStrategyType.Down)
                     {
                         for (int i = index; i < Children.Count; i++)
-                            ((GridRow)Children[i]).UpdateAutoNumeric(i + 1, ItemsCount);
+                            Children[i].UpdateAutoNumeric(i + 1, ItemsCount);
                     }
                     else if (DataGrid.AutoNumberStrategy == Enums.AutoNumberStrategyType.Up)
                     {
                         for (int i = index; i >= 0; i--)
-                            ((GridRow)Children[i]).UpdateAutoNumeric(i + 1, ItemsCount);
+                            Children[i].UpdateAutoNumeric(i + 1, ItemsCount);
                     }
                 }
             }
@@ -253,9 +278,10 @@ namespace DataGridSam.Elements
         /// <param name="host">Корневой элемент</param>        
         /// <param name="index">Индекс элемента таблицы</param>
         /// <param name="itemsCount">Количество элементов таблицы</param>
-        private GridRow AddRow(object bindItem, int index, int itemsCount, bool isLineVisible)
+        private GridRow AddRow(object bindItem, int index, bool isLineVisible)
         {
-            GridRow row = new GridRow(bindItem, this, index, itemsCount, isLineVisible);
+            ItemsCount++;
+            GridRow row = new GridRow(bindItem, this, index, isLineVisible);
 
             Children.Add(row);
             return row;
@@ -266,9 +292,9 @@ namespace DataGridSam.Elements
             GridRow row;            
 
             if (index == itemsCount - 1)
-                row = new GridRow(bindItem, this, index, itemsCount, false);
+                row = new GridRow(bindItem, this, index, false);
             else
-                row = new GridRow(bindItem, this, index, itemsCount, true);
+                row = new GridRow(bindItem, this, index, true);
 
             Children.Insert(index, row);
             return row;
@@ -280,14 +306,16 @@ namespace DataGridSam.Elements
                 return new SizeRequest(new Size(widthConstraint, 0));
             else
             {
-                double height = 0;
+                HeightMeasure = 0;
                 foreach (var item in Children)
                 {
-                    item.Measure(widthConstraint, heightConstraint);
-                    height += item.RowHeight;
+                    var res = item.Measure(widthConstraint, double.PositiveInfinity, MeasureFlags.IncludeMargins);
+                    //HeightMeasure += item.RowHeight;
+                    HeightMeasure += res.Request.Height;
+                    //height += res.Request.Height;
                 }
 
-                return new SizeRequest(new Size(widthConstraint, height));
+                return new SizeRequest(new Size(widthConstraint, HeightMeasure));
             }
         }
 
@@ -305,7 +333,7 @@ namespace DataGridSam.Elements
             if (Children.Count == 0)
                 return;
 
-            double offsetY = y;
+            double offsetY = 0;
             for (int i=0; i<Children.Count; i++)
             {
                 var row = Children[i];

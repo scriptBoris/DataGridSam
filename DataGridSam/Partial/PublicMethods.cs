@@ -6,7 +6,7 @@ using Xamarin.Forms;
 
 namespace DataGridSam
 {
-    public partial class DataGrid : Grid
+    public partial class DataGrid
     {
         public void ScrollToElement(int id, bool isAnimated)
         {

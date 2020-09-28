@@ -7,9 +7,9 @@ namespace DataGridSam.Elements
 {
     public class GridScroll : ScrollView
     {
-        public GridScroll()
+        public GridScroll(View child)
         {
-
+            Content = child;
         }
     }
 }

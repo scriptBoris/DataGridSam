@@ -3,6 +3,8 @@ using DataGridSam.Utils;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Windows.Input;
@@ -12,32 +14,22 @@ namespace DataGridSam
 {
     [Xamarin.Forms.Internals.Preserve(AllMembers = true)]
     [ContentProperty("Columns")]
-    public partial class DataGrid : Grid
+    public partial class DataGrid : Layout<View>
     {
+        internal List<BoxView> linesAll = new List<BoxView>();
+        internal List<BoxView> linesV = new List<BoxView>();
+        internal List<BoxView> linesH = new List<BoxView>();
+
         public static void Preserve() { }
+
         public DataGrid()
         {
-            RowSpacing = 0;
-            RowDefinitions.Add(new RowDefinition{ Height = GridLength.Star });
-            RowDefinitions.Add(new RowDefinition{ Height = GridLength.Auto });
-
-            // Head Grid (1)
-            //headGrid = new Grid();
-            //headGrid.VerticalOptions = LayoutOptions.Start;
-            //headGrid.ColumnSpacing = 0;
-            //headGrid.RowSpacing = 0;
-            //headGrid.SetBinding(Grid.BackgroundColorProperty, new Binding(nameof(HeaderBackgroundColor), source: this));
-            //SetRow(headGrid, 0);
-            //Children.Add(headGrid);
+            ChildReset();
 
             // Head Row (1)
             // Is HeadRow init in method UpdateHeaderCells()
-
-            // Stack list (3)
-            stackList = new StackList();
-            stackList.VerticalOptions = LayoutOptions.FillAndExpand;
-            //stackList.Spacing = 0;
-            stackList.DataGrid = this;
+            headRow = new GridRowHead(this);
+            ChildAdd(headRow);
 
             // Mask Grid (3)
             maskGrid = new Grid();
@@ -48,34 +40,38 @@ namespace DataGridSam
             maskGrid.SetBinding(Grid.IsVisibleProperty, new Binding(nameof(stackList.HasItems), source: stackList));
 
             // Body Grid (2)
-            bodyGrid = new GridBody(this, stackList, maskGrid);
-            bodyGrid.VerticalOptions = LayoutOptions.Start;
-
+            //bodyGrid = new GridBody(this);
+            stackList = new StackList(this);
 
             // Scroll (1)
-            mainScroll = new GridScroll();
-            SetRow(mainScroll, 1);
-            mainScroll.Content = bodyGrid;
-            this.Children.Add(mainScroll);
-
-            // Wrapper (1)
-            wrapper = new BorderWrapper(this);
+            mainScroll = new GridScroll(stackList);
+            ChildAdd(mainScroll);
         }
 
 
 
         // Columns
         public static readonly BindableProperty ColumnsProperty =
-            BindableProperty.Create(nameof(Columns), typeof(List<DataGridColumn>), typeof(DataGrid),
+            BindableProperty.Create(nameof(Columns), typeof(IList<DataGridColumn>), typeof(DataGrid),
                 propertyChanged: (bindableObj, o, n) =>
                 {
-                    (bindableObj as DataGrid).InitHeaderView();
+                    var self = bindableObj as DataGrid;
+                    if (!(n is IEnumerable))
+                    {
+                        self.Columns = new List<DataGridColumn>();
+                    }
+
+                    if (n is INotifyCollectionChanged)
+                    {
+                    }
+
+                    self.UpdateHeader(true);
                 },
                 defaultValueCreator: b =>
                 {
                     return new List<DataGridColumn>();
                 });
-        public List<DataGridColumn> Columns
+        public IList<DataGridColumn> Columns
         {
             get { return (List<DataGridColumn>)GetValue(ColumnsProperty); }
             set { SetValue(ColumnsProperty, value); }
@@ -238,7 +234,8 @@ namespace DataGridSam
             BindableProperty.Create(nameof(IsWrapped), typeof(bool), typeof(DataGrid), true,
                 propertyChanged: (b, o, n) =>
                 {
-                    (b as DataGrid).wrapper.Update();
+                    // TODO Сделать перерисовку после изменения IsWrapped
+                    //(b as DataGrid).wrapper.Update();
                 });
         /// <summary>
         /// Is wrapped by borders (default: true)
@@ -256,8 +253,9 @@ namespace DataGridSam
             BindableProperty.Create(nameof(HeaderHasBorder), typeof(bool), typeof(DataGrid), true,
                 propertyChanged: (b, o, n) =>
                 {
-                    var self = b as DataGrid;
-                    self.InitHeaderView();
+                    // TODO Сделать рендер при изменении HeaderHasBorder
+                    //var self = b as DataGrid;
+                    //self.InvalidateMeasure();
                 });
         /// <summary>
         /// Default: true

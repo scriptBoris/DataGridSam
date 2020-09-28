@@ -82,7 +82,6 @@
                       BorderWidth="1"
                       CellPadding="10"
                       TapColor="#bbdefb"
-                      
                       HeaderLabelStyle="{StaticResource HeaderTitle}"
                       RowsTextStyle="{StaticResource GridRowCell}"
                       SelectedRowTextStyle="{StaticResource GridSelectedRow}">

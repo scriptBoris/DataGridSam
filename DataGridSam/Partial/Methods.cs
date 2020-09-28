@@ -15,18 +15,8 @@ namespace DataGridSam
     {
         private void Init()
         {
-            InitHeaderView();
+            UpdateHeader(false);
             UpdateRowTriggers();
-        }
-
-        private void InitHeaderView()
-        {
-            SetColumnsBindingContext();
-
-            UpdateHeaderCells();
-            UpdateBodyMaskBorders();
-            UpdateHeadMaskBorders();
-            wrapper.Update();
         }
 
         private void UpdateBodyMaskBorders()
@@ -56,34 +46,21 @@ namespace DataGridSam
             }
         }
 
-        private void UpdateHeaderCells()
+        private void UpdateHeader(bool isNeedRender = false)
         {
             bool isUp = false;
             bool isDown = false;
 
             // Clear old GUI elements and values
             AutoNumberStrategy = Enums.AutoNumberStrategyType.None;
-            //headGrid.Children.Clear();
-            //headGrid.ColumnDefinitions.Clear();
-            if (headRow != null)
-                Children.Remove(headRow);
             
             if (Columns == null)
                 return;
 
-            int i = 0;
+            int id = 0;
             foreach (var col in Columns)
             {
-                col.OnAttached(this, i);
-
-                // Header table
-                //headGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = col.CalcWidth });
-
-                //var headCell = CreateColumnHeader(col);
-                //headCell.IsVisible = col.IsVisible;
-
-                //Grid.SetColumn(headCell, i);
-                //headGrid.Children.Add(headCell);
+                col.OnAttached(this, id);
 
                 // Detect auto number
                 if (col.AutoNumber == Enums.AutoNumberType.Up)
@@ -91,12 +68,13 @@ namespace DataGridSam
                 else if (col.AutoNumber == Enums.AutoNumberType.Down)
                     isDown = true;
 
-                i++;
+                id++;
             }
 
-            headRow = new GridHeadRow(BindingContext, this, HeaderHasBorder);
-            SetRow(headRow, 0);
-            Children.Add(headRow);
+            headRow.BuildElements(BindingContext);
+
+            if (isNeedRender)
+                InvalidateLayout();
 
             UpdateHeadHeight(HeaderHeight);
 
@@ -167,7 +145,6 @@ namespace DataGridSam
                 maskHeadGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Star });
                 maskHeadGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
 
-                SetRow(maskHeadGrid, 0);
                 Children.Add(maskHeadGrid);
             }
             else if (!HeaderHasBorder)

@@ -37,12 +37,12 @@ namespace DataGridSam
         [Obsolete("Use headRow")]
         internal Grid headGrid;
 
-        internal GridHeadRow headRow;
+        internal GridRowHead headRow;
 
-        /// <summary>
-        /// Contains: stackList, maskGrid
-        /// </summary>
-        internal GridBody bodyGrid;
+        ///// <summary>
+        ///// Contains: stackList, maskGrid
+        ///// </summary>
+        //internal GridBody bodyGrid;
 
         /// <summary>
         /// Group of BoxViews imitate wrapper (for max FPS)

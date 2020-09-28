@@ -5,35 +5,63 @@ using Xamarin.Forms;
 
 namespace DataGridSam.Elements
 {
-    internal class GridBody : Layout<View>
-    {
-        internal View StackList;
-        internal View Mask;
-        internal DataGrid DataGrid;
-        public GridBody(DataGrid grid, StackList stack, Grid mask)
-        {
-            DataGrid = grid;
-            StackList = stack;
-            Mask = mask;
+    //internal class GridBody : StackLayout
+    //{
+    //    internal readonly DataGrid DataGrid;
+    //    internal readonly StackList StackList;
 
-            Children.Add(stack);
-            Children.Add(mask);
-        }
+    //    //internal View OtherContent;
 
-        protected override SizeRequest OnMeasure(double widthConstraint, double heightConstraint)
-        {
-            var h = StackList.Measure(widthConstraint, double.PositiveInfinity, MeasureFlags.IncludeMargins);
-            //var m = Mask.Measure(widthConstraint, double.PositiveInfinity, MeasureFlags.None);
-            double height = h.Request.Height;
+    //    public GridBody(DataGrid host)
+    //    {
+    //        StackList = new StackList(host);
 
-            return new SizeRequest(new Size(widthConstraint, height));
-        }
+    //        DataGrid = host;
+    //        DataGrid.stackList = StackList;
 
-        protected override void LayoutChildren(double x, double y, double width, double height)
-        {
-            var rect = new Rectangle(0, 0, width, height);
-            LayoutChildIntoBoundingRegion(StackList, rect);
-            LayoutChildIntoBoundingRegion(Mask, rect);
-        }
-    }
+    //        Children.Add(StackList);
+    //    }
+
+    //    internal double lastWidth = 0;
+    //    internal double lastHeight = 0;
+
+    //    //protected override SizeRequest OnMeasure(double widthConstraint, double heightConstraint)
+    //    //{
+    //    //    return StackList.Measure(widthConstraint, heightConstraint);
+    //    //    if (StackList.Children.Count == 0)
+    //    //    {
+    //    //        lastWidth = widthConstraint;
+    //    //        lastHeight = 0;
+
+    //    //        //DataGrid?.mainScroll.ContentSize = new Size(widthConstraint, 0);
+    //    //        return new SizeRequest(new Size(widthConstraint, 0));
+    //    //    }
+
+    //    //    //if (lastHeight == heightConstraint && lastWidth == widthConstraint)
+    //    //    //    return new SizeRequest(new Size(widthConstraint, heightConstraint));
+
+    //    //    var result = StackList.Measure(widthConstraint, double.PositiveInfinity);
+    //    //    double height = StackList.HeightMeasure;
+
+    //    //    lastWidth = widthConstraint;
+    //    //    lastHeight = height;
+
+    //    //    return new SizeRequest(new Size(widthConstraint, height));
+    //    //}
+
+    //    //protected override void LayoutChildren(double x, double y, double width, double height)
+    //    //{
+    //    //    //if (!double.IsInfinity(lastHeight))
+    //    //    //    height = lastHeight;
+    //    //    //else
+    //    //    //    height = StackList.Measure(width, double.PositiveInfinity).Request.Height;
+
+    //    //    var rect = new Rectangle(0, 0, width, height);
+
+    //    //    LayoutChildIntoBoundingRegion(StackList, rect);
+
+    //    //    //if (OtherContent != null)
+    //    //    //    LayoutChildIntoBoundingRegion(OtherContent, rect);
+    //    //}
+    //}
 }

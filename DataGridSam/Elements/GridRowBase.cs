@@ -1,40 +1,59 @@
-﻿using DataGridSam.Platform;
-using DataGridSam.Utils;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Windows.Input;
-//using TouchSam;
-//using DataGridSam.Platform;
+using System.Text;
 using Xamarin.Forms;
 
 namespace DataGridSam.Elements
 {
-    [Xamarin.Forms.Internals.Preserve(AllMembers = true)]
-    internal sealed class GridHeadRow : Layout<View>
+    internal interface IGridRow
     {
-        private bool isLineVisible;
-        
-        internal double RowHeight = -1;
-        internal DataGrid DataGrid;
-        internal int Index;
-        internal object Context;
-        internal View SelectionBox;
-        internal View Line;
-        internal List<GridHeadCell> Cells;
+        bool IsLineVisible { get; set; }
+        double RowHeight { get; set; }
+        DataGrid DataGrid { get; set; }
+        int Index { get; set; }
+        bool IsSelected { get; set; }
+        object Context { get; set; }
+        View SelectionBox { get; set; }
+        View Line { get; set; }
+        RowTrigger EnabledTrigger { get; set; }
+    }
 
-        public GridHeadRow(object context, DataGrid host, bool isLineVisible) 
+    internal abstract class GridRowBase<T> : Layout<View>, IGridRow where T : GridCellBase, new()
+    {
+        public bool IsLineVisible { get; set; } = true;
+        public double RowHeight { get; set; } = -1;
+        public DataGrid DataGrid { get; set; }
+        public int Index { get; set; }
+        public bool IsSelected { get; set; }
+        public object Context { get; set; }
+        public View SelectionBox { get; set; }
+        public View Line { get; set; }
+        public RowTrigger EnabledTrigger { get; set; }
+
+        internal List<T> Cells;
+
+        /// <summary>
+        /// Default ctor for generir: new T()
+        /// </summary>
+        public GridRowBase()
+        {
+        }
+
+        public GridRowBase(object context, DataGrid host, int id, bool isLineVisible)
+        {
+            DataGrid = host;
+            Index = id;
+            IsLineVisible = isLineVisible;
+
+            BuildElements(context);
+        }
+
+        internal void BuildElements(object context)
         {
             Context = context;
             BindingContext = context;
-            DataGrid = host;
-            Index = 0;
-            this.isLineVisible = isLineVisible;
-
-            IsClippedToBounds = true;
-            VerticalOptions = LayoutOptions.Start;
-            HorizontalOptions = LayoutOptions.FillAndExpand;
-            Cells = new List<GridHeadCell>();
+            Cells = new List<T>();
 
             // Selection box
             SelectionBox = new BoxView();
@@ -45,24 +64,13 @@ namespace DataGridSam.Elements
             // Init cells
             foreach (var column in DataGrid.Columns)
             {
-                var cell = new GridHeadCell(this, column);
+                var cell = new T();
+                cell.Init(this, column);
 
                 Children.Add(cell.BackgroundBox);
                 Children.Add(cell.Content);
                 Cells.Add(cell);
             }
-
-            // Add tap system event
-            //Touch.SetSelect(this, new Command(ActionRowSelect));
-
-            //if (DataGrid.TapColor != Color.Default)
-            //    Touch.SetColor(this, DataGrid.TapColor);
-
-            //if (DataGrid.CommandSelectedItem != null)
-            //    Touch.SetTap(this, DataGrid.CommandSelectedItem);
-
-            //if (DataGrid.CommandLongTapItem != null)
-            //    Touch.SetLongTap(this, DataGrid.CommandLongTapItem);
 
 
             // Create horizontal line table
@@ -72,52 +80,39 @@ namespace DataGridSam.Elements
             Line.InputTransparent = true;
             Children.Add(Line);
 
-            // Render style
-            UpdateVisual();
+            RedrawElements(context);
         }
 
-        public void UpdateVisual()
-        {
-        }
+        protected abstract void RedrawElements(object context);
 
-        public void UpdateLineVisibility(bool isVisible)
+        internal void UpdateLineVisibility(bool isVisible)
         {
-            if (isLineVisible == isVisible)
+            if (IsLineVisible == isVisible)
                 return;
 
-            if (isVisible)
-            {
-                double height = Height + DataGrid.BorderWidth;
-                HeightRequest = height;
-                LayoutChildIntoBoundingRegion(Line, new Rectangle(0, height - DataGrid.BorderWidth, Width, DataGrid.BorderWidth));
-            }
-            else
-            {
-                HeightRequest = Height - DataGrid.BorderWidth;
-                LayoutChildIntoBoundingRegion(Line, new Rectangle(0, 0, 0, 0));
-            }
+            IsLineVisible = isVisible;
+            Line.IsVisible = isVisible;
+            InvalidateMeasure();
 
-            isLineVisible = isVisible;
+            //if (isVisible)
+            //{
+            //    double height = Height + DataGrid.BorderWidth;
+            //    HeightRequest = height;
+            //    LayoutChildIntoBoundingRegion(Line, new Rectangle(0, height - DataGrid.BorderWidth, Width, DataGrid.BorderWidth));
+            //}
+            //else
+            //{
+            //    HeightRequest = Height - DataGrid.BorderWidth;
+            //    LayoutChildIntoBoundingRegion(Line, new Rectangle(0, 0, 0, 0));
+            //}
         }
 
-        public void UpdateCellVisibility(int cellId, bool isVisible)
+        internal void UpdateCellVisibility(int cellId, bool isVisible)
         {
             var cell = Cells[cellId];
 
             cell.BackgroundBox.IsVisible = isVisible;
             cell.Content.IsVisible = isVisible;
-        }
-
-        private void MergeVisual(Label label, params VisualCollector[] styles)
-        {
-            label.TextColor = ValueSelector.GetTextColor(styles);
-            label.FontAttributes = ValueSelector.FontAttribute(styles);
-            label.FontFamily = ValueSelector.FontFamily(styles);
-            label.FontSize = ValueSelector.FontSize(styles);
-
-            label.LineBreakMode = ValueSelector.GetLineBreakMode(styles);
-            label.VerticalTextAlignment = ValueSelector.GetVerticalAlignment(styles);
-            label.HorizontalTextAlignment = ValueSelector.GetHorizontalAlignment(styles);
         }
 
         #region Layot calculation
@@ -137,7 +132,7 @@ namespace DataGridSam.Elements
             LayoutChildIntoBoundingRegion(SelectionBox, rectSelection);
 
             // Render line
-            if (isLineVisible)
+            if (IsLineVisible)
             {
                 var rect = new Rectangle(0, height - DataGrid.BorderWidth, width, height);
                 LayoutChildIntoBoundingRegion(Line, rect);
@@ -168,7 +163,7 @@ namespace DataGridSam.Elements
             }
 
             // Position for line
-            if (isLineVisible)
+            if (IsLineVisible)
                 actualHeight += DataGrid.BorderWidth;
 
             RowHeight = actualHeight;
@@ -176,14 +171,14 @@ namespace DataGridSam.Elements
             return new SizeRequest(new Size(width, actualHeight));
         }
 
-        private double CalculateCellHeight(GridHeadCell cell, double rowWidth)
+        private double CalculateCellHeight(GridCellBase cell, double rowWidth)
         {
             double width = CalcWidth(rowWidth, cell.Column);
             var cellSize = cell.Content.Measure(width, double.PositiveInfinity, MeasureFlags.IncludeMargins);
             return cellSize.Request.Height;
         }
 
-        private void RenderCellOnLayout(GridHeadCell cell, double rowWidth, double rowHeight)
+        private void RenderCellOnLayout(GridCellBase cell, double rowWidth, double rowHeight)
         {
             double w = CalcWidth(rowWidth, cell.Column);
             double x = CalcX(rowWidth, cell.Column);
@@ -226,7 +221,7 @@ namespace DataGridSam.Elements
         private double CalcX(double rowWidth, DataGridColumn col)
         {
             double sum = 0;
-            for (int i = col.Index-1; i >= 0; i--)
+            for (int i = col.Index - 1; i >= 0; i--)
             {
                 if (DataGrid.Columns[i].IsVisible)
                     sum += DataGrid.Columns[i].ActualWidth;
