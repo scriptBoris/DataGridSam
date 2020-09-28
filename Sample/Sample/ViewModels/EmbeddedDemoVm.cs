@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
 
@@ -26,8 +27,9 @@ namespace Sample.ViewModels
             CommandAddValue = new Command(ActionAddValue);
             CommandRemoveValue = new Command(ActionRemoveValue);
 
-            Items = DataCollector.GetVehicle();
-            SelectedItem = Items.FirstOrDefault();
+            
+
+            InitItems();
         }
 
         #region Props
@@ -98,5 +100,12 @@ namespace Sample.ViewModels
             }
         }
         #endregion
+
+        private async void InitItems()
+        {
+            await Task.Delay(200);
+            Items = DataCollector.GetVehicle();
+            SelectedItem = Items.FirstOrDefault();
+        }
     }
 }
