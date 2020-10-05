@@ -12,7 +12,7 @@
         <vm:DevVm/>
     </d:ContentPage.BindingContext>
     
-    <StackLayout>
+    <StackLayout Spacing="0">
         <!--Table-->
         <sam:DataGrid x:Name="dataGrid"
                       ItemsSource="{Binding Items}"
@@ -40,7 +40,7 @@
                          Desktop="14"
                          Tablet="14"/>
             </sam:DataGrid.HeaderFontSize>
-            
+
             <!--Columns-->
             <sam:DataGridColumn Title="#" 
                                 Width="40"
@@ -81,6 +81,17 @@
                                 RowBackgroundColor="#e57373"/>
 
             </sam:DataGrid.RowTriggers>
+            <sam:DataGrid.ViewForEmpty>
+                <Frame>
+                    <StackLayout>
+                        <Label Text="There is no data in this table, but you can add it"
+                               TextColor="#333"
+                               HorizontalTextAlignment="Center"/>
+                        <Button Text="Add item"
+                                Command="{Binding CommandAddItem}"/>
+                    </StackLayout>
+                </Frame>
+            </sam:DataGrid.ViewForEmpty>
         </sam:DataGrid>
 
         <StackLayout BackgroundColor="Gray"

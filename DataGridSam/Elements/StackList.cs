@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Diagnostics.SymbolStore;
 using System.Linq;
 using System.Text;
 using Xamarin.Forms;
@@ -14,7 +15,7 @@ namespace DataGridSam.Elements
     /// StackLayout corresponding to ItemsSource and ItemTemplate
     /// </summary>
     [Xamarin.Forms.Internals.Preserve(AllMembers = true)]
-    internal class StackList : StackLayout
+    internal class StackList : Layout<GridRow>
     {
         internal int ItemsCount;
 
@@ -49,6 +50,8 @@ namespace DataGridSam.Elements
         private static void ItemsSourceChanged(BindableObject bindable, object oldValue, object newValue)
         {
             var self = (StackList)bindable;
+            self.ItemsCount = 0;
+            self.Children.Clear();
 
             IEnumerable newList;
             try
@@ -57,7 +60,7 @@ namespace DataGridSam.Elements
             }
             catch (Exception e)
             {
-                self.ItemsCount = 0;
+                self.DataGrid.UpdateEmptyViewVisible();
                 throw e;
             }
 
@@ -67,39 +70,43 @@ namespace DataGridSam.Elements
             if (newValue is INotifyCollectionChanged newObservableCollection)
                 newObservableCollection.CollectionChanged += self.OnItemsSourceCollectionChanged;
 
-            self.Children.Clear();
-
-            // Detect items count 
-            self.ItemsCount = 0;
-            if (newValue is ICollection collection)
-            {
-                self.ItemsCount = collection.Count;
-            }
-            else if (newList != null)
-            {
-                var enumerator = newList.GetEnumerator();
-                if (enumerator != null)
-                    while (enumerator.MoveNext())
-                        self.ItemsCount++;
-            }
-
             if (newList != null)
             {
-                int i = 0;
-                GridRow last = null;
-                foreach (var item in newList)
-                {
-                    // Say triggers what binding context changed
-                    if (i == 0)
-                        self.DataGrid.OnChangeItemsBindingContext(item.GetType());
+                // Say triggers what binding context changed
+                var targetType = newList.GetType().GetGenericArguments()[0];
+                self.DataGrid.OnChangeItemsBindingContext(targetType);
 
-                    bool isLast = (i == self.ItemsCount - 1);
-                    last = self.AddRow(item, i, self.ItemsCount, !isLast);
-                    i++;
+                // Instantly add items
+                int i = 0;
+                object item = null;
+                var enumerator = newList.GetEnumerator();
+                if (enumerator.MoveNext())
+                {
+                    while (true)
+                    {
+                        item = enumerator.Current;
+
+                        if (enumerator.MoveNext())
+                        {
+                            self.AddRow(item, i, true, false);
+                            i++;
+                        }
+                        else
+                        {
+                            self.AddRow(item, i, false, false);
+                            break;
+                        }
+                    }
                 }
+
+                // Update auto number
+                if (self.DataGrid.AutoNumberStrategy != AutoNumberStrategyType.None)
+                    foreach (var row in self.Children)
+                        row.UpdateAutoNumeric(row.Index);
             }
 
             self.HasItems = (self.ItemsCount > 0);
+            self.DataGrid.UpdateEmptyViewVisible();
         }
 
         private void OnItemsSourceCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -109,43 +116,30 @@ namespace DataGridSam.Elements
             {
                 int oldId = e.OldStartingIndex;
                 int newId = e.NewStartingIndex;
+                bool isLast = (ItemsCount == oldId + 1);
 
                 Children.RemoveAt(oldId);
-                var row = InsertRow(e.NewItems[newId], newId, ItemsCount);
-
-                // Hide line if row is last
-                if (ItemsCount == oldId + 1)
-                    row.UpdateLineVisibility(false);
+                InsertRow(e.NewItems[newId], newId, isLast);
             }
-            // Add
+            // Add or Insert
             else if (e.Action == NotifyCollectionChangedAction.Add)
             {
                 if (e.NewItems == null)
                     return;
 
-                // Common calc
-                ItemsCount += e.NewItems.Count;
-                bool isInsert = false;
-                bool isAdd = false;
-                if (Children.Count == 0)
-                    isAdd = true;
-                else if (e.NewStartingIndex < Children.Count)
-                    isInsert = true;
-                else
-                    isAdd = true;
+                bool isInsert = (Children.Count > 0 && e.NewStartingIndex < Children.Count);
 
                 // For add - previous line set visible
-                if (isAdd)
+                if (!isInsert)
                 {
                     var lastRow = Children.LastOrDefault() as GridRow;
                     if (lastRow != null)
-                    {
                         lastRow.UpdateLineVisibility(true);
-                    }
                 }
 
-                int index = 0;
-                for (var i = 0; i < e.NewItems.Count; ++i)
+                int index;
+                // For each elements except the last
+                for (var i = 0; i < e.NewItems.Count - 1; ++i)
                 {
                     index = i + e.NewStartingIndex;
                     var item = e.NewItems[i];
@@ -153,14 +147,23 @@ namespace DataGridSam.Elements
                     if (isInsert)
                     {
                         // Insert row
-                        InsertRow(item, index, ItemsCount);
+                        InsertRow(item, index, true);
                     }
                     else
                     {
                         // Add row
-                        AddRow(item, index, ItemsCount, (i<e.NewItems.Count-1 ) );
+                        AddRow(item, index, true);
                     }
                 }
+
+                index = e.NewStartingIndex + e.NewItems.Count - 1;
+                
+                // Last item from NewItems
+                var lastItem = e.NewItems[e.NewItems.Count - 1];
+                if (isInsert)
+                    InsertRow(lastItem, index, !(index == ItemsCount) );
+                else
+                    AddRow(lastItem, index, !(index == ItemsCount) );
 
                 // recalc autonumber
                 if (DataGrid.IsAutoNumberCalc)
@@ -168,19 +171,21 @@ namespace DataGridSam.Elements
                     if (DataGrid.AutoNumberStrategy == Enums.AutoNumberStrategyType.Both)
                     {
                         for (int i = 0; i < Children.Count; i++)
-                            ((GridRow)Children[i]).UpdateAutoNumeric(i + 1, ItemsCount);
+                            Children[i].UpdateAutoNumeric(i);
                     }
                     else if (DataGrid.AutoNumberStrategy == Enums.AutoNumberStrategyType.Down)
                     {
                         for (int i = index; i < Children.Count; i++)
-                            ((GridRow)Children[i]).UpdateAutoNumeric(i + 1, ItemsCount);
+                            Children[i].UpdateAutoNumeric(i);
                     }
                     else if (DataGrid.AutoNumberStrategy == Enums.AutoNumberStrategyType.Up)
                     {
                         for (int i = index; i >= 0; i--)
-                            ((GridRow)Children[i]).UpdateAutoNumeric(i + 1, ItemsCount);
+                            Children[i].UpdateAutoNumeric(i);
                     }
                 }
+
+                DataGrid.UpdateEmptyViewVisible();
             }
             // Remove
             else if (e.Action == NotifyCollectionChangedAction.Remove)
@@ -199,9 +204,7 @@ namespace DataGridSam.Elements
                 {
                     var last = Children.LastOrDefault() as GridRow;
                     if (last != null)
-                    {
                         last.UpdateLineVisibility(false);
-                    }
                 }
                     
                 if (DataGrid.IsAutoNumberCalc)
@@ -210,12 +213,12 @@ namespace DataGridSam.Elements
                     if (DataGrid.AutoNumberStrategy == Enums.AutoNumberStrategyType.Both)
                     {
                         for (int i = 0; i < Children.Count; i++)
-                            (Children[i] as GridRow).UpdateAutoNumeric(i + 1, ItemsCount);
+                            (Children[i] as GridRow).UpdateAutoNumeric(i);
                     }
                     else if (DataGrid.AutoNumberStrategy == Enums.AutoNumberStrategyType.Down)
                     {
                         for (int i = delIndex; i < Children.Count; i++)
-                            (Children[i] as GridRow).UpdateAutoNumeric(i + 1, ItemsCount);
+                            (Children[i] as GridRow).UpdateAutoNumeric(i);
                     }
                     else if (DataGrid.AutoNumberStrategy == Enums.AutoNumberStrategyType.Up)
                     {
@@ -226,16 +229,19 @@ namespace DataGridSam.Elements
                                 delIndex = 0;
 
                             for (int i = delIndex; i >= 0; i--)
-                                (Children[i] as GridRow).UpdateAutoNumeric(i + 1, ItemsCount);
+                                (Children[i] as GridRow).UpdateAutoNumeric(i);
                         }
                     }
                 }
+
+                DataGrid.UpdateEmptyViewVisible();
             }
             // Reset
             else if (e.Action == NotifyCollectionChangedAction.Reset)
             {
                 Children.Clear();
                 ItemsCount = 0;
+                DataGrid.UpdateEmptyViewVisible();
             }
             else
             {
@@ -252,25 +258,59 @@ namespace DataGridSam.Elements
         /// <param name="host">Корневой элемент</param>        
         /// <param name="index">Индекс элемента таблицы</param>
         /// <param name="itemsCount">Количество элементов таблицы</param>
-        private GridRow AddRow(object bindItem, int index, int itemsCount, bool isLineVisible)
+        private GridRow AddRow(object bindItem, int index, bool isLineVisible, bool isAutoNumber = true)
         {
-            GridRow row = new GridRow(bindItem, this, index, itemsCount, isLineVisible);
-
-            Children.Add(row as View);
+            ItemsCount++;
+            var row = new GridRow(bindItem, this, index, isLineVisible, isAutoNumber);
+            Children.Add(row);
             return row;
         }
 
-        private GridRow InsertRow(object bindItem, int index, int itemsCount)
+        private GridRow InsertRow(object bindItem, int index, bool isLineVisible)
         {
-            GridRow row;            
-
-            if (index == itemsCount - 1)
-                row = new GridRow(bindItem, this, index, itemsCount, false);
-            else
-                row = new GridRow(bindItem, this, index, itemsCount, true);
-
-            Children.Insert(index, row as View);
+            ItemsCount++;
+            var row = new GridRow(bindItem, this, index, isLineVisible, true);
+            Children.Insert(index, row);
             return row;
+        }
+
+        protected override SizeRequest OnMeasure(double widthConstraint, double heightConstraint)
+        {
+            if (Children.Count == 0)
+                return new SizeRequest(new Size(widthConstraint, 0));
+            else
+            {
+                double heightMeasure = 0;
+                foreach (var item in Children)
+                {
+                    var res = item.Measure(widthConstraint, double.PositiveInfinity, MeasureFlags.IncludeMargins);
+                    heightMeasure += res.Request.Height;
+                }
+
+                return new SizeRequest(new Size(widthConstraint, heightMeasure));
+            }
+        }
+
+        protected override void LayoutChildren(double x, double y, double width, double height)
+        {
+            if (Children.Count == 0)
+                return;
+
+            double offsetY = 0;
+            for (int i = 0; i < Children.Count; i++)
+            {
+                var row = Children[i];
+                double rowHeight = row.RowHeight;
+                var rect = new Rectangle(0, offsetY, width, rowHeight);
+
+                // Draw row
+                row.RenderRow(0, 0, width, rowHeight);
+                // And draw row? O_O (joke) This thing is needed to fix 
+                // bug with empty rows after Foreach=>Itemsource.Add(item)
+                LayoutChildIntoBoundingRegion(row, rect);
+
+                offsetY += rowHeight;
+            }
         }
     }
 }

@@ -27,12 +27,12 @@ namespace Sample.ViewModels
             CommandAddWeight = new Command(ActionAddWeight);
             CommandRemoveWeight = new Command(ActionRemoveWeight);
 
-            Items = DataCollector.GetWares();
+            //Items = DataCollector.GetWares();
             SelectedItem = Items.FirstOrDefault();
         }
 
         #region Props
-        public ObservableCollection<Ware> Items { get; set; }
+        public ObservableCollection<Ware> Items { get; set; } = new ObservableCollection<Ware>();
         public Ware SelectedItem { get; set; }
         public int Index { get; set; }
         public int ItemsCount => Items?.Count ?? 0;
@@ -96,12 +96,14 @@ namespace Sample.ViewModels
 
         private void ActionInsertItem(object obj)
         {
-            if (Index > Items.Count - 1)
-                Index = Items.Count - 1;
-            else if (Index < 0)
-                Index = 0;
+            int index = 0;
 
-            Items.Insert(Index, new Ware
+            if (Index > Items.Count)
+                index = Items.Count;
+            else if (Index < 0)
+                index = 0;
+
+            Items.Insert(index, new Ware
             {
                 Name = "Food jar lcc-a",
                 Price = 159.56f,

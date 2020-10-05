@@ -155,9 +155,12 @@ namespace DataGridSam
             }
             else if (!HeaderHasBorder)
             {
-                maskHeadGrid.Children.Clear();
-                Children.Remove(maskHeadGrid);
-                maskHeadGrid = null;
+                if (maskHeadGrid != null)
+                {
+                    maskHeadGrid.Children.Clear();
+                    Children.Remove(maskHeadGrid);
+                    maskHeadGrid = null;
+                }
                 return;
             }
 
@@ -201,6 +204,52 @@ namespace DataGridSam
             foreach (var item in RowTriggers)
             {
                 item.Priority = i++;
+            }
+        }
+
+        private View emptyView;
+        internal void UpdateEmptyView()
+        {
+            if (ViewForEmpty == null) 
+            {
+                if (emptyView != null)
+                {
+                    Children.Remove(emptyView);
+                    mainScroll.IsVisible = true;
+                    emptyView = null;
+                }
+                return;
+            }
+
+
+            ViewForEmpty.IsVisible = false;
+            SetRow(ViewForEmpty, 1);
+            Children.Add(ViewForEmpty);
+            
+            UpdateEmptyViewVisible();
+            emptyView = ViewForEmpty;
+        }
+
+        internal void UpdateEmptyViewVisible()
+        {
+            if (ViewForEmpty == null)
+                return;
+
+            if (stackList.Children.Count == 0)
+            {
+                mainScroll.IsVisible = false;
+                wrapper.bottom.IsVisible = false;
+                wrapper.absoluteBottom.IsVisible = false;
+                ViewForEmpty.IsVisible = true;
+                //SetRow(ViewForEmpty, 1);
+                //Children.Add(ViewForEmpty);
+            }
+            else
+            {
+                mainScroll.IsVisible = true;
+                wrapper.bottom.IsVisible = true;
+                wrapper.absoluteBottom.IsVisible = true;
+                ViewForEmpty.IsVisible = false;
             }
         }
 

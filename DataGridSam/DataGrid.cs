@@ -32,7 +32,6 @@ namespace DataGridSam
             // Stack list (3)
             stackList = new StackList();
             stackList.VerticalOptions = LayoutOptions.FillAndExpand;
-            stackList.Spacing = 0;
             stackList.DataGrid = this;
 
             // Mask Grid (3)
@@ -157,7 +156,24 @@ namespace DataGridSam
         }
 
 
-
+        /// <summary>
+        ///  View for empty (default: null)
+        /// </summary>
+        public static readonly BindableProperty ViewForEmptyProperty =
+            BindableProperty.Create(nameof(ViewForEmpty), typeof(View), typeof(DataGrid), null,
+                propertyChanged: (b, o, n) =>
+                {
+                    var host = b as DataGrid;
+                    host.UpdateEmptyView();
+                });
+        /// <summary>
+        /// Border width (default: 1)
+        /// </summary>
+        public View ViewForEmpty
+        {
+            get { return (View)GetValue(ViewForEmptyProperty); }
+            set { SetValue(ViewForEmptyProperty, value); }
+        }
 
 
         /// <summary>

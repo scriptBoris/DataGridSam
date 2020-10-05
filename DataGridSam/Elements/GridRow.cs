@@ -14,8 +14,8 @@ namespace DataGridSam.Elements
     internal sealed class GridRow : Layout<View>
     {
         private bool isLineVisible;
-        private double rowHeight = -1;
 
+        internal double RowHeight = -1;
         internal DataGrid DataGrid;
         internal int Index;
         internal bool IsSelected;
@@ -25,7 +25,7 @@ namespace DataGridSam.Elements
         internal List<GridCell> Cells;
         internal RowTrigger EnabledTrigger;
 
-        public GridRow(object context, StackList host, int id, int itemsCount, bool isLineVisible)
+        public GridRow(object context, StackList host, int id, bool isLineVisible, bool isAutoNumber)
         {
             Context = context;
             BindingContext = context;
@@ -81,8 +81,8 @@ namespace DataGridSam.Elements
             Children.Add(Line);
 
             // Auto number
-            if (DataGrid.IsAutoNumberCalc)
-                UpdateAutoNumeric(Index + 1, itemsCount);
+            if (DataGrid.IsAutoNumberCalc && isAutoNumber)
+                UpdateAutoNumeric(Index);
 
             // find FIRST active trigger
             if (this.DataGrid.RowTriggers.Count > 0)
@@ -226,18 +226,21 @@ namespace DataGridSam.Elements
             }
         }
 
-        public void UpdateAutoNumeric(int num, int itemsCount)
+        public void UpdateAutoNumeric(int index)
         {
+            Index = index;
+
             // Auto numeric
             foreach(var cell in Cells)
             {
                 switch (cell.Column.AutoNumber)
                 {
                     case Enums.AutoNumberType.Up:
-                        cell.Label.Text = (itemsCount + 1 - num).ToString(cell.Column.StringFormat);
+                        //cell.Label.Text = (itemsCount + 1 - num).ToString(cell.Column.StringFormat);
+                        cell.Label.Text = (DataGrid.stackList.ItemsCount - index).ToString(cell.Column.StringFormat);
                         break;
                     case Enums.AutoNumberType.Down:
-                        cell.Label.Text = num.ToString(cell.Column.StringFormat);
+                        cell.Label.Text = (index + 1).ToString(cell.Column.StringFormat);
                         break;
                 }
             }
@@ -310,10 +313,15 @@ namespace DataGridSam.Elements
         }
 
         #region Layot calculation
+        internal void RenderRow(double x, double y, double width, double height)
+        {
+            LayoutChildren(x, y, width, height);
+        }
+
         protected override void LayoutChildren(double x, double y, double width, double height)
         {
-            if (rowHeight > 0)
-                height = rowHeight;
+            if (RowHeight > 0)
+                height = RowHeight;
 
             // Render cells
             foreach (var cell in Cells)
@@ -335,7 +343,7 @@ namespace DataGridSam.Elements
                 LayoutChildIntoBoundingRegion(Line, rect);
             }
 
-            if (rowHeight > 0)
+            if (RowHeight > 0)
                 HeightRequest = height;
         }
 
@@ -360,7 +368,7 @@ namespace DataGridSam.Elements
             if (isLineVisible)
                 actualHeight += DataGrid.BorderWidth;
 
-            rowHeight = actualHeight;
+            RowHeight = actualHeight;
             return new SizeRequest(new Size(width, actualHeight));
         }
 
