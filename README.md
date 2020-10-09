@@ -6,9 +6,9 @@
 		<td align="center">iOS</td>
 	</tr>
 	<tr>
-	  <td><img src="Screenshots/ImagesDemo/1droid.jpg" width=270 height=550></td>
-	  <td align="center"><img src="Screenshots/ImagesDemo/1uwp.jpg" width=331 height=550></td>
-	  <td><img src="Screenshots/ImagesDemo/1ios.jpg" width=309 height=550></td>
+	  <td><img src="Screenshots/ImagesDemo/1droid.jpg" width=270 height=470></td>
+	  <td align="center"><img src="Screenshots/ImagesDemo/1uwp.jpg" width=331 height=470></td>
+	  <td><img src="Screenshots/ImagesDemo/1ios.jpg" width=309 height=470></td>
 	</tr>
  </table>
  
@@ -19,9 +19,9 @@
 		<td align="center">iOS</td>
 	</tr>
 	<tr>
-	  <td><img src="Screenshots/TriggersDemo/2droid.jpg" width=270 height=550></td>
-	  <td align="center"><img src="Screenshots/TriggersDemo/2uwp.jpg" width=331 height=550></td>
-	  <td><img src="Screenshots/TriggersDemo/2ios.jpg" width=309 height=550></td>
+	  <td><img src="Screenshots/TriggersDemo/2droid.jpg" width=270 height=470></td>
+	  <td align="center"><img src="Screenshots/TriggersDemo/2uwp.jpg" width=331 height=470></td>
+	  <td><img src="Screenshots/TriggersDemo/2ios.jpg" width=309 height=470></td>
 	</tr>
  </table>
 
