@@ -1,6 +1,29 @@
 # Screenshots
-![Repo_List](Screenshots/Screenshot.png)
-![Repo_List](Screenshots/Screenshot2.png)
+<table>
+	<tr>
+		<td align="center">Droid</td>
+		<td align="center">UWP</td>
+		<td align="center">iOS</td>
+	</tr>
+	<tr>
+	  <td><img src="Screenshots/ImagesDemo/1droid.jpg" width=270 height=550></td>
+	  <td align="center"><img src="Screenshots/ImagesDemo/1uwp.jpg" width=331 height=550></td>
+	  <td><img src="Screenshots/ImagesDemo/1ios.jpg" width=309 height=550></td>
+	</tr>
+ </table>
+ 
+ <table>
+	<tr>
+		<td align="center">Droid</td>
+		<td align="center">UWP</td>
+		<td align="center">iOS</td>
+	</tr>
+	<tr>
+	  <td><img src="Screenshots/TriggersDemo/2droid.jpg" width=270 height=550></td>
+	  <td align="center"><img src="Screenshots/TriggersDemo/2uwp.jpg" width=331 height=550></td>
+	  <td><img src="Screenshots/TriggersDemo/2ios.jpg" width=309 height=550></td>
+	</tr>
+ </table>
 
 
 ## Nuget Installation
@@ -13,7 +36,7 @@ Install-Package DataGridSam
 
 ## Supported Platforms
  - Android
- - iOS (сurrently not available)
+ - iOS (beta)
  - UWP
 
 
@@ -55,7 +78,21 @@ In file **App.xaml.cs**, enter `DataGridSam.UWP.Initialize.Init();` as below
 	    ...
         }
 ```
+## Install iOS project
+In file **AppDelegate.cs**, enter `DataGridSam.iOS.Initialize.Init();` as below
+```c#
+    public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsApplicationDelegate
+    {
+        public override bool FinishedLaunching(UIApplication app, NSDictionary options)
+        {
+            global::Xamarin.Forms.Forms.Init();
+            DataGridSam.iOS.Initialize.Init();
+            LoadApplication(new Sample.App());
 
+            return base.FinishedLaunching(app, options);
+        }
+    }
+```
 ## Example
 ```xml
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
