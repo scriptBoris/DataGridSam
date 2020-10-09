@@ -304,9 +304,13 @@ namespace DataGridSam.Elements
                     LayoutChildIntoBoundingRegion(cell.Wrapper, rect);
                     LayoutChildIntoBoundingRegion(cell.Content, rect);
                     lastX += cell.Column.ActualWidth + bw;
+                    cell.Wrapper.IsVisible = true;
+                    cell.Content.IsVisible = true;
                 }
                 else
                 {
+                    cell.Wrapper.IsVisible = false;
+                    cell.Content.IsVisible = false;
                     LayoutChildIntoBoundingRegion(cell.Wrapper, Rectangle.Zero);
                     LayoutChildIntoBoundingRegion(cell.Content, Rectangle.Zero);
                 }

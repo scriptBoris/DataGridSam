@@ -33,7 +33,6 @@ namespace DataGridSam
             bodyGrid = new GridBody(this, stackList);
             bodyGrid.VerticalOptions = LayoutOptions.Start;
 
-
             // Scroll (1)
             mainScroll = new GridScroll();
             SetRow(mainScroll, 1);

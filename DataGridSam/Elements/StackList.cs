@@ -274,8 +274,6 @@ namespace DataGridSam.Elements
             if (Children.Count == 0)
             {
                 StackHeight = -1;
-                //DataGrid.CheckWrapperBottomVisible(null, null);
-
                 return new SizeRequest(new Size(widthConstraint, 0));
             }
             else
@@ -287,7 +285,6 @@ namespace DataGridSam.Elements
                     StackHeight += res.Request.Height;
                 }
 
-                //DataGrid.CheckWrapperBottomVisible(null, null);
                 return new SizeRequest(new Size(widthConstraint, StackHeight));
             }
         }

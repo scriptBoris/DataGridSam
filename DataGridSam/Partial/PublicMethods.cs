@@ -8,6 +8,16 @@ namespace DataGridSam
 {
     public partial class DataGrid : Grid
     {
+#if __ios__
+[Obsolete("iOS not supported")]
+#endif
+        /// <summary>
+        /// Scroll to element Id (iOS not supported)
+        /// </summary>
+        /// <param name="id">id element</param>
+        /// <param name="scrollToPosition">rect element scroll</param>
+        /// <param name="isAnimated">animation</param>
+        /// <returns></returns>
         public Task ScrollToElement(int id, ScrollToPosition scrollToPosition, bool isAnimated)
         {
             if (id < 0)
@@ -15,19 +25,18 @@ namespace DataGridSam
             else if (id > stackList.Children.Count - 1)
                 id = stackList.Children.Count - 1;
 
-            var element = stackList.Children[id];
-            Task.Delay(10).Wait();
-            return mainScroll.ScrollToAsync(element, scrollToPosition, isAnimated);
+            //var element = stackList.Children[id];
+            //return mainScroll.ScrollToAsync(element, scrollToPosition, isAnimated);
 
-            //if (id == stackList.Children.Count - 1)
-            //{
-            //    mainScroll.ScrollToAsync(0, stackList.Height, isAnimated);
-            //}
-            //else
-            //{
-            //    var element = stackList.Children[id];
-            //    mainScroll.ScrollToAsync(element, ScrollToPosition.MakeVisible, isAnimated);
-            //}
+            if (id == stackList.Children.Count - 1)
+            {
+                return mainScroll.ScrollToAsync(0, stackList.StackHeight, isAnimated);
+            }
+            else
+            {
+                var element = stackList.Children[id];
+                return mainScroll.ScrollToAsync(element, scrollToPosition, isAnimated);
+            }
         }
     }
 }
