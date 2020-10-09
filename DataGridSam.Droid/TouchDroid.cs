@@ -39,6 +39,7 @@ namespace DataGridSam.Droid
         readonly Rect _rect = new Rect();
         readonly int[] _location = new int[2];
 
+        private DataGrid host;
         private System.Timers.Timer timer;
         private MotionEvent motion;
         private Color color;
@@ -46,7 +47,6 @@ namespace DataGridSam.Droid
         private ObjectAnimator animation;
         private FrameLayout viewOverlay;
         private RippleDrawable ripple;
-        private bool isEnabled;
 
         public bool EnableRipple => Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop;
         public View View => Control ?? Container;
@@ -59,12 +59,13 @@ namespace DataGridSam.Droid
 
         protected override void OnAttached()
         {
-            if (Touch.GetLongTap(Element) != null)
+            host = Touch.GetHost(Element);
+
+            if (host.CommandLongTapItem != null)
             {
                 timer = new System.Timers.Timer();
                 timer.Elapsed += OnTimerEvent;
             }
-            isEnabled = Touch.GetIsEnabled(Element);
             //View.Clickable = true;
             //View.LongClickable = true;
             //View.SoundEffectsEnabled = true;
@@ -120,25 +121,8 @@ namespace DataGridSam.Droid
             View.Touch -= OnTouch;
         }
 
-        protected override void OnElementPropertyChanged(PropertyChangedEventArgs e)
-        {
-            base.OnElementPropertyChanged(e);
-
-            if (e.PropertyName == Touch.ColorProperty.PropertyName)
-            {
-                SetEffectColor();
-            }
-            else if (e.PropertyName == Touch.IsEnabledProperty.PropertyName)
-            {
-                isEnabled = Touch.GetIsEnabled(Element);
-            }
-        }
-
         private void OnTouch(object sender, View.TouchEventArgs args)
         {
-            if (!isEnabled)
-                return;
-
             motion = args.Event;
 
             if (args.Event.Action == MotionEventActions.Down)
@@ -150,14 +134,15 @@ namespace DataGridSam.Droid
                 else
                     StartAnimation();
 
-                if (Touch.GetLongTap(Element) != null)
+                if (host.CommandLongTapItem != null)
                 {
                     if (timer == null)
                     {
                         timer = new System.Timers.Timer();
                         timer.Elapsed += OnTimerEvent;
                     }
-                    timer.Interval = Touch.GetLongTapLatency(Element);
+                    // TODO Set long tap interval
+                    timer.Interval = 500;
                     timer.AutoReset = false;
                     timer.Start();
                 }
@@ -180,7 +165,7 @@ namespace DataGridSam.Droid
                 if (args.Event.Action == MotionEventActions.Up &&
                     IsViewInBounds((int)args.Event.RawX, (int)args.Event.RawY))
                 {
-                    if (Touch.GetLongTap(Element) != null)
+                    if (host.CommandLongTapItem != null)
                     {
                         if (timer == null)
                         {
@@ -215,13 +200,15 @@ namespace DataGridSam.Droid
 
         private void SelectHandler()
         {
-            var cmd = Touch.GetSelect(Element);
-            cmd.Execute(Element.BindingContext);
+            host.SelectedItem = Element.BindingContext;
+            //var cmd = host.CommandSelectedItem;
+            //if (cmd != null)
+            //    cmd.Execute(Element.BindingContext);
         }
 
         private void ClickHandler()
         {
-            var cmd = Touch.GetTap(Element);
+            var cmd = host.CommandSelectedItem;
             if (cmd == null)
                 return;
 
@@ -233,7 +220,7 @@ namespace DataGridSam.Droid
         {
             SelectHandler();
 
-            var cmdLong = Touch.GetLongTap(Element);
+            var cmdLong = host.CommandLongTapItem;
             if (cmdLong == null)
             {
                 ClickHandler();
@@ -258,7 +245,7 @@ namespace DataGridSam.Droid
 
         private void SetEffectColor()
         {
-            var color = Touch.GetColor(Element);
+            var color = host.TapColor;
             if (color == Xamarin.Forms.Color.Default)
             {
                 return;

@@ -11,20 +11,15 @@ namespace DataGridSam
     public partial class DataGrid
     {
         /// <summary>
+        /// Absolute bottom line if DataGrid wrapped
+        /// </summary>
+        internal View absoluteBottom;
+
+        /// <summary>
         /// Main scroll. Contains: bodyGrid, mainStackLayout 
         /// (if enable pagination)
         /// </summary>
         internal ScrollView mainScroll;
-
-        /// <summary>
-        /// For imitate column borders (BODY)
-        /// </summary>
-        internal Grid maskGrid;
-
-        /// <summary>
-        /// For imitate column borders (HEAD)
-        /// </summary>
-        internal Grid maskHeadGrid;
 
         /// <summary>
         /// Main GUI component that display rows
@@ -34,17 +29,12 @@ namespace DataGridSam
         /// <summary>
         /// Heads
         /// </summary>
-        internal Grid headGrid;
+        internal GridHead headGrid;
 
         /// <summary>
         /// Contains: stackList, maskGrid
         /// </summary>
         internal GridBody bodyGrid;
-
-        /// <summary>
-        /// Group of BoxViews imitate wrapper (for max FPS)
-        /// </summary>
-        internal BorderWrapper wrapper;
 
         /// <summary>
         /// Current time: selected row by user

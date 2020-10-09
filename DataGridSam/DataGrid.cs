@@ -11,39 +11,26 @@ using Xamarin.Forms;
 namespace DataGridSam
 {
     [Xamarin.Forms.Internals.Preserve(AllMembers = true)]
-    [ContentProperty("Columns")]
+    [ContentProperty(nameof(Columns))]
     public partial class DataGrid : Grid
     {
         public static void Preserve() { }
         public DataGrid()
         {
             RowSpacing = 0;
-            RowDefinitions.Add(new RowDefinition{ Height = GridLength.Auto });
-            RowDefinitions.Add(new RowDefinition{ Height = GridLength.Star });
+            RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            RowDefinitions.Add(new RowDefinition { Height = GridLength.Star });
 
             // Head Grid (1)
-            headGrid = new Grid();
-            headGrid.ColumnSpacing = 0;
-            headGrid.RowSpacing = 0;
-            headGrid.SetBinding(Grid.BackgroundColorProperty, new Binding(nameof(HeaderBackgroundColor), source: this));
+            headGrid = new GridHead(this);
             SetRow(headGrid, 0);
             Children.Add(headGrid);
 
             // Stack list (3)
-            stackList = new StackList();
-            stackList.VerticalOptions = LayoutOptions.FillAndExpand;
-            stackList.DataGrid = this;
-
-            // Mask Grid (3)
-            maskGrid = new Grid();
-            maskGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
-            maskGrid.ColumnSpacing = 0;
-            maskGrid.BackgroundColor = Color.Transparent;
-            maskGrid.InputTransparent = true;
-            maskGrid.SetBinding(Grid.IsVisibleProperty, new Binding(nameof(stackList.HasItems), source: stackList));
+            stackList = new StackList(this);
 
             // Body Grid (2)
-            bodyGrid = new GridBody(this, stackList, maskGrid);
+            bodyGrid = new GridBody(this, stackList);
             bodyGrid.VerticalOptions = LayoutOptions.Start;
 
 
@@ -53,8 +40,18 @@ namespace DataGridSam
             mainScroll.Content = bodyGrid;
             this.Children.Add(mainScroll);
 
-            // Wrapper (1)
-            wrapper = new BorderWrapper(this);
+            // Abs bottom line
+            absoluteBottom = new BoxView();
+            absoluteBottom.SetBinding(Grid.BackgroundColorProperty, new Binding(nameof(BorderColor), source: this));
+            absoluteBottom.SetBinding(Grid.HeightRequestProperty, new Binding(nameof(BorderWidth), source: this));
+            absoluteBottom.VerticalOptions = LayoutOptions.EndAndExpand;
+            absoluteBottom.HorizontalOptions = LayoutOptions.FillAndExpand;
+            absoluteBottom.TranslationY = BorderWidth * 0.1;
+            SetRow(absoluteBottom, 1);
+            this.Children.Add(absoluteBottom);
+
+            mainScroll.SizeChanged += CheckWrapperBottomVisible;
+            stackList.SizeChanged += CheckWrapperBottomVisible;
         }
 
 
@@ -111,7 +108,7 @@ namespace DataGridSam
                 propertyChanged: (thisObject, oldValue, newValue) =>
                 {
                     DataGrid self = thisObject as DataGrid;
-                    self.stackList.ItemsSource = newValue as ICollection;
+                    self.stackList.UpdateSource(oldValue, newValue);
                 });
         public IEnumerable ItemsSource
         {
@@ -148,7 +145,11 @@ namespace DataGridSam
         // Selected item
         public static readonly BindableProperty SelectedItemProperty =
             BindableProperty.Create(nameof(SelectedItem), typeof(object), typeof(DataGrid), null, BindingMode.TwoWay,
-                propertyChanged: UpdateSelectedItem);
+                propertyChanged: (b, o, n) => 
+                {
+                    var self = b as DataGrid;
+                    self.UpdateSelectedItem(n);
+                });
         public object SelectedItem
         {
             get { return GetValue(SelectedItemProperty); }
@@ -180,7 +181,12 @@ namespace DataGridSam
         ///  Border width (default: 1)
         /// </summary>
         public static readonly BindableProperty BorderWidthProperty =
-            BindableProperty.Create(nameof(BorderWidth), typeof(double), typeof(DataGrid), 1.0, BindingMode.Default);
+            BindableProperty.Create(nameof(BorderWidth), typeof(double), typeof(DataGrid), 1.0,
+                propertyChanged: (b, o, n) =>
+                 {
+                     var self = b as DataGrid;
+                     self.UpdateBorderWidth();
+                 });
         /// <summary>
         /// Border width (default: 1)
         /// </summary>
@@ -195,7 +201,12 @@ namespace DataGridSam
         /// Border color (default: Color.Gray)
         /// </summary>
         public static readonly BindableProperty BorderColorProperty =
-            BindableProperty.Create(nameof(BorderColor), typeof(Color), typeof(DataGrid), Color.Gray);
+            BindableProperty.Create(nameof(BorderColor), typeof(Color), typeof(DataGrid), Color.Gray,
+                propertyChanged: (b, o, n) =>
+                {
+                    var self = b as DataGrid;
+                    self.UpdateBorderColor();
+                });
         /// <summary>
         /// Border color (default: Color.Gray)
         /// </summary>
@@ -250,7 +261,10 @@ namespace DataGridSam
             BindableProperty.Create(nameof(IsWrapped), typeof(bool), typeof(DataGrid), true,
                 propertyChanged: (b, o, n) =>
                 {
-                    (b as DataGrid).wrapper.Update();
+                    var self = (b as DataGrid);
+                    self.headGrid.Redraw();
+                    self.bodyGrid.Redraw();
+                    self.UpdateIsWrapped();
                 });
         /// <summary>
         /// Is wrapped by borders (default: true)
@@ -334,9 +348,10 @@ namespace DataGridSam
         // Header font size
         public static readonly BindableProperty HeaderFontSizeProperty =
             BindableProperty.Create(nameof(HeaderFontSize), typeof(double), typeof(DataGrid), defaultValue: 14.0,
-                propertyChanged: (b,o,n)=>
+                propertyChanged: (b, o, n) =>
                 {
                     var self = (DataGrid)b;
+                    self.headGrid?.UpdateFontSize();
                 });
         /// <summary>
         /// Header font size. Default: 14
@@ -349,10 +364,85 @@ namespace DataGridSam
 
 
 
+
+        /// <summary>
+        /// Header text padding (default: 5)
+        /// </summary>
+        public static readonly BindableProperty HeaderTextPaddingProperty =
+            BindableProperty.Create(nameof(HeaderTextPadding), typeof(Thickness), typeof(DataGrid), 
+                defaultValue: new Thickness(5),
+                propertyChanged: (b, o, n) =>
+                {
+                    var self = (DataGrid)b;
+                    self.headGrid?.UpdateTextPadding();
+                });
+        /// <summary>
+        /// Header text padding (default: 5)
+        /// </summary>
+        public Thickness HeaderTextPadding
+        {
+            get { return (Thickness)GetValue(HeaderTextPaddingProperty); }
+            set { SetValue(HeaderTextPaddingProperty, value); }
+        }
+
+
+
+
+
+        /// <summary>
+        /// Header text horizontal align (default: center)
+        /// </summary>
+        public static readonly BindableProperty HeaderHorizontalTextAlignmentProperty =
+            BindableProperty.Create(nameof(HeaderHorizontalTextAlignment), typeof(TextAlignment), typeof(DataGrid),
+                defaultValue: TextAlignment.Center,
+                propertyChanged: (b, o, n) =>
+                {
+                    var self = (DataGrid)b;
+                    self.headGrid?.UpdateTextAlign();
+                });
+        /// <summary>
+        /// Header text horizontal align (default: center)
+        /// </summary>
+        public TextAlignment HeaderHorizontalTextAlignment
+        {
+            get { return (TextAlignment)GetValue(HeaderHorizontalTextAlignmentProperty); }
+            set { SetValue(HeaderHorizontalTextAlignmentProperty, value); }
+        }
+
+
+
+
+
+
+
+        /// <summary>
+        /// Header text vertical align (default: center)
+        /// </summary>
+        public static readonly BindableProperty HeaderVerticalTextAlignmentProperty =
+            BindableProperty.Create(nameof(HeaderVerticalTextAlignment), typeof(TextAlignment), typeof(DataGrid),
+                defaultValue: TextAlignment.Center,
+                propertyChanged: (b, o, n) =>
+                {
+                    var self = (DataGrid)b;
+                    self.headGrid.UpdateTextAlign();
+                });
+        /// <summary>
+        /// Header font size. Default: 14
+        /// </summary>
+        public TextAlignment HeaderVerticalTextAlignment
+        {
+            get { return (TextAlignment)GetValue(HeaderVerticalTextAlignmentProperty); }
+            set { SetValue(HeaderVerticalTextAlignmentProperty, value); }
+        }
+
+
+
+
+
         // Header label style
         public static readonly BindableProperty HeaderLabelStyleProperty =
             BindableProperty.Create(nameof(HeaderLabelStyle), typeof(Style), typeof(DataGrid),
-                propertyChanged: (b,o,n) =>
+                propertyChanged: (b, o, n) =>
                 {
                     var self = (DataGrid)b;
                     self.UpdateHeaderStyle(n as Style);
@@ -392,7 +482,7 @@ namespace DataGridSam
                     var self = (DataGrid)b;
                     var color = (Color)n;
                     color = color.MultiplyAlpha(0.5);
-                    
+
                     self.VisualSelectedRow.BackgroundColor = color;
                 });
         public Color SelectedRowColor
@@ -464,11 +554,11 @@ namespace DataGridSam
         // Rows background color
         public static readonly BindableProperty RowsColorProperty =
             BindableProperty.Create(nameof(RowsColor), typeof(Color), typeof(DataGrid), defaultValue: Color.White,
-                propertyChanged:(b,o,n)=>
-                {
-                    var self = (DataGrid)b;
-                    self.VisualRows.BackgroundColor = (Color)n;
-                });
+                propertyChanged: (b, o, n) =>
+                 {
+                     var self = (DataGrid)b;
+                     self.VisualRows.BackgroundColor = (Color)n;
+                 });
         /// <summary>
         /// Rows background color. Default: Color.White
         /// </summary>
@@ -485,11 +575,11 @@ namespace DataGridSam
         //Rows text style
         public static readonly BindableProperty RowsTextStyleProperty =
             BindableProperty.Create(nameof(RowsTextStyle), typeof(Style), typeof(DataGrid), null,
-                propertyChanged:(b,o,n)=>
-                {
-                    var self = (DataGrid)b;
-                    self.VisualRowsFromStyle.OnUpdateStyle(n as Style);
-                });
+                propertyChanged: (b, o, n) =>
+                 {
+                     var self = (DataGrid)b;
+                     self.VisualRowsFromStyle.OnUpdateStyle(n as Style);
+                 });
         /// <summary>
         /// Rows text style. Default: null
         /// </summary>
@@ -505,7 +595,7 @@ namespace DataGridSam
         //Rows text color
         public static readonly BindableProperty RowsTextColorProperty =
             BindableProperty.Create(nameof(RowsTextColor), typeof(Color), typeof(DataGrid), defaultValue: Color.Black,
-                propertyChanged: (b,o,n)=>
+                propertyChanged: (b, o, n) =>
                 {
                     var self = (DataGrid)b;
                     self.VisualRows.TextColor = (Color)n;
@@ -541,11 +631,11 @@ namespace DataGridSam
         // Rows font size
         public static readonly BindableProperty RowsFontSizeProperty =
             BindableProperty.Create(nameof(RowsFontSize), typeof(double), typeof(DataGrid), defaultValue: 14.0,
-                propertyChanged:(b,o,n)=>
-                {
-                    var self = (DataGrid)b;
-                    self.VisualRows.FontSize = (double)n;
-                });
+                propertyChanged: (b, o, n) =>
+                 {
+                     var self = (DataGrid)b;
+                     self.VisualRows.FontSize = (double)n;
+                 });
         /// <summary>
         /// Rows font size. Default: 14
         /// </summary>
@@ -560,11 +650,11 @@ namespace DataGridSam
         // Rows text attribute
         public static readonly BindableProperty RowsFontAttributeProperty =
             BindableProperty.Create(nameof(RowsFontAttribute), typeof(FontAttributes), typeof(DataGrid), null,
-                propertyChanged:(b,o,n)=>
-                {
-                    var self = (DataGrid)b;
-                    self.VisualRows.FontAttribute = (FontAttributes)n;
-                });
+                propertyChanged: (b, o, n) =>
+                 {
+                     var self = (DataGrid)b;
+                     self.VisualRows.FontAttribute = (FontAttributes)n;
+                 });
         /// <summary>
         /// Rows font attribute. Default: null
         /// </summary>

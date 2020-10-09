@@ -22,83 +22,8 @@ namespace DataGridSam
         private void InitHeaderView()
         {
             SetColumnsBindingContext();
-
-            UpdateHeaderCells();
-            UpdateBodyMaskBorders();
-            UpdateHeadMaskBorders();
-            wrapper.Update();
-        }
-
-        private void UpdateBodyMaskBorders()
-        {
-            // Clear GUI mask
-            maskGrid.Children.Clear();
-            maskGrid.ColumnDefinitions.Clear();
-
-            if (Columns == null)
-                return;
-
-            int i = 0;
-            foreach (var col in Columns)
-            {
-                // Create vertical borders (Table)
-                maskGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = col.CalcWidth });
-
-                if (i < Columns.Count - 1)
-                {
-                    var line = CreateColumnLine();
-                    Grid.SetColumn(line, i);
-                    Grid.SetRow(line, 0);
-                    maskGrid.Children.Add(line);
-                }
-
-                i++;
-            }
-        }
-
-        private void UpdateHeaderCells()
-        {
-            bool isUp = false;
-            bool isDown = false;
-
-            // Clear old GUI elements and values
-            AutoNumberStrategy = Enums.AutoNumberStrategyType.None;
-            headGrid.Children.Clear();
-            headGrid.ColumnDefinitions.Clear();
-            UpdateHeadHeight(HeaderHeight);
-
-            if (Columns == null)
-                return;
-
-            int i = 0;
-            foreach (var col in Columns)
-            {
-                col.OnAttached(this, i);
-
-                // Header table
-                headGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = col.CalcWidth });
-
-                var headCell = CreateColumnHeader(col);
-                headCell.IsVisible = col.IsVisible;
-
-                Grid.SetColumn(headCell, i);
-                headGrid.Children.Add(headCell);
-
-                // Detect auto number
-                if (col.AutoNumber == Enums.AutoNumberType.Up)
-                    isUp = true;
-                else if (col.AutoNumber == Enums.AutoNumberType.Down)
-                    isDown = true;
-
-                i++;
-            }
-
-            if (isUp)
-                AutoNumberStrategy = Enums.AutoNumberStrategyType.Up;
-            else if (isDown)
-                AutoNumberStrategy = Enums.AutoNumberStrategyType.Down;
-            else if (isUp && isDown)
-                AutoNumberStrategy = Enums.AutoNumberStrategyType.Both;
+            headGrid.UpdateColumns();
+            bodyGrid.UpdateColumns();
         }
 
         internal void UpdateHeadHeight(int height)
@@ -111,91 +36,11 @@ namespace DataGridSam
                 row.Height = new GridLength(height);
         }
 
-        internal void UpdateColumnVisibile(DataGridColumn col, bool isVisible)
+        internal void UpdateColumnVisibile()
         {
-            void SolveWidth(ColumnDefinition target, bool flag)
-            {
-                if (target == null)
-                    return;
-
-                if (flag)
-                    target.Width = col.Width;
-                else
-                    target.Width = new GridLength(0.0);
-            }
-
-            int i = col.Index;
-            col.HeaderWrapper.IsVisible = isVisible;
-
-            SolveWidth(headGrid?.ColumnDefinitions[i], isVisible);
-            SolveWidth(maskGrid?.ColumnDefinitions[i], isVisible);
-            SolveWidth(maskHeadGrid?.ColumnDefinitions[i], isVisible);
-                
-            foreach (var item in stackList.Children)
-            {
-                var row = item as GridRow;
-                row?.UpdateCellVisibility(i, isVisible);
-            }
-        }
-
-        private void UpdateHeadMaskBorders()
-        {
-            if (HeaderHasBorder && maskHeadGrid == null)
-            {
-                maskHeadGrid = new Grid();
-                maskHeadGrid.ColumnSpacing = 0;
-                maskHeadGrid.RowSpacing = 0;
-                maskHeadGrid.BackgroundColor = Color.Transparent;
-                maskHeadGrid.InputTransparent = true;
-                maskHeadGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Star });
-                maskHeadGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-
-                SetRow(maskHeadGrid, 0);
-                Children.Add(maskHeadGrid);
-            }
-            else if (!HeaderHasBorder)
-            {
-                if (maskHeadGrid != null)
-                {
-                    maskHeadGrid.Children.Clear();
-                    Children.Remove(maskHeadGrid);
-                    maskHeadGrid = null;
-                }
-                return;
-            }
-
-            if (Columns == null)
-                return;
-
-            // Columns
-            int i = 0;
-            foreach (var col in Columns)
-            {
-                // Create vertical borders (Table)
-                maskHeadGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = col.CalcWidth });
-
-                if (i < Columns.Count - 1)
-                {
-                    var line = CreateColumnLine();
-                    Grid.SetColumn(line, i);
-                    Grid.SetRow(line, 0);
-                    maskHeadGrid.Children.Add(line);
-                }
-
-                i++;
-            }
-
-            // Row
-            var row = new BoxView
-            {
-                HeightRequest = BorderWidth,
-                VerticalOptions = LayoutOptions.EndAndExpand,
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                BackgroundColor = BorderColor,
-            };
-            Grid.SetColumnSpan(row, i);
-            Grid.SetRow(row, 1);
-            maskHeadGrid.Children.Add(row);
+            headGrid.Redraw();
+            bodyGrid.Redraw();
+            stackList.Redraw();
         }
 
         private void UpdateRowTriggers()
@@ -207,27 +52,15 @@ namespace DataGridSam
             }
         }
 
-        private View emptyView;
         internal void UpdateEmptyView()
         {
-            if (ViewForEmpty == null) 
-            {
-                if (emptyView != null)
-                {
-                    Children.Remove(emptyView);
-                    mainScroll.IsVisible = true;
-                    emptyView = null;
-                }
-                return;
-            }
+            if (bodyGrid.EmptyView != null)
+                bodyGrid.Children.Remove(bodyGrid.EmptyView);
 
+            bodyGrid.EmptyView = ViewForEmpty;
+            bodyGrid.Children.Add(ViewForEmpty);
 
-            ViewForEmpty.IsVisible = false;
-            SetRow(ViewForEmpty, 1);
-            Children.Add(ViewForEmpty);
-            
             UpdateEmptyViewVisible();
-            emptyView = ViewForEmpty;
         }
 
         internal void UpdateEmptyViewVisible()
@@ -237,54 +70,28 @@ namespace DataGridSam
 
             if (stackList.Children.Count == 0)
             {
-                mainScroll.IsVisible = false;
-                wrapper.bottom.IsVisible = false;
-                wrapper.absoluteBottom.IsVisible = false;
-                ViewForEmpty.IsVisible = true;
-                //SetRow(ViewForEmpty, 1);
-                //Children.Add(ViewForEmpty);
+                if (!bodyGrid.EmptyView.IsVisible)
+                    bodyGrid.EmptyView.IsVisible = true;
             }
-            else
+            else 
             {
-                mainScroll.IsVisible = true;
-                wrapper.bottom.IsVisible = true;
-                wrapper.absoluteBottom.IsVisible = true;
-                ViewForEmpty.IsVisible = false;
+                if (bodyGrid.EmptyView.IsVisible)
+                    bodyGrid.EmptyView.IsVisible = false;
             }
         }
 
-        /// <summary>
-        /// Create header label over column
-        /// </summary>
-        /// <param name="column">Source label column</param>
-        private View CreateColumnHeader(DataGridColumn column)
+        private void UpdateBorderColor()
         {
-            // Set header text color & font size
-            column.HeaderLabel.TextColor = HeaderTextColor;
-            column.HeaderLabel.FontSize = HeaderFontSize;
-
-			column.HeaderLabel.Style = column.HeaderLabelStyle ?? this.HeaderLabelStyle ?? HeaderDefaultStyle;
-
-            // Drop in wrap container
-            column.HeaderWrapper.Content = column.HeaderLabel;
-
-            return column.HeaderWrapper;
+            headGrid.UpdateBorderColor();
+            bodyGrid.UpdateBorderColor();
         }
 
-        /// <summary>
-        /// Create vertical linse aka Column
-        /// </summary>
-        private View CreateColumnLine()
+        private void UpdateBorderWidth()
         {
-            var line = new BoxView
-            {
-                WidthRequest = BorderWidth,
-                VerticalOptions = LayoutOptions.FillAndExpand,
-                HorizontalOptions = LayoutOptions.EndAndExpand,
-                BackgroundColor = BorderColor,
-                TranslationX = BorderWidth,
-            };
-            return line;
+            headGrid.Redraw();
+            bodyGrid.Redraw();
+            stackList.Redraw();
+            absoluteBottom.TranslationY = BorderWidth * 0.2;
         }
 
         private void SetColumnsBindingContext()
@@ -308,15 +115,24 @@ namespace DataGridSam
             }
         }
 
+        internal void UpdateIsWrapped()
+        {
+            if (!IsWrapped)
+                absoluteBottom.IsVisible = false;
+        }
+
         internal void CheckWrapperBottomVisible(object obj, EventArgs e)
         {
-            if (mainScroll.Height > stackList.Height)
+            if (!IsWrapped)
+                return;
+
+            if (mainScroll.Height > stackList.StackHeight)
             {
-                wrapper.absoluteBottom.IsVisible = false;
+                absoluteBottom.IsVisible = false;
             }
             else
             {
-                wrapper.absoluteBottom.IsVisible = true;
+                absoluteBottom.IsVisible = true;
             }
         }
 
@@ -332,32 +148,15 @@ namespace DataGridSam
             }
         }
 
-        private static void UpdateSelectedItem(BindableObject b, object o, object n)
+        private void UpdateSelectedItem(object newItem)
         {
-            var self = (DataGrid)b;
+            int selectedId = -1;
 
-            var lastRow = self.SelectedRow;
+            if (ItemsSource is IList list)
+                selectedId = list.IndexOf(newItem);
 
-            if (n == null && lastRow != null)
-            {
-                lastRow.IsSelected = false;
-                lastRow.UpdateStyle();
-
-                self.SelectedRow = null;
-            }
-            else if (self.stackList.ItemsSource is IList list)
-            {
-                var match = list.IndexOf(n);
-
-                if (match >= 0 && self.stackList.Children.Count > 0)
-                {
-                    var row = self.stackList.Children[match] as GridRow;
-                    row.IsSelected = true;
-                    row.UpdateStyle();
-
-                    self.SelectedRow = row;
-                }
-            }
+            if (selectedId >=0)
+                stackList.Children[selectedId].SelectRow();
         }
     }
 }

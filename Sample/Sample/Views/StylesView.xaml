@@ -18,7 +18,7 @@
         <!--Header style-->
         <Style TargetType="Label" x:Key="HeaderTitle">
             <Setter Property="TextColor" Value="Black"/>
-            <Setter Property="BackgroundColor" Value="#DDD"/>
+            <Setter Property="BackgroundColor" Value="#EEE"/>
             <Setter Property="FontAttributes" Value="Bold"/>
             <Setter Property="FontSize">
                 <Setter.Value>
@@ -82,7 +82,6 @@
                       BorderWidth="1"
                       CellPadding="10"
                       TapColor="#bbdefb"
-                      
                       HeaderLabelStyle="{StaticResource HeaderTitle}"
                       RowsTextStyle="{StaticResource GridRowCell}"
                       SelectedRowTextStyle="{StaticResource GridSelectedRow}">

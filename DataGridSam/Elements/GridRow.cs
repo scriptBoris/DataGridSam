@@ -25,13 +25,13 @@ namespace DataGridSam.Elements
         internal List<GridCell> Cells;
         internal RowTrigger EnabledTrigger;
 
-        public GridRow(object context, StackList host, int id, bool isLineVisible, bool isAutoNumber)
+        public GridRow(object context, StackList host, int id, bool showBottomLine, bool isAutoNumber)
         {
             Context = context;
             BindingContext = context;
             DataGrid = host.DataGrid;
             Index = id;
-            this.isLineVisible = isLineVisible;
+            isLineVisible = showBottomLine;
 
             IsClippedToBounds = true;
             VerticalOptions = LayoutOptions.Start;
@@ -61,16 +61,21 @@ namespace DataGridSam.Elements
             }
 
             // Add tap system event
-            Touch.SetSelect(this, new Command(ActionRowSelect));
+            if (DataGrid.TapColor != Color.Default ||
+                DataGrid.CommandLongTapItem != null ||
+                DataGrid.CommandSelectedItem != null)
+                Touch.SetHost(this, DataGrid);
 
-            if (DataGrid.TapColor != Color.Default)
-                Touch.SetColor(this, DataGrid.TapColor);
+            //Touch.SetSelect(this, new Command(ActionRowSelect));
 
-            if (DataGrid.CommandSelectedItem != null)
-                Touch.SetTap(this, DataGrid.CommandSelectedItem);
+            //if (DataGrid.TapColor != Color.Default)
+            //    Touch.SetColor(this, DataGrid.TapColor);
 
-            if (DataGrid.CommandLongTapItem != null)
-                Touch.SetLongTap(this, DataGrid.CommandLongTapItem);
+            //if (DataGrid.CommandSelectedItem != null)
+            //    Touch.SetTap(this, DataGrid.CommandSelectedItem);
+
+            //if (DataGrid.CommandLongTapItem != null)
+            //    Touch.SetLongTap(this, DataGrid.CommandLongTapItem);
 
 
             // Create horizontal line table
@@ -97,7 +102,7 @@ namespace DataGridSam.Elements
             UpdateStyle();
         }
 
-        private void ActionRowSelect(object param)
+        internal void SelectRow()
         {
             var rowTapped = this;
             var lastTapped = DataGrid.SelectedRow;
@@ -251,53 +256,9 @@ namespace DataGridSam.Elements
             if (isLineVisible == isVisible)
                 return;
 
-            if (isVisible)
-            {
-                double height = Height + DataGrid.BorderWidth;
-                HeightRequest = height;
-                LayoutChildIntoBoundingRegion(Line, new Rectangle(0, height - DataGrid.BorderWidth, Width, DataGrid.BorderWidth));
-            }
-            else
-            {
-                HeightRequest = Height - DataGrid.BorderWidth;
-                LayoutChildIntoBoundingRegion(Line, new Rectangle(0, 0, 0, 0));
-            }
+            InvalidateMeasure();
 
             isLineVisible = isVisible;
-        }
-
-        public void UpdateCellVisibility(int cellId, bool isVisible)
-        {
-            var currentCell = Cells[cellId];
-
-            if (isVisible)
-            {
-                Children.Add(currentCell.Wrapper);
-                Children.Add(currentCell.Content);
-            }
-            else
-            {
-                Children.Remove(currentCell.Wrapper);
-                Children.Remove(currentCell.Content);
-            }
-
-            double height = 0.0;
-            foreach (var cell in Cells)
-            {
-                if (cell.Column.IsVisible)
-                {
-                    double h = CalculateCellHeight(cell, Width);
-                    if (height < h)
-                        height = h;
-                }
-            }
-
-            LayoutChildren(0, 0, Width, height);
-            //foreach (var cell in Cells)
-            //{
-            //    if (cell.Column.IsVisible)
-            //        RenderCellOnLayout(cell, Width, height);
-            //}
         }
 
         private void MergeVisual(Label label, params VisualCollector[] styles)
@@ -318,79 +279,83 @@ namespace DataGridSam.Elements
             LayoutChildren(x, y, width, height);
         }
 
+        internal void CallInvalidateMeasure()
+        {
+            InvalidateMeasure();
+            //double result = 0;
+            //foreach (var cell in Cells)
+            //    result += CalculateCellHeight(cell);
+
+            //return result;
+        }
+
         protected override void LayoutChildren(double x, double y, double width, double height)
         {
-            if (RowHeight > 0)
-                height = RowHeight;
+            double wrap = DataGrid.IsWrapped ? DataGrid.BorderWidth : 0;
+            double bw = DataGrid.BorderWidth;
 
             // Render cells
+            double lastX = 0;
             foreach (var cell in Cells)
             {
-                if (!cell.Column.IsVisible)
-                    continue;
-
-                RenderCellOnLayout(cell, width, height);
+                if (cell.Column.IsVisible)
+                {
+                    var rect = new Rectangle(lastX, 0, cell.Column.ActualWidth, height);
+                    LayoutChildIntoBoundingRegion(cell.Wrapper, rect);
+                    LayoutChildIntoBoundingRegion(cell.Content, rect);
+                    lastX += cell.Column.ActualWidth + bw;
+                }
+                else
+                {
+                    LayoutChildIntoBoundingRegion(cell.Wrapper, Rectangle.Zero);
+                    LayoutChildIntoBoundingRegion(cell.Content, Rectangle.Zero);
+                }
             }
 
             // Selection box
-            var rectSelection = new Rectangle(0, 0, width, height + DataGrid.BorderWidth);
+            var rectSelection = new Rectangle(0, 0, width, height + bw);
             LayoutChildIntoBoundingRegion(SelectionBox, rectSelection);
 
             // Render line
             if (isLineVisible)
             {
-                var rect = new Rectangle(0, height - DataGrid.BorderWidth, width, height);
+                var rect = new Rectangle(0, height - bw, width, height);
                 LayoutChildIntoBoundingRegion(Line, rect);
             }
-
-            if (RowHeight > 0)
-                HeightRequest = height;
         }
 
         protected override SizeRequest OnMeasure(double width, double height)
         {
             if (Cells.Count == 0)
-                return new SizeRequest(new Size(width, 0));
+                return new SizeRequest();
 
-            double actualHeight = 0.0;
+            RowHeight = 0;
             foreach (var cell in Cells)
             {
                 if (!cell.Column.IsVisible)
                     continue;
 
-                double cellHeight = CalculateCellHeight(cell, width);
+                double cellHeight = CalculateCellHeight(cell);
 
-                if (actualHeight < cellHeight)
-                    actualHeight = cellHeight;
+                if (RowHeight < cellHeight)
+                    RowHeight = cellHeight;
             }
 
             // Position for line
             if (isLineVisible)
-                actualHeight += DataGrid.BorderWidth;
+                RowHeight += DataGrid.BorderWidth;
 
-            RowHeight = actualHeight;
-            return new SizeRequest(new Size(width, actualHeight));
+            return new SizeRequest(new Size(width, RowHeight));
         }
 
-        private double CalculateCellHeight(GridCell cell, double rowWidth)
+        private double CalculateCellHeight(GridCell cell)
         {
-            double width = CalcWidth(rowWidth, cell.Column);
+            double width = cell.Column.ActualWidth;
             var cellSize = cell.Content.Measure(width, double.PositiveInfinity, MeasureFlags.IncludeMargins);
             return cellSize.Request.Height;
         }
 
-        private void RenderCellOnLayout(GridCell cell, double rowWidth, double rowHeight)
-        {
-            double w = CalcWidth(rowWidth, cell.Column);
-            double x = CalcX(rowWidth, cell.Column);
-            var rect = new Rectangle(x, 0, w, rowHeight);
-
-            LayoutChildIntoBoundingRegion(cell.Wrapper, rect);
-            LayoutChildIntoBoundingRegion(cell.Content, rect);
-        }
-
-        // TODO Upgrade performance
-        private double CalcWidth(double rowWidth, DataGridColumn col)
+        internal static double CalcWidth(double rowWidth, DataGridColumn col, List<DataGridColumn> cols)
         {
             if (!col.IsVisible)
                 return 0.0;
@@ -403,7 +368,7 @@ namespace DataGridSam.Elements
             {
                 double com = 0;
                 double dif = 0;
-                foreach (var c in DataGrid.Columns)
+                foreach (var c in cols)
                 {
                     if (!c.IsVisible)
                         continue;
@@ -415,54 +380,6 @@ namespace DataGridSam.Elements
                 }
 
                 return (rowWidth - dif) * (col.Width.Value / com);
-            }
-        }
-
-        // TODO Upgrade performance
-        private double CalcX(double rowWidth, DataGridColumn col)
-        {
-            double sum = 0;
-            for (int i = col.Index-1; i >= 0; i--)
-            {
-                if (DataGrid.Columns[i].IsVisible)
-                    sum += DataGrid.Columns[i].ActualWidth;
-            }
-
-            if (!col.IsVisible)
-            {
-                return sum;
-            }
-            else if (col.Width.IsStar)
-            {
-                double dif = 0;
-                double com = 0;
-                foreach (var c in DataGrid.Columns)
-                {
-                    if (!c.IsVisible)
-                        continue;
-
-                    if (c.Width.IsStar)
-                        com += c.Width.Value;
-                    else
-                        dif += c.Width.Value;
-                }
-
-                double final = col.Width.Value / com;
-                col.ActualWidth = (rowWidth - dif) * final;
-
-                if (col.Index == 0)
-                    return 0;
-
-                return sum;
-            }
-            else
-            {
-                col.ActualWidth = col.Width.Value;
-
-                if (col.Index == 0)
-                    return 0;
-
-                return sum;
             }
         }
         #endregion Layout calculation

@@ -20,6 +20,7 @@ namespace DataGridSam.iOS
         public bool IsDisposed => (Container as IVisualElementRenderer)?.Element == null;
         public UIView View => Control ?? Container;
 
+        private DataGrid host;
         private UIView _layer;
         private nfloat _alpha;
 
@@ -28,12 +29,12 @@ namespace DataGridSam.iOS
 
         private System.Timers.Timer timer;
         private UILongPressGestureRecognizer gestureTap;
-        private bool isEnabled;
 
         public static void Preserve() { }
 
         protected override void OnAttached()
         {
+            host = Touch.GetHost(Element);
             View.UserInteractionEnabled = true;
             _layer = new UIView
             {
@@ -42,8 +43,6 @@ namespace DataGridSam.iOS
                 Alpha = 0,
                 TranslatesAutoresizingMaskIntoConstraints = false,
             };
-
-            isEnabled = Touch.GetIsEnabled(Element);
 
             gestureTap = new UILongPressGestureRecognizer(OnTap);
             gestureTap.MinimumPressDuration = 0;
@@ -92,20 +91,6 @@ namespace DataGridSam.iOS
             }
         }
 
-        protected override void OnElementPropertyChanged(System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            base.OnElementPropertyChanged(e);
-
-            if (e.PropertyName == Touch.ColorProperty.PropertyName)
-            {
-                UpdateEffectColor();
-            }
-            else if (e.PropertyName == Touch.IsEnabledProperty.PropertyName)
-            {
-                isEnabled = Touch.GetIsEnabled(Element);
-            }
-        }
-
         private CoreGraphics.CGPoint tapCoord;
         private void OnTap(UILongPressGestureRecognizer press)
         {
@@ -115,17 +100,14 @@ namespace DataGridSam.iOS
             switch (press.State)
             {
                 case UIGestureRecognizerState.Began:
-                    if (isEnabled)
+                    tapCoord = coord;
+                    isTaped = true;
+                    if (timer != null)
                     {
-                        tapCoord = coord;
-                        isTaped = true;
-                        if (timer != null)
-                        {
-                            timer.Interval = Touch.GetLongTapLatency(Element);
-                            timer.Start();
-                        }
-                        AnimRun();
+                        timer.Interval = 500;
+                        timer.Start();
                     }
+                    AnimRun();
                     break;
                 case UIGestureRecognizerState.Changed:
                     if (!isInside && isTaped)
@@ -148,9 +130,9 @@ namespace DataGridSam.iOS
                     }
                     break;
                 case UIGestureRecognizerState.Ended:
-                    if (isInside && isTaped && isEnabled)
+                    if (isInside && isTaped)
                     {
-                        if (Touch.GetLongTap(Element) == null)
+                        if (host.CommandLongTapItem == null)
                         {
                             SelectHandler();
                             ClickHandler();
@@ -200,7 +182,7 @@ namespace DataGridSam.iOS
         {
             SelectHandler();
 
-            var cmdLong = Touch.GetLongTap(Element);
+            var cmdLong = host.CommandLongTapItem;
             if (cmdLong == null)
             {
                 ClickHandler();
@@ -213,13 +195,14 @@ namespace DataGridSam.iOS
 
         private void SelectHandler()
         {
-            var cmd = Touch.GetSelect(Element);
-            cmd.Execute(Element.BindingContext);
+            host.SelectedItem = Element.BindingContext;
+            //var cmd = Touch.GetSelect(Element);
+            //cmd.Execute(Element.BindingContext);
         }
 
         private void ClickHandler()
         {
-            var cmd = Touch.GetTap(Element);
+            var cmd = host.CommandSelectedItem;
             if (cmd == null)
                 return;
 
@@ -231,7 +214,7 @@ namespace DataGridSam.iOS
         #region TouchEffects
         private void UpdateEffectColor()
         {
-            var color = Touch.GetColor(Element);
+            var color = host.TapColor;
             if (color == Color.Default)
             {
                 return;

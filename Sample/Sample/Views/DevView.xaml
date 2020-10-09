@@ -15,18 +15,22 @@
     <StackLayout Spacing="0">
         <!--Table-->
         <sam:DataGrid x:Name="dataGrid"
+                      VerticalOptions="FillAndExpand"
                       ItemsSource="{Binding Items}"
                       SelectedItem="{Binding SelectedItem}"
                       CommandSelectedItem="{Binding CommandSelectItem}"
                       CommandLongTapItem="{Binding CommandLongTap}"
                       IsWrapped="True"
-                      HeaderBackgroundColor="#1976d2"
+                      HeaderHeight="50"
+                      HeaderHasBorder="True"
+                      HeaderBackgroundColor="Black"
+                      CellPadding="0"
                       HeaderTextColor="White"
                       SelectedRowColor="#64b5f6"
                       RowsColor="White"
                       RowsTextColor="Black"
-                      BorderColor="#2196F3"
-                      CellPadding="10"
+                      BorderColor="Blue"
+                      BorderWidth="5"
                       TapColor="#03a9f4">
             <sam:DataGrid.RowsFontSize>
                 <OnIdiom x:TypeArguments="x:Double"
@@ -49,9 +53,10 @@
                                 StringFormat="{}0\."/>
             <sam:DataGridColumn Title="Name" 
                                 Width="2*"
-                                CellBackgroundColor="#EEE"
+                                CellBackgroundColor="#aaa"
                                 PropertyName="Name"/>
             <sam:DataGridColumn Title="Need" 
+                                IsVisible="False"
                                 Width="2*"
                                 HorizontalTextAlignment="End"
                                 PropertyName="Need"/>
@@ -62,7 +67,7 @@
                                 PropertyName="Price"/>-->
             <sam:DataGridColumn Title="Weight" 
                                 Width="1*"
-                                CellBackgroundColor="#EEE"
+                                CellBackgroundColor="#aaa"
                                 CellTextColor="Red"
                                 PropertyName="Weight"
                                 HorizontalTextAlignment="End"/>
@@ -82,7 +87,7 @@
 
             </sam:DataGrid.RowTriggers>
             <sam:DataGrid.ViewForEmpty>
-                <Frame>
+                <Frame VerticalOptions="Start">
                     <StackLayout>
                         <Label Text="There is no data in this table, but you can add it"
                                TextColor="#333"
@@ -95,13 +100,13 @@
         </sam:DataGrid>
 
         <StackLayout BackgroundColor="Gray"
-                     VerticalOptions="EndAndExpand">
+                     VerticalOptions="End">
             <StackLayout Orientation="Horizontal">
                 <Label Text="{Binding SelectedItem.Pos}"
                        FontSize="20"
                        TextColor="Black"/>
                 <Label Text="{Binding SelectedItem.Name}"
-                       IsVisible="False"
+                       IsVisible="True"
                        FontSize="20"
                        TextColor="Black"/>
                 <Label Text="{Binding SelectedItem.Weight, StringFormat='(weight: {0})'}"

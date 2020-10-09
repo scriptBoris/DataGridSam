@@ -11,13 +11,13 @@ namespace DataGridSam
     public class DataGridColumn : BindableObject, IDefinition
     {
         public event EventHandler SizeChanged;
-        public DataGrid DataGrid { get; private set; }
+        public DataGrid DataGrid { get; internal set; }
         public double ActualWidth { get; internal set; }
         public double ActualX { get; internal set; }
         public int Index { get; private set; }
 
-        internal Label HeaderLabel;
-        internal ContentView HeaderWrapper = new ContentView();
+        internal Label Label;
+        internal ContentView Cell = new ContentView();
         internal VisualCollector VisualCell = new VisualCollector();
         internal VisualCollector VisualCellFromStyle = new VisualCollector();
 
@@ -25,7 +25,7 @@ namespace DataGridSam
 
         public DataGridColumn()
         {
-            HeaderLabel = new Label();
+            Label = new Label();
         }
 
         #region Bindable props
@@ -35,7 +35,7 @@ namespace DataGridSam
                 propertyChanged: (b, o, n) =>
                 {
                     var self = (DataGridColumn)b;
-                    self.DataGrid?.UpdateColumnVisibile(self, (bool)n);
+                    self.DataGrid?.UpdateColumnVisibile();
                 });
         public bool IsVisible
         {
@@ -49,7 +49,7 @@ namespace DataGridSam
             BindableProperty.Create(nameof(Title), typeof(string), typeof(DataGridColumn), string.Empty,
                 propertyChanged: (b, o, n) =>
                 {
-                    (b as DataGridColumn).HeaderLabel.Text = (string)n;
+                    (b as DataGridColumn).Label.Text = (string)n;
                 });
         public string Title
         {
@@ -203,8 +203,8 @@ namespace DataGridSam
                     var self = (DataGridColumn)b;
 
                     //self.VisualCellFromStyle.OnUpdateStyle(n as Style);
-                    if (self.HeaderLabel != null && (o != n))
-                        self.HeaderLabel.Style = n as Style;
+                    if (self.Label != null && (o != n))
+                        self.Label.Style = n as Style;
                 });
         public Style HeaderLabelStyle
         {

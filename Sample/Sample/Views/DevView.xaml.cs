@@ -20,7 +20,7 @@ namespace Sample.Views
 
         public void ScrollToIndex(int id)
         {
-            dataGrid.ScrollToElement(id, true);
+            dataGrid.ScrollToElement(id, ScrollToPosition.End, true);
         }
     }
 }

@@ -17,6 +17,7 @@ namespace DataGridSam.UWP
     {
         public UIElement View => Control ?? Container;
         public bool IsDisposed => (Container as IVisualElementRenderer)?.Element == null;
+        private DataGrid host;
 
         public static void Init() { }
 
@@ -24,6 +25,7 @@ namespace DataGridSam.UWP
         {
             if (View != null)
             {
+                host = Touch.GetHost(Element);
                 View.Tapped += OnTapped;
                 View.RightTapped += OnRightTapped;
             }
@@ -43,17 +45,15 @@ namespace DataGridSam.UWP
 
         private async void Tap()
         {
-            var cmd = Touch.GetSelect(Element);
-
             if (Element is ContentView cont)
             {
                 await cont.RelScaleTo(0.2, 40, Easing.SinIn);
-                cmd.Execute(null);
+                host.SelectedItem = Element.BindingContext;
                 await cont.RelScaleTo(-0.2, 40, Easing.SinOut);
             }
             else
             {
-                cmd.Execute(null);
+                host.SelectedItem = Element.BindingContext;
             }
         }
 
@@ -61,7 +61,7 @@ namespace DataGridSam.UWP
         {
             Tap();
 
-            var cmd = Touch.GetTap(Element);
+            var cmd = host.CommandSelectedItem;
             if (cmd?.CanExecute(Element.BindingContext) ?? false)
                 cmd.Execute(Element.BindingContext);
         }
@@ -70,7 +70,7 @@ namespace DataGridSam.UWP
         {
             Tap();
 
-            var cmd = Touch.GetLongTap(Element);
+            var cmd = host.CommandLongTapItem; //Touch.GetLongTap(Element);
             if (cmd?.CanExecute(Element.BindingContext) ?? false)
                 cmd.Execute(Element.BindingContext);
         }

@@ -12,46 +12,26 @@ namespace DataGridSam.Elements
 {
     /// <summary>
     /// RepeatableStack
-    /// StackLayout corresponding to ItemsSource and ItemTemplate
     /// </summary>
     [Xamarin.Forms.Internals.Preserve(AllMembers = true)]
     internal class StackList : Layout<GridRow>
     {
+        private bool? lastHasItems = null;
+        
+        internal double StackHeight = -1;
         internal int ItemsCount;
+        internal DataGrid DataGrid;
 
-        // ItemsSource
-        public static BindableProperty ItemsSourceProperty =
-            BindableProperty.Create(nameof(ItemsSource), typeof(IEnumerable), typeof(StackList), null, defaultBindingMode: BindingMode.OneWay,
-                propertyChanged: ItemsSourceChanged);
-        public IEnumerable ItemsSource
+        public StackList(DataGrid host)
         {
-            get { return (IEnumerable)GetValue(ItemsSourceProperty); }
-            set { SetValue(ItemsSourceProperty, value); }
+            VerticalOptions = LayoutOptions.FillAndExpand;
+            DataGrid = host;
         }
 
-        // Has items
-        public static BindableProperty HasItemsProperty =
-            BindableProperty.Create(nameof(HasItems), typeof(bool), typeof(StackList), true);
-        public bool HasItems
+        internal void UpdateSource(object oldValue, object newValue)
         {
-            get { return (bool)GetValue(HasItemsProperty); }
-            set { SetValue(HasItemsProperty, value); }
-        }
-
-        // DataGrid
-        public static readonly BindableProperty DataGridProperty =
-            BindableProperty.Create(nameof(DataGrid), typeof(DataGrid), typeof(StackList), null);
-        public DataGrid DataGrid
-        {
-            get { return (DataGrid)GetValue(DataGridProperty); }
-            set { SetValue(DataGridProperty, value); }
-        }
-
-        private static void ItemsSourceChanged(BindableObject bindable, object oldValue, object newValue)
-        {
-            var self = (StackList)bindable;
-            self.ItemsCount = 0;
-            self.Children.Clear();
+            ItemsCount = 0;
+            Children.Clear();
 
             IEnumerable newList;
             try
@@ -60,21 +40,21 @@ namespace DataGridSam.Elements
             }
             catch (Exception e)
             {
-                self.DataGrid.UpdateEmptyViewVisible();
+                TryOnEmptyItems();
                 throw e;
             }
 
             if (oldValue is INotifyCollectionChanged oldObservableCollection)
-                oldObservableCollection.CollectionChanged -= self.OnItemsSourceCollectionChanged;
+                oldObservableCollection.CollectionChanged -= OnItemsSourceCollectionChanged;
 
             if (newValue is INotifyCollectionChanged newObservableCollection)
-                newObservableCollection.CollectionChanged += self.OnItemsSourceCollectionChanged;
+                newObservableCollection.CollectionChanged += OnItemsSourceCollectionChanged;
 
             if (newList != null)
             {
                 // Say triggers what binding context changed
                 var targetType = newList.GetType().GetGenericArguments()[0];
-                self.DataGrid.OnChangeItemsBindingContext(targetType);
+                DataGrid.OnChangeItemsBindingContext(targetType);
 
                 // Instantly add items
                 int i = 0;
@@ -88,25 +68,36 @@ namespace DataGridSam.Elements
 
                         if (enumerator.MoveNext())
                         {
-                            self.AddRow(item, i, true, false);
+                            AddRow(item, i, true, false);
                             i++;
                         }
                         else
                         {
-                            self.AddRow(item, i, false, false);
+                            AddRow(item, i, false, false);
                             break;
                         }
                     }
                 }
 
                 // Update auto number
-                if (self.DataGrid.AutoNumberStrategy != AutoNumberStrategyType.None)
-                    foreach (var row in self.Children)
+                if (DataGrid.AutoNumberStrategy != AutoNumberStrategyType.None)
+                    foreach (var row in Children)
                         row.UpdateAutoNumeric(row.Index);
             }
 
-            self.HasItems = (self.ItemsCount > 0);
-            self.DataGrid.UpdateEmptyViewVisible();
+            TryOnEmptyItems();
+        }
+
+        internal void Redraw(bool isNeedMeasure = true, bool isNeedLayout = true)
+        {
+            foreach (var item in Children)
+                item.CallInvalidateMeasure();
+
+            if (isNeedMeasure)
+                InvalidateMeasure();
+
+            if (isNeedLayout)
+                InvalidateLayout();
         }
 
         private void OnItemsSourceCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -185,7 +176,7 @@ namespace DataGridSam.Elements
                     }
                 }
 
-                DataGrid.UpdateEmptyViewVisible();
+                TryOnEmptyItems();
             }
             // Remove
             else if (e.Action == NotifyCollectionChangedAction.Remove)
@@ -234,30 +225,21 @@ namespace DataGridSam.Elements
                     }
                 }
 
-                DataGrid.UpdateEmptyViewVisible();
+                TryOnEmptyItems();
             }
             // Reset
             else if (e.Action == NotifyCollectionChangedAction.Reset)
             {
                 Children.Clear();
                 ItemsCount = 0;
-                DataGrid.UpdateEmptyViewVisible();
+                TryOnEmptyItems();
             }
             else
             {
                 return;
             }
-
-            HasItems = (ItemsCount > 0);
         }
 
-        /// <summary>
-        /// Создает строку для таблицы
-        /// </summary>
-        /// <param name="bindItem">Модель данных</param>
-        /// <param name="host">Корневой элемент</param>        
-        /// <param name="index">Индекс элемента таблицы</param>
-        /// <param name="itemsCount">Количество элементов таблицы</param>
         private GridRow AddRow(object bindItem, int index, bool isLineVisible, bool isAutoNumber = true)
         {
             ItemsCount++;
@@ -274,20 +256,39 @@ namespace DataGridSam.Elements
             return row;
         }
 
+        private void TryOnEmptyItems()
+        {
+            bool res = (Children.Count == 0);
+            if (lastHasItems != null && res == lastHasItems.Value)
+                return;
+
+            // Actions:
+            DataGrid.UpdateEmptyViewVisible();
+            InvalidateLayout();
+
+            lastHasItems = res;
+        }
+
         protected override SizeRequest OnMeasure(double widthConstraint, double heightConstraint)
         {
             if (Children.Count == 0)
+            {
+                StackHeight = -1;
+                //DataGrid.CheckWrapperBottomVisible(null, null);
+
                 return new SizeRequest(new Size(widthConstraint, 0));
+            }
             else
             {
-                double heightMeasure = 0;
+                StackHeight = 0;
                 foreach (var item in Children)
                 {
                     var res = item.Measure(widthConstraint, double.PositiveInfinity, MeasureFlags.IncludeMargins);
-                    heightMeasure += res.Request.Height;
+                    StackHeight += res.Request.Height;
                 }
 
-                return new SizeRequest(new Size(widthConstraint, heightMeasure));
+                //DataGrid.CheckWrapperBottomVisible(null, null);
+                return new SizeRequest(new Size(widthConstraint, StackHeight));
             }
         }
 

@@ -8,7 +8,7 @@ namespace DataGridSam
 {
     public partial class DataGrid : Grid
     {
-        public void ScrollToElement(int id, bool isAnimated)
+        public Task ScrollToElement(int id, ScrollToPosition scrollToPosition, bool isAnimated)
         {
             if (id < 0)
                 id = 0;
@@ -16,18 +16,18 @@ namespace DataGridSam
                 id = stackList.Children.Count - 1;
 
             var element = stackList.Children[id];
-            mainScroll.ScrollToAsync(element, ScrollToPosition.MakeVisible, isAnimated);
-        }
+            Task.Delay(10).Wait();
+            return mainScroll.ScrollToAsync(element, scrollToPosition, isAnimated);
 
-        public async Task ScrollToElementAsync(int id, bool isAnimated)
-        {
-            if (id < 0)
-                id = 0;
-            else if (id > stackList.Children.Count - 1)
-                id = stackList.Children.Count - 1;
-
-            var element = stackList.Children[id];
-            await mainScroll.ScrollToAsync(element, ScrollToPosition.MakeVisible, isAnimated);
+            //if (id == stackList.Children.Count - 1)
+            //{
+            //    mainScroll.ScrollToAsync(0, stackList.Height, isAnimated);
+            //}
+            //else
+            //{
+            //    var element = stackList.Children[id];
+            //    mainScroll.ScrollToAsync(element, ScrollToPosition.MakeVisible, isAnimated);
+            //}
         }
     }
 }
