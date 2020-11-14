@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>DataGridSam</id>
-    <version>1.3.7</version>
+    <version>1.3.8</version>
     <authors>Boris Krit</authors>
     <description>Onvenient and faster element for display DataGrid in Xamarin.Forms</description>
     <title>DataGridSam</title>
@@ -12,20 +12,14 @@
     <icon>images\icon.png</icon>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <copyright>Copyright 2019</copyright>
-    <tags>dataGrid xamarin.forms forms xamarin grid DataGridSam</tags>
+    <tags>dataGrid table xamarin.forms forms xamarin grid DataGridSam</tags>
     <repository type="git" url="https://github.com/scriptBoris/DataGridSam.git"/>
     <dependencies>
       <dependency id="Xamarin.Forms" version="4.6.0.1180" />
     </dependencies>
     <releaseNotes>
-- Implement support iOS (beta)
-- Changed method ScrollToElement (no support for iOS)
-- Changed method of placing column borders
-- Changed border width system
-- Changed selection row system
-- Add head text padding
-- Add head text align
-- Add empty view (when ItemSource is empty)
+- Add PositionId property for DataGridColumn. Can swap columns
+- Add Converter property for DataGridColumn
     </releaseNotes>
   </metadata>
 	<files>

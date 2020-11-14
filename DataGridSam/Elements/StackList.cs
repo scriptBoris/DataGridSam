@@ -90,8 +90,8 @@ namespace DataGridSam.Elements
 
         internal void Redraw(bool isNeedMeasure = true, bool isNeedLayout = true)
         {
-            foreach (var item in Children)
-                item.CallInvalidateMeasure();
+            foreach (var row in Children)
+                row.Redraw();
 
             if (isNeedMeasure)
                 InvalidateMeasure();

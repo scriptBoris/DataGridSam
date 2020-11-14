@@ -8,7 +8,7 @@ namespace DataGridSam.Elements
     internal class GridHead : Layout<View>
     {
         private DataGrid dataGrid;
-        private List<DataGridColumn> cells => dataGrid.Columns;
+        private List<DataGridColumn> cells => dataGrid.InternalColumns;
         private List<View> allLines = new List<View>();
         private List<View> colLines = new List<View>();
 
@@ -178,9 +178,6 @@ namespace DataGridSam.Elements
                 int id = 0;
                 foreach (var col in cells)
                 {
-                    // Init columns
-                    col.OnAttached(dataGrid, id);
-
                     // Create vertical border
                     CreateVLine();
 

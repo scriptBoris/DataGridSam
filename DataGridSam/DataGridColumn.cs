@@ -35,7 +35,7 @@ namespace DataGridSam
                 propertyChanged: (b, o, n) =>
                 {
                     var self = (DataGridColumn)b;
-                    self.DataGrid?.UpdateColumnVisibile();
+                    self.DataGrid?.Redraw();
                 });
         public bool IsVisible
         {
@@ -234,6 +234,30 @@ namespace DataGridSam
         {
             get { return (DataTemplate)GetValue(CellTemplateProperty); }
             set { SetValue(CellTemplateProperty, value); }
+        }
+
+        // Converter
+        public static readonly BindableProperty ConverterProperty =
+            BindableProperty.Create(nameof(Converter), typeof(IValueConverter), typeof(DataGridColumn), null);
+        public IValueConverter Converter
+        {
+            get { return (IValueConverter)GetValue(ConverterProperty); }
+            set { SetValue(ConverterProperty, value); }
+        }
+
+        // PositionId
+        public static readonly BindableProperty PositionIdProperty =
+            BindableProperty.Create(nameof(PositionId), typeof(int?), typeof(DataGridColumn), null,
+                propertyChanged: (b, o, n) =>
+                {
+                    var self = (DataGridColumn)b;
+                    self.DataGrid?.OnChangeColumns();
+                    self.DataGrid?.Redraw();
+                });
+        public int? PositionId
+        {
+            get { return (int?)GetValue(PositionIdProperty); }
+            set { SetValue(PositionIdProperty, value); }
         }
         #endregion
 

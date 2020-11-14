@@ -131,12 +131,12 @@ namespace DataGridSam.Elements
             }
 
             // Column lines
-            if (DataGrid.Columns != null && StackList.ItemsCount > 0)
+            if (StackList.ItemsCount > 0)
             {
                 double lastX = wrap;
-                for (int i = 0; i < DataGrid.Columns.Count-1; i++)
+                for (int i = 0; i < DataGrid.InternalColumns.Count-1; i++)
                 {
-                    var col = DataGrid.Columns[i];
+                    var col = DataGrid.InternalColumns[i];
                     var line = colLines[i];
 
                     if (col.IsVisible)

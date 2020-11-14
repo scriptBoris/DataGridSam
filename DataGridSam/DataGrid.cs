@@ -58,9 +58,11 @@ namespace DataGridSam
         // Columns
         public static readonly BindableProperty ColumnsProperty =
             BindableProperty.Create(nameof(Columns), typeof(List<DataGridColumn>), typeof(DataGrid),
-                propertyChanged: (bindableObj, o, n) =>
+                propertyChanged: (b, o, n) =>
                 {
-                    (bindableObj as DataGrid).InitHeaderView();
+                    var self = (DataGrid)b;
+                    self.OnChangeColumns();
+                    self.InitHeaderView();
                 },
                 defaultValueCreator: b =>
                 {

@@ -22,7 +22,7 @@ namespace DataGridSam.Elements
         internal object Context;
         internal View SelectionBox;
         internal View Line;
-        internal List<GridCell> Cells;
+        internal GridCell[] Cells;
         internal RowTrigger EnabledTrigger;
 
         public GridRow(object context, StackList host, int id, bool showBottomLine, bool isAutoNumber)
@@ -36,7 +36,7 @@ namespace DataGridSam.Elements
             IsClippedToBounds = true;
             VerticalOptions = LayoutOptions.Start;
             HorizontalOptions = LayoutOptions.FillAndExpand;
-            Cells = new List<GridCell>();
+            Cells = new GridCell[DataGrid.Columns.Count];
 
             // Triggers event
             if (context is INotifyPropertyChanged model && DataGrid.RowTriggers.Count > 0)
@@ -49,15 +49,14 @@ namespace DataGridSam.Elements
             Children.Add(SelectionBox);
 
             // Init cells
-            int i = 0;
-            foreach (var column in DataGrid.Columns)
+            for (int i = 0; i < DataGrid.Columns.Count; i++)
             {
+                var column = DataGrid.Columns[i];
                 var cell = new GridCell(this, column);
 
                 Children.Add(cell.Wrapper);
                 Children.Add(cell.Content);
-                Cells.Add(cell);
-                i++;
+                Cells[i] = cell;
             }
 
             // Add tap system event
@@ -279,14 +278,10 @@ namespace DataGridSam.Elements
             LayoutChildren(x, y, width, height);
         }
 
-        internal void CallInvalidateMeasure()
+        internal void Redraw()
         {
             InvalidateMeasure();
-            //double result = 0;
-            //foreach (var cell in Cells)
-            //    result += CalculateCellHeight(cell);
-
-            //return result;
+            InvalidateLayout();
         }
 
         protected override void LayoutChildren(double x, double y, double width, double height)
@@ -296,8 +291,9 @@ namespace DataGridSam.Elements
 
             // Render cells
             double lastX = 0;
-            foreach (var cell in Cells)
+            foreach(var column in DataGrid.InternalColumns)
             {
+                var cell = Cells[column.Index];
                 if (cell.Column.IsVisible)
                 {
                     var rect = new Rectangle(lastX, 0, cell.Column.ActualWidth, height);
@@ -330,7 +326,7 @@ namespace DataGridSam.Elements
 
         protected override SizeRequest OnMeasure(double width, double height)
         {
-            if (Cells.Count == 0)
+            if (Cells?.Length == 0)
                 return new SizeRequest();
 
             RowHeight = 0;

@@ -42,6 +42,11 @@ namespace DataGridSam
         internal GridRow SelectedRow;
 
         /// <summary>
+        /// Columns based on position 
+        /// </summary>
+        internal List<DataGridColumn> InternalColumns = new List<DataGridColumn>();
+
+        /// <summary>
         /// Need calc auto number?
         /// </summary>
         internal bool IsAutoNumberCalc => AutoNumberStrategy != AutoNumberStrategyType.None;

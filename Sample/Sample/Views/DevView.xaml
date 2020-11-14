@@ -67,9 +67,11 @@
                                 PropertyName="Price"/>-->
             <sam:DataGridColumn Title="Weight" 
                                 Width="1*"
+                                PositionId="{Binding ColumnWeightPosition}"
                                 CellBackgroundColor="#aaa"
                                 CellTextColor="Red"
                                 PropertyName="Weight"
+                                Converter="{StaticResource NumberNothingConverter}"
                                 HorizontalTextAlignment="End"/>
 
             <sam:DataGrid.RowTriggers>
@@ -100,7 +102,10 @@
         </sam:DataGrid>
 
         <StackLayout BackgroundColor="Gray"
-                     VerticalOptions="End">
+                     VerticalOptions="End"
+                     Spacing="0">
+            
+            <!--Current item-->
             <StackLayout Orientation="Horizontal">
                 <Label Text="{Binding SelectedItem.Pos}"
                        FontSize="20"
@@ -126,6 +131,7 @@
                         Command="{Binding CommandRemoveWeight}"/>
             </StackLayout>
 
+            <!--Add or remove item-->
             <StackLayout Orientation="Horizontal">
                 <Button Text="Add"
                         TextColor="Black"
@@ -137,13 +143,25 @@
                         Command="{Binding CommandRemoveItem}"/>
             </StackLayout>
             
+            <!--Insert item-->
             <StackLayout Orientation="Horizontal">
+                <Label Text="Insert item by ID"
+                       TextColor="Black"
+                       VerticalTextAlignment="Center"/>
                 <Entry Text="{Binding Index}"
                        HorizontalOptions="FillAndExpand"
+                       Keyboard="Numeric"
+                       ReturnCommand="{Binding CommandInsertItem}"/>
+            </StackLayout>
+
+            <!--Insert item-->
+            <StackLayout Orientation="Horizontal">
+                <Label Text="Column Weight position"
+                       TextColor="Black"
+                       VerticalTextAlignment="Center"/>
+                <Entry Text="{Binding ColumnWeightPosition, Mode=TwoWay}"
+                       HorizontalOptions="FillAndExpand"
                        Keyboard="Numeric"/>
-                <Button Text="Insert"
-                        TextColor="Black"
-                        Command="{Binding CommandInsertItem}"/>
             </StackLayout>
         </StackLayout>
     </StackLayout>

@@ -35,6 +35,7 @@ namespace Sample.ViewModels
         public ObservableCollection<Ware> Items { get; set; } = new ObservableCollection<Ware>();
         public Ware SelectedItem { get; set; }
         public int Index { get; set; }
+        public int ColumnWeightPosition { get; set; } = 2;
         public int ItemsCount => Items?.Count ?? 0;
         public ICommand CommandSelectItem { get; set; }
         public ICommand CommandLongTap { get; set; }
