@@ -15,6 +15,7 @@ namespace DataGridSam
     {
         private void Init()
         {
+            OnChangeColumns();
             InitHeaderView();
             UpdateRowTriggers();
         }
@@ -36,7 +37,7 @@ namespace DataGridSam
                 row.Height = new GridLength(height);
         }
 
-        internal void UpdateColumnVisibile()
+        internal void Redraw()
         {
             headGrid.Redraw();
             bodyGrid.Redraw();
@@ -96,9 +97,11 @@ namespace DataGridSam
 
         private void SetColumnsBindingContext()
         {
-            if (Columns != null)
-                foreach (var c in Columns)
-                    c.BindingContext = BindingContext;
+            if (Columns == null)
+                return;
+
+            foreach (var c in Columns)
+                c.BindingContext = BindingContext;
         }
 
         private void UpdateHeaderStyle(Style style)
@@ -146,6 +149,73 @@ namespace DataGridSam
             {
                 trigger.OnSourceTypeChanged(newTypeItems);
             }
+        }
+
+        /// <summary>
+        /// Called every time an Columns changes or Column position change<br/>
+        /// Вызывается каждый раз, когда меняется Columns или позиция Column;
+        /// </summary>
+        internal void OnChangeColumns()
+        {
+            InternalColumns.Clear();
+            
+            if (Columns == null)
+                return;
+
+            // Sort column
+            for (int i = 0; i < Columns.Count; i++)
+            {
+                var col = Columns[i];
+                col.OnAttached(this, i);
+                InternalColumns.Add(col);
+            }
+
+            var columnsWithPosition = new List<DataGridColumn>();
+            foreach (var item in Columns)
+            {
+                if (item.PositionId != null)
+                    columnsWithPosition.Add(item);
+            }
+            columnsWithPosition.Sort((x, y) =>
+               x.PositionId.Value.CompareTo(y.PositionId.Value)
+            );
+
+            //var listAuto = new List<DataGridColumn>();
+            //foreach (var item in Columns)
+            //{
+            //    if (item.PositionId == null)
+            //        listAuto.Add(item);
+            //}
+
+            //InternalColumns.Sort( (x, y) => 
+            //    x.PositionId?.CompareTo(y.PositionId ?? y.Index) ?? x.Index.CompareTo(y.PositionId ?? y.Index)
+            //);
+
+            foreach (var col in columnsWithPosition)
+            {
+                int i = InternalColumns.IndexOf(col);
+                int newIndex = col.PositionId.Value;
+
+                if (col.PositionId.Value >= InternalColumns.Count - 1)
+                    newIndex = InternalColumns.Count-1;
+
+                InternalColumns.RemoveAt(i);
+                InternalColumns.Insert(newIndex, col);
+            }
+
+            //for (int i = 0; i < InternalColumns.Count; i++)
+            //{
+            //    DataGridColumn colWithPosition = columnsWithPosition.FirstOrDefault();
+            //    DataGridColumn col = InternalColumns[i];
+            //    //DataGridColumn colNext = (i < InternalColumns.Count-1) ? InternalColumns[i+1] : null;
+
+            //    //if (colNext == null)
+            //    //    break;
+
+            //    if ()
+
+            //    col.IndexRow = i;
+            //}
         }
 
         private void UpdateSelectedItem(object newItem)

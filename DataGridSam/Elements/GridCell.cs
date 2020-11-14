@@ -58,6 +58,7 @@ namespace DataGridSam.Elements
                         column.PropertyName,
                         BindingMode.Default,
                         stringFormat: column.StringFormat,
+                        converter: column.Converter,
                         source: row.Context));
             }
 

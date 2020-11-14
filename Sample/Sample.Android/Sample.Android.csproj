@@ -110,7 +110,7 @@
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties XamarinHotReloadXFormsNugetUpgradeInfoBarSampleAndroidHideInfoBar="True" XamarinHotReloadGenericExceptionInfoBarSampleAndroidHideInfoBar="True" />
+      <UserProperties TriggeredFromHotReload="False" XamarinHotReloadGenericExceptionInfoBarSampleAndroidHideInfoBar="True" XamarinHotReloadXFormsNugetUpgradeInfoBarSampleAndroidHideInfoBar="True" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

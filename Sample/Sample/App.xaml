@@ -3,9 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:conv="clr-namespace:Sample.Core"
              mc:Ignorable="d"
              x:Class="Sample.App">
     <Application.Resources>
+        <conv:NumberNothingConverter x:Key="NumberNothingConverter"/>
+
         <OnPlatform x:TypeArguments="x:String" x:Key="Font1">
             <On Platform="Android" Value="OpenSans-Regular.ttf#Open Sans" />
             <On Platform="UWP" Value="/Assets/OpenSans-Regular.ttf#Open Sans" />
