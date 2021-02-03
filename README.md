@@ -1,30 +1,38 @@
 # Screenshots
+
 <table>
-	<tr>
-		<td align="center">Droid</td>
-		<td align="center">UWP</td>
-		<td align="center">iOS</td>
-	</tr>
-	<tr>
-	  <td><img src="Screenshots/ImagesDemo/1droid.jpg" width=270 height=470></td>
-	  <td align="center"><img src="Screenshots/ImagesDemo/1uwp.jpg" width=331 height=470></td>
-	  <td><img src="Screenshots/ImagesDemo/1ios.jpg" width=309 height=470></td>
-	</tr>
- </table>
+  <thead>
+    <tr>
+      <th>Droid</th>
+      <th>iOS</th>
+      <th>UWP</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><img src="Screenshots/ImagesDemo/1droid.jpg" width="300" /></td>
+      <td><img src="Screenshots/ImagesDemo/1ios.jpg" width="300" /></td>
+      <td><img src="Screenshots/ImagesDemo/1uwp.jpg" width="300" /></td>
+    </tr>
+  </tbody>
+</table>
  
  <table>
-	<tr>
-		<td align="center">Droid</td>
-		<td align="center">UWP</td>
-		<td align="center">iOS</td>
-	</tr>
-	<tr>
-	  <td><img src="Screenshots/TriggersDemo/2droid.jpg" width=270 height=470></td>
-	  <td align="center"><img src="Screenshots/TriggersDemo/2uwp.jpg" width=331 height=470></td>
-	  <td><img src="Screenshots/TriggersDemo/2ios.jpg" width=309 height=470></td>
-	</tr>
- </table>
-
+  <thead>
+    <tr>
+      <th>Droid</th>
+      <th>iOS</th>
+      <th>UWP</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><img src="Screenshots/TriggersDemo/2droid.jpg" width="300" /></td>
+      <td><img src="Screenshots/TriggersDemo/2ios.jpg" width="300" /></td>
+      <td><img src="Screenshots/TriggersDemo/2uwp.jpg" width="300" /></td>
+    </tr>
+  </tbody>
+</table>
 
 ## Nuget Installation
 
